@@ -26,17 +26,19 @@
  
 package gui.minimize;
 
-import gui.tree.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.tree.*;
 import automata.*;
 import automata.fsa.*;
-import gui.viewer.*;
+import automata.graph.*;
+import gui.SplitPaneFactory;
 import gui.editor.*;
 import gui.environment.Environment;
-import gui.SplitPaneFactory;
+import gui.tree.*;
+import gui.viewer.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.tree.*;
 
 /**
  * The <CODE>MinimizePane</CODE> is a view created to minimize a DFA
@@ -169,6 +171,22 @@ public class MinimizePane extends JPanel {
 	split.setRightComponent(right);
 	invalidate();
 	repaint();
+
+	// Do graph layout.
+	AutomatonGraph graph = new AutomatonGraph(newAutomaton);
+	graph.addVertex(newAutomaton.getInitialState(), new Point(0,0));
+	Iterator it = builderController.remainingTransitions.iterator();
+	while (it.hasNext()) {
+	    Transition t = (Transition) it.next();
+	    graph.addEdge(t.getFromState(), t.getToState());
+	}
+	GEMLayoutAlgorithm layout = new GEMLayoutAlgorithm();
+	Set constantStates = new HashSet();
+	constantStates.add(newAutomaton.getInitialState());
+	layout.layout(graph, constantStates);
+	graph.moveAutomatonStates();
+	validate();
+	ep.getAutomatonPane().fitToBounds(10);
     }
 
     /**

@@ -163,7 +163,6 @@ public class UselessProductionRemover {
      */
     private static boolean isInUsefulVariableSet(char ch, Set set) {
 	Iterator it = set.iterator();
-	//System.out.println("SET: "+set);
 	while(it.hasNext()) {
 	    String variable = (String) it.next();
 	    char var = variable.charAt(0);
@@ -188,7 +187,6 @@ public class UselessProductionRemover {
      */
     private static boolean isUsefulProduction
 	(Production production, Set set) {
-	//System.out.println("SET: "+set);
 	ProductionChecker pc = new ProductionChecker();
 	String rhs = production.getRHS();
 	for(int k = 0; k < rhs.length(); k++) {
@@ -496,24 +494,6 @@ public class UselessProductionRemover {
 	    grammar.removeProduction(productions[k]);
 	}
     }
-
-    /**
-     * Outputs the contents of <CODE>set</CODE> to stdout.
-     * @param set the set.
-     */
-    private static void printSet(Set set) {
-	System.out.print("SET :");
-	Iterator it = set.iterator();
-	while(it.hasNext()) {
-	    System.out.print(it.next());
-	    System.out.print(" ");
-	}
-	System.out.print('\n');
-    }
-
-    /**
-     * 
-     */
 
     /**
      * Returns a grammar with no variables that can not derive strings,

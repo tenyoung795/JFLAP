@@ -23,12 +23,12 @@ jarExists = os.access(jarFile, os.F_OK)
 # Find those .class files that are newer than the jar, if it exists.
 command = "find . -name \"*.class\" "
 if jarExists: command += "-newer "+jarFile+" "
-files = string.split(string.replace(commands.getoutput(command), "$", "\$"))
+files = string.split(commands.getoutput(command))
 
 # Find those support files that are newer than the jar, if it exists.
 command = "find "+string.join(supportDirectories)+" -type f "
 if jarExists: command += "-newer "+jarFile+" "
-files.extend(string.split(string.replace(commands.getoutput(command), "$", "\$")))
+files.extend(string.split(commands.getoutput(command)))
 # Update the manifest.
 print "UPDATING MANIFEST"
 if jarExists:
@@ -37,8 +37,8 @@ else:
     os.system("jar cvmf "+manifestFile+" "+jarFile)
 # Update the files.
 if (len(files)):
-    print string.join(files)
     print "UPDATING FILES"
+    files = ["'"+file+"'" for file in files]
     os.system("jar uvf "+jarFile+" "+string.join(files))
 else:
     print "NO FILES TO ADD"

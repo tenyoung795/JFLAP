@@ -80,7 +80,7 @@ public class LSystem implements Serializable {
     }
     
     /**
-     * Initializes the list of replacements.
+     * Initializes the list of rewriting rules.
      * @param replacements the grammar holding the replacement rules
      */
     private void initReplacements(Grammar replacements) {

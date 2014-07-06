@@ -244,6 +244,15 @@ public class REToFSAController {
     public void export() {
 	FrameFactory.createFrame((FiniteStateAutomaton)automaton.clone());
     }
+
+    /**
+     * Exports the automaton to a tab.
+     */
+    public void exportToTab() {
+	gui.viewer.AutomatonPane p = new gui.viewer.AutomatonPane(automaton);
+	convertPane.environment.add(p, "Current FA");
+	convertPane.environment.setActive(p);
+    }
     
     /**
      * Called when the transition tool is used to create a transition

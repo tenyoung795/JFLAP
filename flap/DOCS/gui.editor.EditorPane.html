@@ -6,7 +6,7 @@
 
 <H1>The Automaton Editor</H1>
 
-<CENTER><IMG SRC="images/automaton.png" ALT="View Showing the Automaton Editor" WIDTH="303" HEIGHT="265" BORDER="1"><BR>Editing a finite state automaton.</CENTER>
+<CENTER><IMG SRC="images/automaton.png" ALT="View Showing the Automaton Editor" WIDTH="303" HEIGHT="265" BORDER="1"><BR>Editing a finite automaton.</CENTER>
 
 <H2>The Editor Pane</H2>
 
@@ -41,11 +41,11 @@ Right-clicking in a blank portion of the canvas will bring up a different pop-up
 
 <P>Only one transition may be edited at a time.  While a transition is being edited, fields appear that allow the user to change parameters regarding that particular transition.  Each field corresponds to a particular parameter of that transition.  In order to find out which is which during runtime, hold the mouse cursor over one of the fields; a tool tip will pop up to tell what it is.</P>
 
-<P>Note that separate transitions must be placed in separate transitions; for example, in a FSA, the three separate transitions <VAR>a</VAR>, <VAR>c</VAR>, and <VAR>d</VAR> <STRONG>cannot</STRONG> be abbreviated as the single transition <VAR>a, c, d</VAR>.</P>
+<P>Note that separate transitions must be placed in separate transitions; for example, in a FA, the three separate transitions <VAR>a</VAR>, <VAR>c</VAR>, and <VAR>d</VAR> <STRONG>cannot</STRONG> be abbreviated as the single transition <VAR>a, c, d</VAR>.</P>
 
 <CENTER><IMG SRC="images/turing-transition-edit.png" ALT="" WIDTH="257" HEIGHT="168" BORDER="1"><BR>Editing a Turing machine transition.</CENTER>
 
-<P>A finite state automaton's transition editor will have a single field representing what characters are read from the input.  A pushdown automaton's transition editor will have three fields, the first to define what characters to read from input, the second to define what characters to pop from the stack, and the third to define what characters to push.  A Turing machine's transition editor will also have three fields, one for the read character, one for the write character, and one for the direction to move the tape head (L, S, and R for left, stay, and right).  A multi-tape Turing machine is similar, but it has as many rows as tapes; each row follows the convention of Turing machine transitions defined previously.  To enter lambda entries for FSAs and PDAs, simply leave a field blank.  Leaving a field blank in a Turing machine is not lambda, but is the blank tape symbol (represented as a square).</P>
+<P>A finite automaton's transition editor will have a single field representing what characters are read from the input.  A pushdown automaton's transition editor will have three fields, the first to define what characters to read from input, the second to define what characters to pop from the stack, and the third to define what characters to push.  A Turing machine's transition editor will also have three fields, one for the read character, one for the write character, and one for the direction to move the tape head (L, S, and R for left, stay, and right).  To select the direction, click on the direction field and select from the menu or type shift-L, shift-S, or shift-R when the direction field is selected.  A multi-tape Turing machine is similar, but it has as many rows as tapes; each row follows the convention of Turing machine transitions defined previously.  To enter lambda entries for FAs and PDAs, simply leave a field blank.  Leaving a field blank in a Turing machine is not lambda, but is the blank tape symbol (represented as a square).</P>
 
 <P>To stop editing, take some other action with the tool, or click in an empty space on the canvas, or press return/enter.  To cancel the editing of a transition and to revert that transition to its state before the edit, press escape.  If there is anything irregular about the transition entered, the program will display an error and revert the transition to its state before the edit.  Currently, the only restriction on transitions are on transitions for Turing machine: a Turing machine transition must read exactly one character and write exactly one character per tape.  If the read or write fields for a Turing machine are left empty, the blank tape alphabet symbol is assumed to be the content of that field.  Pressing shift-return/enter will stop editing the transition, and begin the process of editing a new one between the start and end states of the transition that we just stopped editing.</P>
 

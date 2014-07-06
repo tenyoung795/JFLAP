@@ -1,12 +1,12 @@
 <!-- The documentation for conversion of some form of automaton to a RE. -->
 
 <HTML><HEAD>
-<TITLE>Convert FSA to RE</TITLE>
+<TITLE>Convert FA to RE</TITLE>
 </HEAD><BODY>
 
-<H1>Convert FSA to RE</H1>
+<H1>Convert FA to RE</H1>
 
-<P>The idea behind the transformation is that an FSA is repeatedly collapsed until there is a single initial and different single final state, with transitions between them.  This reformed FSA is called a <DFN>generalized transition graph</DFN>.</P>
+<P>The idea behind the transformation is that an FA is repeatedly collapsed until there is a single initial and different single final state, with transitions between them.  This reformed FA is called a <DFN>generalized transition graph</DFN>.</P>
 
 <H2>Steps</H2>
 
@@ -15,7 +15,7 @@
 <P><IMG SRC="images/fsa2re/1.png" ALT="" WIDTH="215" HEIGHT="189" ALIGN="bottom"> In the process of each step, we will pretend to convert this automaton.</P>
 
 <OL>
-<LI><P>The FSA is transformed so that there is a single final state that is not the initial state.  First, the user creates a new final state.  Then, the user inserts lambda transitions from the old final states to the new final state.  This is accomplished with the regular state creator (<IMG SRC="../ICON/state.gif" ALT="" WIDTH="16" HEIGHT="16">) and transition creator (<IMG SRC="../ICON/transition.gif" ALT="" WIDTH="16" HEIGHT="16">) tools.  The transition creator knows that if we are on this step, we will only be interested in creating lambda transitions.  If there is already only a single final state, this step is skipped.  The example does not require this step.</P></LI>
+<LI><P>The FA is transformed so that there is a single final state that is not the initial state.  First, the user creates a new final state.  Then, the user inserts lambda transitions from the old final states to the new final state.  This is accomplished with the regular state creator (<IMG SRC="../ICON/state.gif" ALT="" WIDTH="16" HEIGHT="16">) and transition creator (<IMG SRC="../ICON/transition.gif" ALT="" WIDTH="16" HEIGHT="16">) tools.  The transition creator knows that if we are on this step, we will only be interested in creating lambda transitions.  If there is already only a single final state, this step is skipped.  The example does not require this step.</P></LI>
 
 <LI><P><IMG SRC="images/fsa2re/2.png" WIDTH="215" HEIGHT="186" ALIGN="bottom"> If there are multiple transitions from and to any two given states, they are combined into a single transition.  For example, if from state <VAR>q<SUB>i</SUB></VAR> to <VAR>q<SUB>j</SUB></VAR> there are two transitions <VAR>a</VAR> and <VAR>b</VAR>, they are combined into the regular expression transition <VAR>a+b</VAR>.  The user does this with the "Transition Collapser" tool (<IMG SRC="../ICON/collapse.gif" ALT="" WIDTH="16" HEIGHT="16">).  To collapse multiple transitions between states, click one of these transitions while the tool is active.  If there is no pair of states with multiple transitions between them, this step is skipped.</P></LI>
 

@@ -152,7 +152,6 @@ public class Unrestricted {
 	// Repeat
 	boolean changed;
 	do {
-	    System.out.println("Terminating is "+terminating);
 	    changed = false;
 	    // If a production has only "terminating" variables, add it.
 	    for (int i=0; i<prods.length; i++) {

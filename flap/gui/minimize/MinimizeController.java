@@ -39,8 +39,10 @@ import java.util.*;
 /**
  * The <CODE>MinimizeController</CODE> serves as an intermediary
  * between the <CODE>Minimizer</CODE> object and the various gui
- * classes that handles the drawing of the automaton and minimization
- * tree.
+ * classes that handles the drawing of the unminimized automaton and
+ * minimization tree.  This does not handle the building of the
+ * minimized automata, however, which is handled by {@link
+ * gui.minimize.BuilderController}.
  * 
  * @author Thomas Finley
  */

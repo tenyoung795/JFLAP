@@ -300,7 +300,7 @@ public class CurvedArrow {
 	} catch (java.awt.geom.NoninvertibleTransformException e) {
 	    
 	} catch (NullPointerException e) {
-	    System.out.println(e+" : "+bounds+" : "+affineToText);
+	    System.err.println(e+" : "+bounds+" : "+affineToText);
 	    return false;
 	}
 	return intersects(point, fudge, curve);

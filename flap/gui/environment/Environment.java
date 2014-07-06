@@ -26,16 +26,17 @@
  
 package gui.environment;
 
-import java.io.Serializable;
-import java.io.File;
-import java.util.*;
+import file.Encoder;
+import gui.environment.tag.EditorTag;
+import gui.environment.tag.Satisfier;
+import gui.environment.tag.Tag;
 import java.awt.*;
+import java.io.File;
+import java.io.Serializable;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import gui.environment.tag.Tag;
-import gui.environment.tag.EditorTag;
-import gui.environment.tag.Satisfier;
 
 /**
  * The environment class is the central view that manages various
@@ -116,13 +117,33 @@ public abstract class Environment extends JPanel {
 
     /**
      * Sets the file owned by this <CODE>Environment</CODE> as the
-     * default location to save the serializable object.
+     * default location to save the object.
      * @param file the new file for the environment
      */
     public void setFile(File file) {
 	File oldFile = this.file;
 	this.file = file;
 	distributeFileChangeEvent(new FileChangeEvent(this, oldFile));
+    }
+
+    /**
+     * Sets the encoder to use when writing this environment's file.
+     * This should be set when the file is ever written, or when a
+     * file is read and the format it was read in has a corresponding
+     * encoder.
+     * @param encoder the encoder for this 
+     */
+    public void setEncoder(Encoder encoder) {
+	this.encoder = encoder;
+    }
+
+    /**
+     * Gets the encoder to be used when saving this file.
+     * @return the encoder to use to save this file, or
+     * <CODE>null</CODE> if no encoder has been chosen yet
+     */
+    public Encoder getEncoder() {
+	return encoder;
     }
 
     /**
@@ -389,6 +410,8 @@ public abstract class Environment extends JPanel {
 	dirty = false;
     }
 
+    /** The encoder for this document. */
+    private Encoder encoder = null;
     /** The mapping of components to their respective tag objects. */
     private HashMap componentTags = new HashMap();
     /** The tabbed pane for this environment. */

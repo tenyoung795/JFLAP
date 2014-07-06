@@ -8,7 +8,7 @@
 
 <CENTER><IMG SRC="images/nfa2dfa.png" ALT="Conversion of NFA to DFA" WIDTH="581" HEIGHT="340" BORDER="1"></CENTER>
 
-<P>This operator may be applied to any nondeterministic FSA.  At the end of the operation, there will be a completed NFA.</P>
+<P>This operator may be applied to any nondeterministic FA.  At the end of the operation, there will be a completed NFA.</P>
 
 <P>The conversion practice used is the standard canonical method of creating an equivalent DFA from an NFA, that is: each state in the DFA being built corresponds to a nonempty set of states in the original NFA.  Therefore, for an NFA with <VAR>n</VAR> states, there are potentially <VAR>2<SUP>n</SUP> - 1</VAR> states in the DFA, though realistically this upper bound is rarely met.</P>
 
@@ -34,7 +34,7 @@
 
 <P>Final states in the DFA are those states whose NFA state sets contain at least one final state from the NFA: in the example, notice that every state in the DFA with the NFA final state <VAR>q3</VAR> in its set is a final state.  JFLAP will detect if the user entered any states that were final states, and if so make the state it creates a final state.</P>
 
-<P>The "Done?" button will check the DFA to see if it is complete.  If it is, then this completed DFA will be exported to its own window, where it may be treated like any other FSA.</P>
+<P>The "Done?" button will check the DFA to see if it is complete.  If it is, then this completed DFA will be exported to its own window, where it may be treated like any other FA.</P>
 
 <H2>Help</H2>
 

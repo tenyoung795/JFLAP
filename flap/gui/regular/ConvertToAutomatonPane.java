@@ -104,6 +104,7 @@ public class ConvertToAutomatonPane extends JPanel {
 	bar.add(doStepAction);
 	bar.add(doAllAction);
 	bar.add(exportAction);
+	//bar.add(exportAction2);
 
 	add(ep, BorderLayout.CENTER);
     }
@@ -111,7 +112,7 @@ public class ConvertToAutomatonPane extends JPanel {
     /** The environment that holds the regular expression.  The
      * regular expression from the environment is itself not
      * modified. */
-    private RegularEnvironment environment;
+    RegularEnvironment environment;
     /** The automaton being built, which will be modified throughout
      * this process. */
     private FiniteStateAutomaton automaton = new FiniteStateAutomaton();
@@ -135,5 +136,9 @@ public class ConvertToAutomatonPane extends JPanel {
     AbstractAction exportAction = new AbstractAction("Export") {
 		public void actionPerformed(ActionEvent e) {
 		    controller.export();
+		} };
+    AbstractAction exportAction2 = new AbstractAction("Export Now") {
+		public void actionPerformed(ActionEvent e) {
+		    controller.exportToTab();
 		} };
 }

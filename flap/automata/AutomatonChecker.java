@@ -53,14 +53,12 @@ public class AutomatonChecker {
      */
     public boolean isNFA(Automaton automaton) {
 	if(!(automaton instanceof FiniteStateAutomaton)) { 
-	    System.out.println("AUTOMATON NOT FSA!!");
 	    return false;
 	}
 	NondeterminismDetector nd = new FSANondeterminismDetector();
 	State[] nondeterministicStates = 
 	    nd.getNondeterministicStates(automaton);
-	if(nondeterministicStates.length > 0) return true;
-	else return false;
+	return nondeterministicStates.length > 0;
     }
 
 }

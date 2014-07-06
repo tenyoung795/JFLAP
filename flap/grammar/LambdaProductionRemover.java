@@ -466,8 +466,6 @@ public class LambdaProductionRemover {
      */
     private Production getProductionForCombination
 	(Production production, String comb) {
-	System.out.println("GETTING PRODUCTION FOR " +
-			   comb);
 	ProductionChecker pc = new ProductionChecker();
 	String rhs = production.getRHS();
 	StringBuffer buffer = new StringBuffer();
@@ -477,7 +475,6 @@ public class LambdaProductionRemover {
 	       isNotReplacedByLambda(ch,comb)) buffer.append(ch);
 	}
 	Production p = new Production(production.getLHS(), buffer.toString());
-	System.out.println("GOT " + p);
 	return p;
     }
 

@@ -94,12 +94,10 @@ public class DisjointSetsDetector {
      */
     private ArrayList getStatesConnectedToState
 	(State state, Automaton automaton) {
-	System.out.println("GETTING STATES CONNECTED TO " + state);
 	ArrayList list = new ArrayList();
 	State[] states = automaton.getStates();
 	for(int k = 0; k < states.length; k++) {
 	    if(areDirectlyConnected(state,states[k],automaton)) {
-		System.out.println(states[k] + " IS CONNECTED TO " + state);
 		list.add(states[k]);
 	    }
 	}
@@ -133,7 +131,6 @@ public class DisjointSetsDetector {
      * <CODE>state</CODE>.
      */
     public HashSet getSetIncludingState(State state, Automaton automaton) {
-	System.out.println("GETTING SET INCLUDING " + state);
 	HashSet set = new HashSet();
 	ArrayList list = new ArrayList();
 	list.add(state);
@@ -144,7 +141,6 @@ public class DisjointSetsDetector {
 		State s = (State) it.next();
 		toAdd.addAll(getStatesConnectedToState(s,automaton));
 		set.add(s);
-		System.out.println("ADDING " + s + " TO SET");
 		it.remove();
 	    }
 	    addAllNotInSetToList(toAdd,set,list);

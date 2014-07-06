@@ -85,10 +85,6 @@ public class FSAToRegularExpressionConverter {
     public boolean isConvertable(Automaton automaton) {
 	if(!(automaton instanceof FiniteStateAutomaton)) return false;
 	State[] finalStates = automaton.getFinalStates();
-	
-	for(int k = 0; k < finalStates.length; k++) {
-	    System.out.println(finalStates[k]);
-	}
 	if(finalStates.length != 1) {
 	    return false;
 	}
@@ -183,33 +179,23 @@ public class FSAToRegularExpressionConverter {
      * k represent the IDs of states in <CODE>automaton</CODE>.
      */
     public String getExpression(int p, int q, int k, Automaton automaton) {
-	System.out.println ("GETTING EXPRESSION FOR p = " + p +
-			    " q = " + q + " k = " + k);
 	State fromState = automaton.getStateWithID(p);
 	State toState = automaton.getStateWithID(q);
 	State removeState = automaton.getStateWithID(k);
 	
 	String pq = 
 	    getExpressionBetweenStates(fromState,toState,automaton); 
-	System.out.println("pq: " + getExp(pq));
 	String pk = 
 	    getExpressionBetweenStates(fromState,removeState,automaton); 
-	System.out.println("pk: " + getExp(pk));
 	String kk = 
 	    getExpressionBetweenStates(removeState,removeState,automaton);
-	System.out.println("kk: " + getExp(kk));
 	String kq = 
 	    getExpressionBetweenStates(removeState,toState,automaton);
-	System.out.println("kq: " + getExp(kq));
 	
 	String temp1 = star(kk);
-	System.out.println("kk* = " + getExp(temp1));
 	String temp2 = concatenate(pk, temp1);
-	System.out.println("pk(kk*) = " + getExp(temp2));
 	String temp3 = concatenate(temp2, kq);
-	System.out.println("pk(kk*)kq = " + getExp(temp3)); 
 	String label = or(pq, temp3);
-	System.out.println("EXPRESSION = " + getExp(label));
 	return label;
     }
 
@@ -589,10 +575,6 @@ public class FSAToRegularExpressionConverter {
 	String ij = getIJ(automaton);
 	String jj = getJJ(automaton);
 	String ji = getJI(automaton);
-	System.out.println("ii = " + getExp(ii));
-	System.out.println("ij = " + getExp(ij));
-	System.out.println("jj = " + getExp(jj));
-	System.out.println("ji = " + getExp(ji));
 	
 	return getFinalExpression(ii,ij,jj,ji);
     }
@@ -605,7 +587,6 @@ public class FSAToRegularExpressionConverter {
      * <CODE>automaton</CODE>.
      */
     public String convertToRegularExpression(Automaton automaton) {
-	System.out.println(automaton);
 	if(!isConvertable(automaton)) return null;
 	convertToGTG(automaton);
 	return getExpressionFromGTG(automaton);

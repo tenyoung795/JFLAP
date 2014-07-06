@@ -92,6 +92,7 @@ public class GEMLayoutAlgorithm implements LayoutAlgorithm {
 		for (int j=0; j<vArray.length; j++)
 		    if (!isovertices.contains(vArray[j]))
 			vertices.add(vArray[j]);
+		if (vertices.size() == 0) return;
 	    }
 
 	    // Choose a vertex V to update.
@@ -109,8 +110,8 @@ public class GEMLayoutAlgorithm implements LayoutAlgorithm {
 		 (c[1]/graph.numberOfVertices() - point.getY())*
 		 GRAVITATIONAL_CONSTANT*Theta}; // Attraction to BC.
 	    // Random disturbance.
-	    //p[0] += RANDOM.nextDouble() * 64.0 - 32.0;
-	    //p[1] += RANDOM.nextDouble() * 64.0 - 32.0;
+	    p[0] += RANDOM.nextDouble() * 10.0 - 5.0;
+	    p[1] += RANDOM.nextDouble() * 10.0 - 5.0;
 	    // Forces exerted by other nodes.
 	    for (int j=0; j<vArray.length; j++) {
 		if (vArray[j] == vertex) continue;

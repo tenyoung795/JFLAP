@@ -337,8 +337,8 @@ class Turtle implements Cloneable, Serializable {
 
     /**
      * Changes the current color's hue angle by the turtle's value.
-     * @param increment <CODE>true</CODE> if we want to progress or
-     * regress
+     * @param increment <CODE>true</CODE> if we want to progress, and
+     * <CODE>false</CODE> if we want to regress
      */
     public void changeHue(boolean increment) {
 	changeHue(increment ? hueChange : -hueChange);
@@ -351,12 +351,30 @@ class Turtle implements Cloneable, Serializable {
     public void changeHue(double change) {
 	float[] hsbvals = Color.RGBtoHSB
 	    (color.getRed(), color.getGreen(), color.getBlue(), null);
-	/*System.out.println("HSB values BFR "+hsbvals[0]+", "+hsbvals[1]+", "
-	  +hsbvals[2]);*/
 	hsbvals[0] += ((float) change)/360f;
-	/*System.out.println("HSB values NOW "+hsbvals[0]+", "+hsbvals[1]+", "
-	  +hsbvals[2]);*/
 	setColor(Color.getHSBColor(hsbvals[0], hsbvals[1], hsbvals[2]));
+    }
+
+    /**
+     * Changes the current polygon color's hue angle by the turtle's
+     * value.
+     * @param increment <CODE>true</CODE> if we want to progress, and
+     * <CODE>false</CODE> if we want to regress
+     */
+    public void changePolygonHue(boolean increment) {
+	changePolygonHue(increment ? hueChange : -hueChange);
+    }
+
+    /**
+     * Changes the current polygon color's hue angle by the given hue
+     * angle.
+     */
+    public void changePolygonHue(double change) {
+	float[] hsbvals = Color.RGBtoHSB
+	    (polygonColor.getRed(), polygonColor.getGreen(),
+	     polygonColor.getBlue(), null);
+	hsbvals[0] += ((float) change)/360f;
+	setPolygonColor(Color.getHSBColor(hsbvals[0], hsbvals[1], hsbvals[2]));
     }
     
     // METHODS RELATING TO LINE WIDTH
@@ -468,7 +486,6 @@ class Turtle implements Cloneable, Serializable {
 
 	try {
 	    while (st.nextToken() != st.TT_EOF) {
-		//System.out.println("SYMBOL "+st.sval);
 		switch (st.ttype) {
 		case StreamTokenizer.TT_WORD:
 		    // Attempt to resolve the symbol to a number.
@@ -495,7 +512,6 @@ class Turtle implements Cloneable, Serializable {
 	    return new Double(Double.NaN); // We canna do it, captain!
 	}
 	// So now we have all these symbols in a list... great!
-	//System.out.println("values "+list);
 	Iterator it = list.iterator();
 	return valueOf(it);
     }

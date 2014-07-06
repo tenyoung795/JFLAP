@@ -150,15 +150,12 @@ public class Minimizer {
     public boolean isSplittable
 	(State[] group, Automaton automaton, DefaultTreeModel tree) {
 	/** if only one state in group, can't be split. */
-	/*System.out.println("CHECKING IF " + getString(group) + 
-	  " IS SPLITTABLE");*/
 	if(group.length <= 1) return false;
 	AlphabetRetriever far = new FSAAlphabetRetriever();
 	String[] alphabet = far.getAlphabet(automaton);
 	for(int k = 0; k < alphabet.length; k++) {
 	    /** if group splittable on a terminal in alphabet.*/
 	    if(isSplittableOnTerminal(group,alphabet[k],automaton,tree)) {
-		//System.out.println("IS SPLITTABLE!");
 		return true;
 	    }
 	}
@@ -175,13 +172,10 @@ public class Minimizer {
      */
     public State[] getDistinguishableGroup
 	(Automaton automaton, DefaultTreeModel tree) {
-	//System.out.println("GETTING A DISTINGUISHABLE GROUP");
 	MinimizeTreeNode root = 
 	    (MinimizeTreeNode) tree.getRoot();
 	ArrayList distinguishableGroups = getLeaves(tree,root);
 	Iterator it = distinguishableGroups.iterator();
-	//Iterator it = DISTINGUISHABLE_GROUPS.iterator();
-	//System.out.println("ITERATING THRU DIST. GROUPS");
 	while(it.hasNext()) {
 	    State[] group = (State[]) it.next();
 	    if(isSplittable(group,automaton,tree)) return group;
@@ -198,7 +192,6 @@ public class Minimizer {
      */
     public State[] getGroupForState
 	(State state, DefaultTreeModel tree) {
-	//System.out.println("LOOKING FOR GROUP FOR " + state);
 	MinimizeTreeNode root = 
 	    (MinimizeTreeNode) tree.getRoot();
 	ArrayList distinguishableGroups = getLeaves(tree,root);
@@ -208,8 +201,6 @@ public class Minimizer {
 	    State[] group = (State[]) it.next();
 	    for(int k = 0; k < group.length; k++) {
 		if(group[k] == state) {
-		    /*System.out.println("GROUP: " + getString(group) +
-		      " FOUND");*/
 		    return group;
 		}
 	    }
@@ -232,8 +223,6 @@ public class Minimizer {
      */
     public boolean stateGoesToGroupOnTerminal
 	(State state, State[] group, String terminal, Automaton automaton) {
-	/*System.out.println("CHECKING IF " + state + " GOES TO " +
-	  getString(group) + " ON " + terminal);*/
 	for(int k = 0; k < group.length; k++) {
 	    Transition[] transitions = 
 		automaton.getTransitionsFromStateToState(state, group[k]);
@@ -241,8 +230,6 @@ public class Minimizer {
 		FSATransition trans = (FSATransition) transitions[j];
 		String label = trans.getLabel();
 		if(label.equals(terminal)) {
-		    /*System.out.println("STATE GOES TO GROUP ON " +
-		      trans);*/
 		    return true;
 		}
 	    }
@@ -264,21 +251,16 @@ public class Minimizer {
 	 DefaultTreeModel tree) {
 	ArrayList list = new ArrayList();
 	for(int k = 0; k < group.length; k++) {
-	    //System.out.println("CHECKING STATE " + group[k]);
 	    if (group[k].getAutomaton() != automaton)
 		System.err.println("BADNESS!  BADNESS!");
 	    Transition[] transitions = 
 		automaton.getTransitionsFromState(group[k]);
 	    for(int j = 0; j < transitions.length; j++) {
 		FSATransition trans = (FSATransition) transitions[j];
-		//System.out.println("CHECKING TRANSITION " + trans);
 		if(trans.getLabel().equals(terminal)) {
-		    //System.out.println("LABEL MATCHED TERMINAL");
 		    State[] node = 
 			getGroupForState(transitions[j].getToState(),tree);
 		    if(!list.contains(node)) {
-			/*System.out.println("ADDED NODE " + getString(node) +
-			  " TO DISTINGUISHABLE GROUPS");*/
 			list.add(node);
 		    }
 		}
@@ -300,11 +282,8 @@ public class Minimizer {
     //(DefaultTreeModel tree, DefaultMutableTreeNode root, State[] group) {
     public MinimizeTreeNode getTreeNodeForObject
 	(DefaultTreeModel tree, MinimizeTreeNode root, State[] group) {
-	//System.out.println("SEARCHING FOR TREE NODE FOR " + getString(group));
 	State[] rootNode = (State[]) root.getUserObject();
-	//System.out.println("CHECKING " + getString(rootNode));
 	if(rootNode == group) {
-	    //System.out.println("FOUND : " + getString(rootNode));
 	    return root;
 	}
 	for(int k = 0; k < root.getChildCount(); k++) {
@@ -330,10 +309,8 @@ public class Minimizer {
      * groups as subsets of <CODE>group</CODE>.
      */
     public ArrayList splitOnTerminal
-	(State[] group, String terminal, Automaton automaton, DefaultTreeModel tree) {
-	/*System.out.println("SPLITTING " + getString(group) + " ON " 
-	  + terminal);*/
-	
+	(State[] group, String terminal, Automaton automaton,
+	 DefaultTreeModel tree) {
 	ArrayList newGroups = new ArrayList();
 	MinimizeTreeNode root = 
 	    (MinimizeTreeNode) tree.getRoot();
@@ -352,26 +329,10 @@ public class Minimizer {
 	    if(statesInGroup.size() > 0) {
 		State[] groupstates = 
 		    (State[]) statesInGroup.toArray(new State[0]);
-		//System.out.println("NEW GROUP " + getString(groupstates));
 		newGroups.add(groupstates);
 	    }
 	}
 	
-	/** Remove group that was split from set of distinguishable groups. */ 
-	//System.out.println("REMOVING GROUP " + getString(group));
-	//int index = DISTINGUISHABLE_GROUPS.indexOf(group);
-	//DISTINGUISHABLE_GROUPS.remove(index);
-	
-	/** Add groups obtained from split to set of distinguishable groups. */
-	//System.out.println("ADDING GROUPS...");
-	//Iterator iter = newGroups.iterator();
-	//while(iter.hasNext()) {
-	//  State[] node = (State[]) iter.next();
-	//  System.out.println("ADDING " + getString(node));
-	//  DISTINGUISHABLE_GROUPS.add(node);
-	//}
-	//System.out.println("ADDED ALL DISTINGUISHABLE GROUPS");
-
 	return newGroups;
     }
     
@@ -383,12 +344,7 @@ public class Minimizer {
      */
     public boolean isMinimized(Automaton automaton, DefaultTreeModel tree) {
 	State[] states = getDistinguishableGroup(automaton,tree);
-	if(states == null) {
-	    //System.out.println("AUTOMATON IS MINIMIZED!");
-	    return true;
-	}
-	//System.out.println("AUTOMATON IS NOT MINIMIZED");
-	return false;
+	return states == null;
     }
 
     /**
@@ -401,8 +357,6 @@ public class Minimizer {
      */
     public ArrayList split(State[] group, Automaton automaton, 
 			   DefaultTreeModel tree) {
-	//System.out.println("SPLITTING " + getString(group));
-	
 	String terminal = getTerminalToSplit(group, automaton,tree);
 	ArrayList list = new ArrayList();
 	list.addAll(splitOnTerminal(group,terminal,automaton,tree));
@@ -419,16 +373,12 @@ public class Minimizer {
      */
     public boolean isTransitionOnTerminal
 	(Transition[] transitions, String terminal) {
-	//System.out.println("CHECKING IF TRANSITION ON TERMINAL " + terminal);
 	for(int k = 0; k < transitions.length; k++) {
 	    FSATransition transition = (FSATransition) transitions[k];
-	    //System.out.println("CHECKING TRANSITION " + transition);
 	    if(transition.getLabel().equals(terminal)) {
-		//System.out.println("FOUND TRANSITION ON TERMINAL");
 		return true;
 	    }
 	}
-	//System.out.println("NO TRANSITION ON TERMINAL " + terminal);
 	return false;
     }
 
@@ -441,22 +391,18 @@ public class Minimizer {
      * @return true if automaton needs a trap state.
      */
     public boolean needsTrapState(Automaton automaton) {
-	//System.out.println("CHECKING IF NEEDS TRAP STATE");
 	AlphabetRetriever far = new FSAAlphabetRetriever();
        	String[] alphabet = far.getAlphabet(automaton);
 	State[] states = automaton.getStates();
 	for(int k = 0; k < states.length; k++) {
-	    //System.out.println("CHECKING STATE " + states[k].toString());
 	    Transition[] transitions = 
 		automaton.getTransitionsFromState(states[k]);
 	    for(int j = 0; j < alphabet.length; j++) {
 		if(!isTransitionOnTerminal(transitions, alphabet[j])) {
-		    //System.out.println("NEEDS TRAP STATE");
 		    return true;
 		}
 	    }
 	}
-	//System.out.println("DOES NOT NEED TRAP STATE");
 	return false;
     }
 
@@ -473,20 +419,16 @@ public class Minimizer {
 	Point point = sp.getPointForState(automaton);
 	State trapState = automaton.createState(point);
 	TRAP_STATE = trapState;
-	//System.out.println("MADE TRAP STATE: " + trapState.toString());
 	AlphabetRetriever far = new FSAAlphabetRetriever();
 	String[] alphabet = far.getAlphabet(automaton);
 	State[] states = automaton.getStates();
 	for(int k = 0; k < states.length; k++) {
-	    //System.out.println("CHECKING STATE: " + states[k].toString());
 	    Transition[] transitions = 
 		automaton.getTransitionsFromState(states[k]);
 	    for(int j = 0; j < alphabet.length; j++) {
 		if(!isTransitionOnTerminal(transitions, alphabet[j])) {
 		    FSATransition trans = 
 			new FSATransition(states[k],trapState,alphabet[j]);
-		    /*System.out.println("ADDING TRANSITION TO TRAP STATE: "
-		      + trans.toString()+ "******");*/
 		    automaton.addTransition(trans);
 		}
 	    }
@@ -514,8 +456,6 @@ public class Minimizer {
 	    new UnreachableStatesDetector(a);
 	State[] unreachableStates = usd.getUnreachableStates();
 	for(int k = 0; k < unreachableStates.length; k++) {
-	    /*System.out.println("REMOVING UNREACHABLE STATE " + 
-	      unreachableStates[k]);*/
 	    a.removeState(unreachableStates[k]);
 	}
 	/** Remove all multiple character labels. */
@@ -657,7 +597,6 @@ public class Minimizer {
 	    //getTreeNodeForObject(tree, root, group);
 	    addChildrenToParent(children,parent,tree);
 	}
-	//printTree(tree, root);
 	
 	return tree;
     }
@@ -699,7 +638,6 @@ public class Minimizer {
      * @param group the group of states.
      */
     public void mapStateToGroup(State state, State[] group) {
-	//System.out.println("MAPPING " + state + " TO " + getString(group));
 	MAP.put(state,group);
     }
 
@@ -770,10 +708,7 @@ public class Minimizer {
 	(State state, Automaton minDfa, Automaton dfa, DefaultTreeModel tree) {
 	ArrayList list = new ArrayList();
 	State[] group = getGroupMappedToState(state);
-	/*System.out.println("GETTING TRANSITIONS FOR " + state +
-	  " MAPPED TO " + getString(group));*/
 	State stateInGroup = group[0];
-	//System.out.println("GETTING TRANSITIONS FROM " + stateInGroup);
 	Transition[] transitions =
 	    dfa.getTransitionsFromState(stateInGroup);
 	for(int k = 0; k < transitions.length; k++) {
@@ -785,7 +720,6 @@ public class Minimizer {
 		    
 		    Transition transition =
 			new FSATransition(state, to, trans.getLabel()); 
-		    //System.out.println("ADDING TRANSITION " + transition);
 		    list.add(transition);
 		}
 	}
@@ -804,11 +738,9 @@ public class Minimizer {
     //		       DefaultMutableTreeNode root) {
     public ArrayList getLeaves(DefaultTreeModel tree,
 			       MinimizeTreeNode root) {
-	//System.out.println("GETTING LEAVES.");
 	ArrayList list = new ArrayList();
 	if(tree.isLeaf(root)) {
 	    State[] group = (State[]) root.getUserObject();
-	    //System.out.println("FOUND LEAF: " + getString(group));
 	    list.add(group);
 	}
 	for(int k = 0; k < root.getChildCount(); k++) {

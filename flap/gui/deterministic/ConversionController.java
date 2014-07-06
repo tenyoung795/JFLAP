@@ -74,7 +74,7 @@ public class ConversionController {
 	    Set fromNfa = new HashSet(Arrays.asList(getStatesForString
 						    (s[i].getLabel(), nfa)));
 	    stateToSet.put(s[i], fromNfa);
-	    setToState.put(s[i], fromNfa);
+	    //setToState.put(s[i], fromNfa);
 	    graph.addVertex(fromNfa, s[i].getPoint());
 	}
 	for (int i=0; i<t.length; i++) {
@@ -84,14 +84,18 @@ public class ConversionController {
     }
 
     public void performFirstLayout() {
-	layout.layout(graph, null);
-	Rectangle r = view.editor.getAutomatonPane().getVisibleRect();
+	view.validate();
+	Set isonodes = new HashSet();
+	Set initialSet = (Set) stateToSet.get(dfa.getInitialState());
+	isonodes.add(initialSet);
+	graph.addVertex(initialSet, new Point(0,0));
+	layout.layout(graph, isonodes);
+	Rectangle r = view.editor.getBounds(null);
 	r.grow(-50,-50);
 	graph.moveWithinFrame(r);
 	// Set the position of the initial state.
 	Point p = new Point();
-	p.setLocation(graph.pointForVertex(stateToSet.get
-					   (dfa.getInitialState())));
+	p.setLocation(graph.pointForVertex(initialSet));
 	dfa.getInitialState().setPoint(p);
     }
 

@@ -96,7 +96,6 @@ public class TransitionWindow extends JFrame {
     public void setTransitions(Transition[] transitions) {
 	this.transitions = transitions;
 	table.setModel(new TransitionTableModel(transitions));
-	this.setVisible(true);
     }
     
     /** The controller object for this window. */

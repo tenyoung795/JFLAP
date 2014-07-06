@@ -103,8 +103,8 @@ public class LSystemInputPane extends JPanel {
 	parameterTable = new HighlightTable(parameterModel);
 	JScrollPane scroller = new JScrollPane(parameterTable);
 	Dimension bestSize=new Dimension(400,200);
-	parameterTable.setPreferredSize(bestSize);
-	productionInputPane.getTable().setPreferredSize(bestSize);
+	/*parameterTable.setPreferredSize(bestSize);
+	productionInputPane.getTable().setPreferredSize(bestSize);*/
 	productionInputPane.setPreferredSize(bestSize);
 	scroller.setPreferredSize(bestSize);
 	JSplitPane split = new JSplitPane
@@ -116,8 +116,10 @@ public class LSystemInputPane extends JPanel {
 	
 	scroller.setVerticalScrollBarPolicy
 	    (JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-	final JComboBox box = new JComboBox
+
+	/*final JComboBox box = new JComboBox
 	    ((String[]) Renderer.ASSIGN_WORDS.toArray(new String[0]));
+	box.setLightWeightPopupEnabled(false);
 	scroller.setCorner(JScrollPane.UPPER_RIGHT_CORNER, box);
 	box.addItemListener(new ItemListener() {
 		public void itemStateChanged(ItemEvent e) {
@@ -126,7 +128,25 @@ public class LSystemInputPane extends JPanel {
 		    box.setSelectedIndex(-1); // No selection!
 		    setEditing(s);
 		}
-	    });
+		});*/
+	
+	final JPopupMenu menu = new JPopupMenu();
+	ActionListener listener = new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    setEditing(e.getActionCommand());
+		} };
+	String[] words = 
+	    (String[]) Renderer.ASSIGN_WORDS.toArray(new String[0]);
+	for (int i=0; i<words.length; i++) {
+	    menu.add(words[i]).addActionListener(listener);
+	}
+	JPanel c = new JPanel();
+	c.addMouseListener(new MouseAdapter() {
+		public void mousePressed(MouseEvent e) {
+		    menu.show((Component)e.getSource(), e.getPoint().x,
+			      e.getPoint().y);
+		} });
+	scroller.setCorner(JScrollPane.UPPER_RIGHT_CORNER, c);
     }
 
     /**
@@ -154,7 +174,7 @@ public class LSystemInputPane extends JPanel {
     }
 
     /**
-     * Given a list of objects, this converts it to a text delimited
+     * Given a list of objects, this converts it to a space delimited
      * string.
      * @param list the list to convert to a string
      * @return a string containing the elements of the list
@@ -182,11 +202,17 @@ public class LSystemInputPane extends JPanel {
 	if (parameterTable.getCellEditor() != null)
 	    parameterTable.getCellEditor().stopCellEditing();
 	// Do we already have a cached copy?
-	if (cachedSystem == null)
-	    cachedSystem=new LSystem
-		(axiomField.getText(),
-		 productionInputPane.getGrammar(UnboundGrammar.class),
-		 parameterModel.getParameters());
+	try {
+	    if (cachedSystem == null)
+		cachedSystem=new LSystem
+		    (axiomField.getText(),
+		     productionInputPane.getGrammar(UnboundGrammar.class),
+		     parameterModel.getParameters());
+	} catch (IllegalArgumentException e) {
+	    JOptionPane.showMessageDialog
+		(this, e.getMessage(), "L-System Error",
+		 JOptionPane.ERROR_MESSAGE);
+	}
 	return cachedSystem;
     }
 

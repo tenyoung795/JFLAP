@@ -34,6 +34,7 @@ import gui.viewer.AutomatonPane;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.awt.event.*;
 import java.util.Arrays;
 import javax.swing.*;
 import javax.swing.table.*;
@@ -116,11 +117,21 @@ public class TMTransitionCreator extends TableTransitionCreator {
     protected JTable createTable(Transition transition) {
 	JTable table = super.createTable(transition);
 	TableColumn directionColumn = table.getColumnModel().getColumn(2);
-	JComboBox cb = new JComboBox();
-	cb.addItem("R");
-	cb.addItem("S");
-	cb.addItem("L");
-	directionColumn.setCellEditor(new DefaultCellEditor(cb));
+	directionColumn.setCellEditor(new DefaultCellEditor(BOX) {
+		public Component getTableCellEditorComponent
+		    (JTable table, Object value, boolean isSelected,
+		     int row, int column) {
+		    final JComboBox c = (JComboBox)
+			super.getTableCellEditorComponent
+			(table, value, isSelected, row, column);
+		    InputMap imap = c.getInputMap();
+		    ActionMap amap = c.getActionMap();
+		    Object o = new Object();
+		    amap.put(o, CHANGE_ACTION);
+		    for (int i=0; i<STROKES.length; i++)
+			imap.put(STROKES[i], o);
+		    return c;
+		} });
 	return table;
     }
 
@@ -147,4 +158,23 @@ public class TMTransitionCreator extends TableTransitionCreator {
 
     /** The Turing machine. */
     private TuringMachine machine;
+    /** The directions. */
+    private static final String[] DIRS = new String[] {"R", "S", "L"};
+    /** The direction field combo box. */
+    private static final JComboBox BOX = new JComboBox(DIRS);
+    /** The array of keystrokes for the direction field. */
+    private static final KeyStroke[] STROKES;
+    /** The action for the strokes for the direction field. */
+    private static final Action CHANGE_ACTION =
+	new AbstractAction() {
+	    public void actionPerformed(ActionEvent e) {
+		JComboBox box = (JComboBox) e.getSource();
+		box.setSelectedItem(e.getActionCommand().toUpperCase());
+	    } };
+
+    static {
+	STROKES = new KeyStroke[DIRS.length];
+	for (int i=0; i<STROKES.length; i++)
+	    STROKES[i] = KeyStroke.getKeyStroke("shift "+DIRS[i]);
+    }
 }

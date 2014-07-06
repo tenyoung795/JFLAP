@@ -29,6 +29,7 @@ package gui.editor;
 import automata.Automaton;
 import gui.viewer.AutomatonDrawer;
 import gui.viewer.AutomatonPane;
+import gui.viewer.SelectionDrawer;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import javax.swing.*;
@@ -47,14 +48,14 @@ public class EditorPane extends JComponent {
      * @param automaton the automaton to create the editor pane for
      */
     public EditorPane(Automaton automaton) {
-	this(new AutomatonDrawer(automaton));
+	this(new SelectionDrawer(automaton));
     }
 
     /**
      * Instantiates a new editor pane with a tool box.
      */
     public EditorPane(Automaton automaton, ToolBox box) {
-	this(new AutomatonDrawer(automaton), box);
+	this(new SelectionDrawer(automaton), box);
     }
 
     /**

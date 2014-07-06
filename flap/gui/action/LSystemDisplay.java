@@ -57,6 +57,15 @@ public class LSystemDisplay extends LSystemAction {
      */
     public void actionPerformed(ActionEvent e) {
 	LSystem lsystem = getEnvironment().getLSystem();
+	
+	if (lsystem.getAxiom().size() == 0) {
+	    JOptionPane.showMessageDialog
+		(getEnvironment(),
+		 "The axiom must have one or more symbols.",
+		 "Nonempty Axiom Required", JOptionPane.ERROR_MESSAGE);
+	    return;
+	}
+
 	try {
 	    DisplayPane pane = new DisplayPane(lsystem);
 	    getEnvironment().add(pane, "L-S Render", new CriticalTag() {});
@@ -66,6 +75,7 @@ public class LSystemDisplay extends LSystemAction {
 		(getEnvironment(),
 		 "Sorry, but this uses features requiring Java 1.4 or later!",
 		 "JVM too primitive", JOptionPane.ERROR_MESSAGE);
+	    return;
 	}
     }
 

@@ -74,8 +74,8 @@ class BuilderController {
     }
 
     /**
-     * Sets up the reamining transitions with all the transitions that
-     * need to be created.
+     * Sets up the remaining transitions set with all the transitions
+     * that need to be created.
      */
     private void determineTransitions() {
 	remainingTransitions = new HashSet();
@@ -176,5 +176,5 @@ class BuilderController {
     private Component view;
 
     /** The set of transitions that must be created. */
-    private Set remainingTransitions;
+    Set remainingTransitions;
 }

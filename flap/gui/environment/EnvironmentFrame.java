@@ -26,13 +26,19 @@
  
 package gui.environment;
 
-import javax.swing.JFrame;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import java.io.*;
+import file.xml.*;
+import file.*;
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.filechooser.FileFilter;
+import java.io.*;
+import javax.swing.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.ProcessingInstruction;
+import java.util.List;
+import java.util.Iterator;
 
 /**
  * The <CODE>EnvironmentFrame</CODE> is the general sort of frame for
@@ -111,13 +117,73 @@ public class EnvironmentFrame extends JFrame {
      */
     public boolean save(boolean saveAs) {
 	File file = saveAs ? null : environment.getFile();
-	while (file == null) {
-	    int result = Universe.CHOOSER.showSaveDialog(this);
-	    if (result != JFileChooser.APPROVE_OPTION)
-		return false;
-	    file = Universe.CHOOSER.getSelectedFile();
+	Codec codec = (Codec) environment.getEncoder();
+	Serializable object = environment.getObject();
+	boolean badname = false;
+
+	// Is this encoder valid?
+	if (file != null && (codec == null || !codec.canEncode(object))) {
+	    JOptionPane.showMessageDialog
+		(this, "We cannot write this structure in the same format\n"+
+		 "it was read as!  Use Save As to select a new format.",
+		 "IO Error", JOptionPane.ERROR_MESSAGE);
+	    return false;
+	}
+
+	// Set the file filters.
+	FileFilter[] filters = Universe.CHOOSER.getChoosableFileFilters();
+	for (int i=0; i<filters.length; i++)
+	    Universe.CHOOSER.removeChoosableFileFilter(filters[i]);
+	List encoders = Universe.CODEC_REGISTRY.getEncoders(object);
+	Iterator it = encoders.iterator();
+	while (it.hasNext())
+	    Universe.CHOOSER.addChoosableFileFilter((FileFilter)it.next());
+	if (codec != null && codec.canEncode(object)) {
+	    Universe.CHOOSER.setFileFilter(codec);
+	} else {
+	    Universe.CHOOSER.setFileFilter((FileFilter)encoders.get(0));
+	}
+	// Check the name.
+	if (file != null && codec != null) {
+	    // Get the suggested file name.
+	    String filename = file.getName();
+	    String newname = codec.proposeFilename(filename, object);
+	    if (!filename.equals(newname)) {
+		int result = JOptionPane.showConfirmDialog
+		    (this, "To save as a "+codec.getDescription()+",\n"+
+		     "JFLAP wants to save "+filename+" to a new file\n"+
+		     "named "+newname+".  Is that OK?");
+		switch (result) {
+		case JOptionPane.CANCEL_OPTION:
+		    // They cancelled.  Get out of here.
+		    return false;
+		case JOptionPane.NO_OPTION:
+		    // No, it's not OK!  Use the original name.
+		    break;
+		case JOptionPane.YES_OPTION:
+		    // Yes, we want the new name!  Change the file.
+		    file = new File(file.getParent(), newname);
+		    badname = true;
+		}
+	    }
+	}
+	// The save as loop.
+	while (badname || file == null) {
+	    if (!badname) {
+		int result = Universe.CHOOSER.showSaveDialog(this);
+		if (result != JFileChooser.APPROVE_OPTION)
+		    return false;
+		file = Universe.CHOOSER.getSelectedFile();
+		// Get the suggested file name.
+		String filename = file.getName();
+		codec = (Codec) Universe.CHOOSER.getFileFilter();
+		file = new File(file.getParent(), codec.proposeFilename
+				(filename, object));
+		// Check for the existing file.
+	    }
+	    badname = false;
 	    if (file.exists()) {
-		result = JOptionPane.showConfirmDialog
+		int result = JOptionPane.showConfirmDialog
 		    (this, "Overwrite "+file.getName()+"?");
 		switch (result) {
 		case JOptionPane.CANCEL_OPTION:
@@ -129,25 +195,20 @@ public class EnvironmentFrame extends JFrame {
 		}
 	    }
 	}
+	System.out.println("CODEC: "+codec.getDescription());
+	Universe.CHOOSER.resetChoosableFileFilters();
 
+	// Use the codec to save the file.
 	try {
-	    ObjectOutputStream stream = new ObjectOutputStream
-		(new BufferedOutputStream
-		 (new FileOutputStream(file)));
-	    stream.writeObject(environment.getObject());
-	    stream.flush();
-	    stream.close();
+	    codec.encode(object, file, null);
 	    environment.setFile(file);
+	    environment.setEncoder(codec);
 	    environment.clearDirty();
 	    return true;
-	} catch (NotSerializableException e) {
-	    System.err.println("Could not serialize object.");
-	    System.err.println(e);
-	    return false;
-	} catch (IOException e) {
+	} catch (ParseException e) {
 	    JOptionPane
-		.showMessageDialog(this, "Could not open file to write!",
-				   "IO Error", JOptionPane.ERROR_MESSAGE);
+		.showMessageDialog(this, e.getMessage(),
+				   "Write Error", JOptionPane.ERROR_MESSAGE);
 	    return false;
 	}
     }

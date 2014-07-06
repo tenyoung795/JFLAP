@@ -193,7 +193,6 @@ public class UnitPane extends JPanel {
     private void initEditingGrammarTable() {
 	editingGrammarModel.addTableModelListener(new TableModelListener() {
 		public void tableChanged(TableModelEvent event) {
-		    //System.out.println("Here I am!");
 		    if (!editingActive) return;
 		    int r = event.getFirstRow();
 		    if (event.getType() != event.UPDATE) {
@@ -201,11 +200,9 @@ public class UnitPane extends JPanel {
 			// out of the funk.
 			return;
 		    }
-		    //System.out.println("This is an edit, I guess.");
 		    editingColumn[event.getColumn()>>1] = true;
 		    if (editingColumn[0] == true && editingColumn[1] == true) {
 			Production p = editingGrammarModel.getProduction(r);
-			System.out.println(p);
 			if (p == null) return;
 			if (!controller.productionAdded(p, r)) {
 			    editingGrammarModel.deleteRow(r);

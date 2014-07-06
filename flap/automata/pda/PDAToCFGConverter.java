@@ -78,7 +78,7 @@ public class PDAToCFGConverter {
     public boolean hasSingleFinalState(Automaton automaton) {
 	State[] finalStates = automaton.getFinalStates();
 	if(finalStates.length != 1) {
-	    System.err.println("There is not exactly one final state!");
+	    //System.err.println("There is not exactly one final state!");
 	    return false;
 	}
 	
@@ -88,8 +88,8 @@ public class PDAToCFGConverter {
 	    PDATransition trans = (PDATransition) transitions[k];
 	    String toPop = trans.getStringToPop();
 	    if(!(toPop.substring(toPop.length()-1)).equals(BOTTOM_OF_STACK)) {
-		System.err.println("Bad transition to final state! "+trans);
-		System.err.println(toPop.substring(toPop.length()-1));
+		//System.err.println("Bad transition to final state! "+trans);
+		//System.err.println(toPop.substring(toPop.length()-1));
 		return false;
 	    }
 	}
@@ -202,7 +202,7 @@ public class PDAToCFGConverter {
 	State startState = automaton.getInitialState();
 	State[] finalStates = automaton.getFinalStates();
 	if(finalStates.length > 1) {
-	    System.err.println("MORE THAN ONE FINAL STATE");
+	    //System.err.println("MORE THAN ONE FINAL STATE");
 	    return false;
 	}
 	State finalState = finalStates[0];
@@ -359,15 +359,13 @@ public class PDAToCFGConverter {
     public ContextFreeGrammar convertToContextFreeGrammar(Automaton automaton)
     {
 	/** check if automaton is pda. */
-	if(!(automaton instanceof PushdownAutomaton)) {
-	    System.err.println("ATTEMPTING TO CONVERT NON PDA TO CFG.");
-	    return null;
-	}
+	if (!(automaton instanceof PushdownAutomaton))
+	    throw new IllegalArgumentException
+		("automaton must be PushdownAutomaton");
 
-	if(!isInCorrectFormForConversion(automaton)) {
-	    System.err.println("PDA NOT IN CORRECT FORM FOR CONVERSION TO CFG.");
-	    return null;
-	}
+	if (!isInCorrectFormForConversion(automaton))
+	    throw new IllegalArgumentException
+		("automaton not in correct form for conversion to CFG");
 
 	initializeConverter();
 
@@ -383,8 +381,6 @@ public class PDAToCFGConverter {
 	Iterator it = list.iterator();
 	while(it.hasNext()) {
 	    Production p = (Production) it.next();
-	    System.out.println(p);
-	    System.out.println(getSimplifiedProduction(p));
 	    grammar.addProduction(getSimplifiedProduction(p));
 	}
 	

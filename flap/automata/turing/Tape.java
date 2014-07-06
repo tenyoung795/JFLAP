@@ -92,7 +92,6 @@ public class Tape implements Serializable {
      * @return the character pointed to by the tape head.
      */
     public char readChar() {
-	//if(tapeHead < 0 || tapeHead >= buffer.length()) return '\u02BC';
 	char[] toReturn = new char[1];
 	buffer.getChars(tapeHead, tapeHead+1, toReturn, 0);
 	return toReturn[0];
@@ -105,7 +104,6 @@ public class Tape implements Serializable {
      * pointed to by the tape head.
      */
     public String read() {
-	//if(tapeHead < 0 || tapeHead >= buffer.length()) return "\u02BC";
 	char[] toReturn = new char[1];
 	buffer.getChars(tapeHead, tapeHead+1, toReturn, 0);
 	return new String(toReturn);

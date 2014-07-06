@@ -26,9 +26,9 @@
  
 package gui;
 
-import javax.swing.JComponent;
 import java.awt.*;
 import java.net.URL;
+import javax.swing.*;
 
 /**
  * The <CODE>ImageDisplayComponent</CODE> is a single component that
@@ -38,7 +38,7 @@ import java.net.URL;
  * @author Thomas Finley
  */
 
-public class ImageDisplayComponent extends JComponent {
+public class ImageDisplayComponent extends JComponent implements Scrollable {
     /**
      * Instantiates a new <CODE>ImageDisplayComponent</CODE> without
      * an image at this time.
@@ -83,11 +83,23 @@ public class ImageDisplayComponent extends JComponent {
     /**
      * Sets the image associated with this component.
      * @param image the new image for this component
+     * @param origin the point in the image that is the real "origin"
+     * of the image (should be 0,0 in most cases)
      */
-    public void setImage(Image image) {
+    public void setImage(Image image, Point origin) {
 	myImage = image;
+	myOrigin = origin;
 	trackImage(getImage());
 	redefineSize();
+    }
+
+    /**
+     * Sets the image associated with this component, with (0,0) set
+     * as the origin.
+     * @param image the new image for this component
+     */
+    public void setImage(Image image) {
+	setImage(image, ZERO_ORIGIN);
     }
 
     /**
@@ -134,6 +146,7 @@ public class ImageDisplayComponent extends JComponent {
 			      getImage().getHeight(this));
 	}
 	setPreferredSize(d);
+	setBounds(-myOrigin.x, -myOrigin.y, d.width, d.height);
     }
 
     /**
@@ -141,20 +154,55 @@ public class ImageDisplayComponent extends JComponent {
      * @param g the graphics object to paint upon
      */
     public void paintComponent(Graphics g) {
-	if (myImage != null) {
-	    Rectangle r = getVisibleRect(),
-		r2 = new Rectangle(getPreferredSize());
-	    r = r.intersection(r2);
+	if (myImage == null) return;
 
-	    //long time = System.currentTimeMillis();
-	    g.drawImage(myImage, r.x, r.y, r.x+r.width, r.y+r.height,
-			r.x, r.y, r.x+r.width, r.y+r.height, this);
-	    /*time = System.currentTimeMillis() - time;
-	      System.out.println
-	      ("Done drawing the image!  Took "+time+" ms");*/
-	}
+	Rectangle r = getVisibleRect(),
+	    r2 = new Rectangle(getPreferredSize());
+	int offsetx = r.width > r2.width ? (r.width-r2.width)/2 : 0;
+	int offsety = r.height > r2.height ? (r.height-r2.height)/2 : 0;
+	r = r.intersection(r2);
+	g.drawImage(myImage, r.x+offsetx, r.y+offsety, r.x+r.width+offsetx,
+		    r.y+r.height+offsety,
+		    r.x, r.y, r.x+r.width, r.y+r.height, this);
+    }
+
+    public Dimension getPreferredScrollableViewportSize() {
+	return getPreferredSize();
+    }
+
+    public int getScrollableBlockIncrement(Rectangle visibleRect,
+					   int orientation,
+					   int direction) {
+	return orientation == SwingConstants.VERTICAL ?
+	    visibleRect.height : visibleRect.width;
+    }
+
+    public int getScrollableUnitIncrement(Rectangle visibleRect,
+					  int orientation,
+					  int direction) {
+	return 5;
+    }
+
+    /**
+     * We want this view sized so that it is either larger than or
+     * just as wide as the containing scroll pane.
+     */
+    public boolean getScrollableTracksViewportWidth() {
+	return getPreferredSize().width < getParent().getSize().width;
+    }
+
+    /**
+     * We want this view sized so that it is either larger than or
+     * just as tall as the containing scroll pane.
+     */
+    public boolean getScrollableTracksViewportHeight() {
+	return getPreferredSize().height < getParent().getSize().height;
     }
 
     /** The image to display. */
     private Image myImage;
+    /** The origin. */
+    private Point myOrigin;
+    /** Default (0,0) instance of the origin. */
+    private static final Point ZERO_ORIGIN = new Point(0,0);
 }

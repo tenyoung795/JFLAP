@@ -167,14 +167,12 @@ public class BruteParsePane extends ParsePane {
 		    }
 		    TreeNode node = e.getParser().getAnswer();
 		    do {
-			//System.out.println(node);
 			node = node.getParent();
 		    } while (node != null);
 		    }
 		    statusDisplay.setText("Press step to show derivations.");
 		    treePanel.setAnswer(e.getParser().getAnswer());
 		    treePanel.repaint();
-		    //System.out.println(treePanel.getTB());
 		}
 
 	    });

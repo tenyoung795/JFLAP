@@ -33,6 +33,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Graphics;
+import java.awt.RenderingHints;
 import java.awt.geom.*;
 import java.util.*;
 import javax.swing.*;
@@ -91,8 +92,6 @@ public class UnrestrictedTreePanel extends TreePanel {
 	List topList = new LinkedList();
 	UnrestrictedTreeNode[] U = new UnrestrictedTreeNode[0];
 	UnrestrictedTreeNode[][] UU = new UnrestrictedTreeNode[0][0];
-	//System.out.println("Doing level "+level);
-	//System.out.println("Has nodes "+Arrays.asList(prev));
 	for (int i=0; i<prev.length; i++) {
 	    if (prodNum >= prods.length || length < prodStarts[prodNum]) {
 		// Symbol doesn't change.  We bring it down.
@@ -107,12 +106,10 @@ public class UnrestrictedTreePanel extends TreePanel {
 		List currentTop = new LinkedList();
 		String rhs = prods[prodNum].getRHS();
 		String lhs = prods[prodNum].getLHS();
-		//System.out.println("Subs prod "+prods[prodNum]);
 		while (length < prodStarts[prodNum] + lhs.length()) {
 		    currentBottom.add(prev[i]);
 		    prev[i].lowest = level-1;
 		    length += prev[i].length();
-		    //System.out.println("Prev: "+prev[i]);
 		    i++;
 		}
 		UnrestrictedTreeNode[] b = 
@@ -197,7 +194,6 @@ public class UnrestrictedTreePanel extends TreePanel {
 		cSum += c[j].weight;
 	    }
 	    Double TOTAL = new Double(total + Math.max(sSum,cSum)/2.0);
-	    //System.out.println("Level "+level+" group "+i+" maps to "+TOTAL);
 	    for (int j=0; j<c.length; j++) {
 		nodeToParentWeights.put(c[j], TOTAL);
 	    }
@@ -311,15 +307,12 @@ public class UnrestrictedTreePanel extends TreePanel {
 	    setMetaWidth();
 	metaHeight = top.length;
 	Point2D p = new Point2D.Double();
-	//System.out.println("Drawing "+level+" through "+group);
 	Map nodeToPoint = new HashMap();
 	for (int l=0; l<=level; l++) {
-	    //System.out.println("Painting level "+l);
 	    double total = 0.0;
 	    UnrestrictedTreeNode[][] GG = l<level?bottom[l]:top[l];
 	    for (int gr=0; gr < GG.length && (level!=l||gr<=group);gr++) {
 		double x,y;
-		//System.out.println("Painting group "+gr);
 		UnrestrictedTreeNode[] G = GG[gr];
 
 		if (l <= level-2 || (l==level-1 && gr<=group)) {
@@ -481,8 +474,6 @@ public class UnrestrictedTreePanel extends TreePanel {
 	    if (level == top.length-1 && group == top[level].length-1)
 		break;
 	} while (!begins(level, group));
-	//System.out.println(p);
-	//return level == top.length-1 && group == top[level].length-1;
 	String lhs = p.getRHS();
 	if (lhs.length()==0) lhs = "\u03BB";
 	String text = "Derived "+lhs+" from "+p.getLHS()+".";
@@ -500,16 +491,18 @@ public class UnrestrictedTreePanel extends TreePanel {
      * Paints the component.
      * @param g the graphics object to draw on
      */
-    public void paintComponent(Graphics g) {
+    public void paintComponent(Graphics gr) {
 	//super.paintComponent(g);
+	Graphics2D g = (Graphics2D) gr.create();
+	g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+			   RenderingHints.VALUE_ANTIALIAS_ON);
 	g.setColor(Color.white);
 	Dimension d=getSize();
 	g.fillRect(0,0,d.width,d.height);
 	g.setColor(Color.black);
-	Graphics2D g2 = (Graphics2D) g.create();
 	if (top != null)
-	    paintTree(g2);
-	g2.dispose();
+	    paintTree(g);
+	g.dispose();
     }
 
     /** The brute parse pane. */

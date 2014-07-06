@@ -271,7 +271,6 @@ public abstract class BruteParser {
      * @param derivation
      */
     public boolean isPossibleDerivation(String derivation) {
-	//System.out.println(derivation);
 	return Unrestricted.minimumLength(derivation,smaller)
 	    <= target.length();
     }

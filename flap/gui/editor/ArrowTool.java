@@ -27,14 +27,15 @@
 package gui.editor;
 
 import automata.State;
+import automata.StateRenamer;
 import automata.Transition;
+import automata.graph.*;
 import gui.viewer.AutomatonDrawer;
 import gui.viewer.AutomatonPane;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.*;
 import javax.swing.*;
-import automata.graph.*;
 
 /**
  * The arrow tool is used mostly for editing existing objects.
@@ -293,6 +294,11 @@ public class ArrowTool extends Tool {
 		layoutGraph.addActionListener(this);
 		this.add(layoutGraph);
 	    }
+	    renameStates = new JMenuItem("Rename States");
+	    if (!(ArrowTool.this instanceof ArrowDisplayOnlyTool)) {
+		renameStates.addActionListener(this);
+		this.add(renameStates);
+	    }
 	}
 
 	public void show(Component comp, Point at) {
@@ -310,12 +316,15 @@ public class ArrowTool extends Tool {
 		alg.layout(g, null);
 		g.moveAutomatonStates();
 		getView().fitToBounds(30);
+	    } else if (item == renameStates) {
+		StateRenamer.rename(getAutomaton());
 	    }
 	    getView().repaint();
 	}
 
 	private JCheckBoxMenuItem stateLabels;
 	private JMenuItem layoutGraph;
+	private JMenuItem renameStates;
     }
 
     /** The transition creator for editing transitions. */

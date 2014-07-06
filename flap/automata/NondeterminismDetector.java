@@ -66,7 +66,6 @@ public abstract class NondeterminismDetector {
 	/** Get all states in automaton. */
 	State[] states = automaton.getStates();
 	/** Check each state for nondeterminism. */
-	System.out.println("NONDETERMINISTIC STATES:");
 	for(int k = 0; k < states.length; k++) {
 	    State state = states[k];
 	    /** Get all transitions from each state. */
@@ -77,7 +76,6 @@ public abstract class NondeterminismDetector {
 		Transition t1 = transitions[i];
 		/** if is lambda transition. */
 		if(lc.isLambdaTransition(t1)) {
-		    System.out.println(state);
 		    if(!list.contains(state)) list.add(state);
 		}
 		/** 
@@ -88,7 +86,6 @@ public abstract class NondeterminismDetector {
 		    for(int p = (i+1); p < transitions.length; p++) {
 			Transition t2 = transitions[p];
 			if(areNondeterministic(t1,t2)) {
-			    System.out.println(state.toString());
 			    if(!list.contains(state)) list.add(state);
 			}
 		    }

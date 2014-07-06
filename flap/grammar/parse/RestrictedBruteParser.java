@@ -47,7 +47,6 @@ public class RestrictedBruteParser extends BruteParser {
     }
 
     public boolean isPossibleDerivation(String derivation) {
-	//System.out.println("Checking if possible derivation: "+derivation);
 	if (Unrestricted.minimumLength(derivation,smaller)
 	    > target.length()) return false;
 	int targetSearched = 0;
@@ -85,8 +84,6 @@ public class RestrictedBruteParser extends BruteParser {
 	    }
 	}
 	int cp = 0;
-	//System.out.println("Discrete : "+discrete);
-	//System.out.println("Buffer : "+sb);
 	for (int i=0; i<discrete.size(); i++) {
 	    String e = (String) discrete.get(i);
 	    if (startBookend && i==0) {

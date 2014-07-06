@@ -31,7 +31,8 @@ import automata.Transition;
 import automata.fsa.FSAToRegularExpressionConverter;
 import automata.fsa.FSATransition;
 import automata.fsa.FiniteStateAutomaton;
-import gui.environment.FrameFactory;
+import gui.environment.*;
+import gui.viewer.AutomatonPane;
 import gui.viewer.SelectionDrawer;
 import java.awt.*;
 import javax.swing.*;
@@ -125,8 +126,10 @@ public class FSAToREController {
 		("Use the collapse state tool to remove nonfinal, noninitial "
 		 +"states. "+remaining+" more removals needed.");
 	    if (remaining != 0) return;
-	    transitionWindow.setVisible(false);
-	    transitionWindow.dispose();
+	    if (transitionWindow != null) {
+		transitionWindow.setVisible(false);
+		transitionWindow.dispose();
+	    }
 	    drawer.clearSelected();
 	    drawer.clearSelectedTransitions();
 	    currentStep = FINISHED;
@@ -163,7 +166,6 @@ public class FSAToREController {
      */
     protected int emptyNeeded() {
 	State[] states = automaton.getStates();
-	System.out.println("For empty, there are "+states.length);
 	int needed = 0;
 	for (int i=0; i<states.length; i++)
 	    for (int j=0; j<states.length; j++)
@@ -279,7 +281,7 @@ public class FSAToREController {
 	if (ts.length <= 1) {
 	    JOptionPane.showMessageDialog
 		(frame, "Collapse requires 2 or more transitions!",
-		 "To Few Transitions", JOptionPane.ERROR_MESSAGE);
+		 "Too Few Transitions", JOptionPane.ERROR_MESSAGE);
 	    return null;
 	}
 	Transition t=convert.combineToSingleTransition(from,to,ts,automaton);
@@ -318,9 +320,11 @@ public class FSAToREController {
 	collapseState = state;
 	drawer.clearSelected();
 	drawer.addSelected(collapseState);
+	transitionWindow = new TransitionWindow(this);
 	transitionWindow.setTransitions
 	    (convert.getTransitionsForRemoveState(state, automaton));
-	transitionWindow.show();
+	transitionWindow.setVisible(true);
+	//transitionWindow.show();
 	return true;
     }
 
@@ -342,8 +346,10 @@ public class FSAToREController {
 	collapseState = null;
 	drawer.clearSelected();
 	drawer.clearSelectedTransitions();
-	transitionWindow.setTransitions(new Transition[0]);
-	transitionWindow.hide();
+	//transitionWindow.setTransitions(new Transition[0]);
+	transitionWindow.setVisible(false);
+	transitionWindow.dispose();
+	//transitionWindow.hide();
     }
 
     /**
@@ -448,6 +454,17 @@ public class FSAToREController {
 	FrameFactory.createFrame(new RegularExpression(computedRE));
     }
 
+    /**
+     * This will export the current automaton.  Used for special
+     * purposes.
+     */
+    void exportAutomaton() {
+	Environment e = ((EnvironmentFrame) frame).getEnvironment();
+	AutomatonPane a = new AutomatonPane(drawer);
+	e.add(a, "Current FA");
+	e.setActive(a);
+    }
+
     /** The current step of the conversion process. */
     private int currentStep = -1;
     /** The automaton that's being converted. */
@@ -465,7 +482,7 @@ public class FSAToREController {
     private int remaining = 0;
     /** The window holding the list of transitions for state
      * collapsing. */
-    private TransitionWindow transitionWindow = new TransitionWindow(this);
+    private TransitionWindow transitionWindow = null;
     /** The state last selected for state collapsing. */
     private State collapseState = null;
     /** The final answer, or null if not done. */

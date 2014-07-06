@@ -85,7 +85,6 @@ public class UnreachableStatesDetector {
 	 * to list of unreachable states. 
 	 */
 	for(int k = 0; k < myNodes.length; k++) {
-	    System.out.println(myNodes[k].toString());
 	    if(myNodes[k].isWhite()) {
 		list.add(myNodes[k].getState());
 	    }
@@ -104,7 +103,6 @@ public class UnreachableStatesDetector {
 	    Node node = myNodes[k];
 	    if(node.getState() == state) return node;
 	}
-	System.out.println("COULD NOT FIND NODE FOR STATE " + state);
 	return null;
     }
 

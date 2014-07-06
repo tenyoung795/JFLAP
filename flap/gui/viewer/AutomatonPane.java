@@ -104,7 +104,8 @@ public class AutomatonPane extends JPanel implements Scrollable {
 	drawer.getAutomaton().addStateListener(listener);
 	drawer.getAutomaton().addTransitionListener(listener);
 	addComponentListener(listener);
-	this.setToolTipText("Beavis"); // Tool tips require this.  :P
+	setToolTipText("Beavis"); // Tool tips require some text. :P
+	setOpaque(true);
     }
 
     /**
@@ -139,6 +140,8 @@ public class AutomatonPane extends JPanel implements Scrollable {
 	boolean oldAdapt = adapt;
 	adapt = true;
 	reformTransform(g.getClipBounds());
+	g.setColor(java.awt.Color.white);
+	g.fillRect(0, 0, g.getClipBounds().width, g.getClipBounds().height);
 	Graphics2D g2 = (Graphics2D) g.create();
 	g2.transform(transform);
 	drawer.drawAutomaton(g2);
@@ -156,12 +159,6 @@ public class AutomatonPane extends JPanel implements Scrollable {
 	Rectangle rect = drawer.getBounds();
 	if (rect == null) return new Rectangle(getSize());
 	return rect;
-    }
-
-    public void setPreferredSize(Dimension d) {
-	super.setPreferredSize(d);
-	//System.out.println("Have new D "+d);
-	//(new Throwable()).fillInStackTrace().printStackTrace(System.out);
     }
 
     /**
@@ -338,12 +335,28 @@ public class AutomatonPane extends JPanel implements Scrollable {
 	return 5;
     }
 
+    /**
+     * If this is an adaptive automaton pane we want this component to
+     * be the width of a viewport of course, but if this is NOT an
+     * adaptive container we want it to be stretched so its width is
+     * at least that of the viewport (to avoid clicks seemingly "not
+     * happening" to the right of automata).
+     */
     public boolean getScrollableTracksViewportWidth() {
-	return adapt;
+	if (adapt) return true;
+	return getPreferredSize().width < getParent().getSize().width;
     }
 
+    /**
+     * If this is an adaptive automaton pane we want this component to
+     * be the height of a viewport of course, but if this is NOT an
+     * adaptive container we want it to be stretched so its height is
+     * at least that of the viewport (to avoid clicks seemingly "not
+     * happening" below automata).
+     */
     public boolean getScrollableTracksViewportHeight() {
-	return adapt;
+	if (adapt) return true;
+	return getPreferredSize().height < getParent().getSize().height;
     }
 
     /**

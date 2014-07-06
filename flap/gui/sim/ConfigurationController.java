@@ -31,6 +31,8 @@ import automata.Configuration;
 import gui.viewer.SelectionDrawer;
 import java.awt.Component;
 import java.util.*;
+import javax.swing.JOptionPane;
+import javax.swing.JSplitPane;
 
 /**
  * This is an intermediary object between the simulator GUI and the
@@ -123,12 +125,27 @@ public class ConfigurationController
 		configurations.setReject(config);
 	}
 	// What the devil do I have to do to get it to repaint?
-	//configurations.invalidate();
 	configurations.validate();
 	configurations.repaint();
 
 	// Change them darned selections.
 	changeSelection();
+
+	// Ready for the ugliest code in the whole world, ever?
+	try {
+	    // I take this action without the knowledge or sanction of
+	    // my government...
+	    JSplitPane split = (JSplitPane) configurations.getParent()
+		.getParent().getParent().getParent();
+	    int loc = split.getDividerLocation();
+	    split.setDividerLocation(loc-1);
+	    split.setDividerLocation(loc);
+	    // Yes!  GridLayout doesn't display properly in a scroll
+	    // pane, but if the user "wiggled" the size a little it
+	    // displays correctly -- now the size is wiggled in code!
+	} catch (Throwable e) {
+	    
+	}
     }
 
     /**
@@ -136,6 +153,12 @@ public class ConfigurationController
      */
     public void freeze() {
 	Configuration[] configs = configurations.getSelected();
+	if (configs.length == 0) {
+	    JOptionPane.showMessageDialog
+		(configurations, NO_CONFIGURATION_ERROR,
+		 NO_CONFIGURATION_ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+	    return;
+	}
 	for (int i=0; i<configs.length; i++) {
 	    configurations.setFrozen(configs[i]);
 	}
@@ -149,6 +172,12 @@ public class ConfigurationController
      */
     public void remove() {
 	Configuration[] configs = configurations.getSelected();
+	if (configs.length == 0) {
+	    JOptionPane.showMessageDialog
+		(configurations, NO_CONFIGURATION_ERROR,
+		 NO_CONFIGURATION_ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+	    return;
+	}
 	for (int i=0; i<configs.length; i++) {
 	    configurations.remove(configs[i]);
 	    
@@ -181,6 +210,12 @@ public class ConfigurationController
      */
     public void thaw() {
 	Configuration[] configs = configurations.getSelected();
+	if (configs.length == 0) {
+	    JOptionPane.showMessageDialog
+		(configurations, NO_CONFIGURATION_ERROR,
+		 NO_CONFIGURATION_ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+	    return;
+	}
 	for (int i=0; i<configs.length; i++) {
 	    configurations.setNormal(configs[i]);
 	}
@@ -193,6 +228,12 @@ public class ConfigurationController
      */
     public void trace() {
 	Configuration[] configs = configurations.getSelected();
+	if (configs.length == 0) {
+	    JOptionPane.showMessageDialog
+		(configurations, NO_CONFIGURATION_ERROR,
+		 NO_CONFIGURATION_ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+	    return;
+	}
 	for (int i=0; i<configs.length; i++) {
 	    TraceWindow window =
 		(TraceWindow) configurationToTraceWindow.get(configs[i]);
@@ -244,4 +285,11 @@ public class ConfigurationController
     /** This is the set of original configurations when the
      * configuration pane started. */
     private Configuration[] originalConfigurations = new Configuration[0];
+
+    /** The error message displayed when there is no config selected. */
+    private static final String NO_CONFIGURATION_ERROR =
+	"Select at least one configuration!";
+    /** The error message displayed when there is no config selected. */
+    private static final String NO_CONFIGURATION_ERROR_TITLE =
+	"No Configuration Selected";
 }

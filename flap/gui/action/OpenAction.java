@@ -26,19 +26,25 @@
  
 package gui.action;
 
-import java.io.*;
+import file.*;
+import file.xml.*;
 import gui.environment.*;
+import javax.swing.filechooser.FileFilter;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
-import javax.swing.JOptionPane;
-import javax.swing.JFileChooser;
-import javax.swing.KeyStroke;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.awt.Component;
+import java.io.*;
+import java.util.*;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
+import javax.xml.parsers.*;
+import org.w3c.dom.*;
 
 /**
- * The <CODE>OpenAction</CODE> is an action to load a serializable
- * object from a file, and create a new environment with that object.
+ * The <CODE>OpenAction</CODE> is an action to load a structure from a
+ * file, and create a new environment with that object.
  * 
  * @author Thomas Finley
  */
@@ -55,42 +61,6 @@ public class OpenAction extends RestrictedAction {
     }
 
     /**
-     * This reads the serializable object from the indicated file, and
-     * returns it
-     * @param file the file to retrieve the object from
-     * @param parent the parent component for this open action so we
-     * know where to display error messages, or <CODE>null</CODE> if
-     * there is no parent
-     * @return the object read from the file, or <CODE>null</CODE> if
-     * an object could not be read
-     */
-    protected Serializable open(File file, Component parent) {
-	Serializable object = null;
-        try {
-            ObjectInputStream stream = new ObjectInputStream
-                (new BufferedInputStream
-                 (new FileInputStream(file)));
-            object = (Serializable) stream.readObject();
-            stream.close();
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(parent,
-					  "Could not open file to read!",
-                                          "IO Error",
-					  JOptionPane.ERROR_MESSAGE);
-        } catch (ClassCastException e) {
-            JOptionPane.showMessageDialog(parent, "Bad Class Read!",
-                                          "Class Read Error",
-                                          JOptionPane.ERROR_MESSAGE);
-        } catch (ClassNotFoundException e) {
-            JOptionPane.showMessageDialog(parent, "Unrecognized Class Read!",
-                                          "Class Read Error",
-                                          JOptionPane.ERROR_MESSAGE);
-        }
-	return object;
-    }
-
-
-    /**
      * If an open is attempted, call the methods that handle the
      * retrieving of an object, then create a new frame for the
      * environment.
@@ -105,9 +75,35 @@ public class OpenAction extends RestrictedAction {
 	    // Who cares.
 	}
 
+	// Apple is so fucking stupid.
+	File tempFile = fileChooser.getCurrentDirectory();
+	fileChooser.setCurrentDirectory(tempFile.getParentFile());
+	fileChooser.setCurrentDirectory(tempFile);
+	fileChooser.rescanCurrentDirectory();
+
+	// Set up the file filters.
+	Universe.CHOOSER.resetChoosableFileFilters();
+	List decoders = Universe.CODEC_REGISTRY.getDecoders();
+	Iterator it = decoders.iterator();
+	while (it.hasNext())
+	    Universe.CHOOSER.addChoosableFileFilter((FileFilter)it.next());
+	Universe.CHOOSER.setFileFilter
+	    (Universe.CHOOSER.getAcceptAllFileFilter());
+
+	// Open the dialog.
 	int result = fileChooser.showOpenDialog(source);
 	if (result != JFileChooser.APPROVE_OPTION) return;
 	File file = fileChooser.getSelectedFile();
+	// Get the decoders.
+	Codec[] codecs = null;
+	FileFilter filter = Universe.CHOOSER.getFileFilter();
+	if (filter == Universe.CHOOSER.getAcceptAllFileFilter()) {
+	    codecs = (Codec[]) decoders.toArray(new Codec[0]);
+	} else {
+	    codecs = new Codec[1];
+	    codecs[0] = (Codec) filter;
+	}
+	Universe.CHOOSER.resetChoosableFileFilters();
 
 	// Is this file already open?
 	if (Universe.frameForFile(file) != null) {
@@ -115,12 +111,41 @@ public class OpenAction extends RestrictedAction {
 	    return;
 	}
 
-	Serializable object = open(fileChooser.getSelectedFile(), source);
-	if (object == null) return; // Something bad happened...
-	// Set the file on the thing.
-	EnvironmentFrame ef = FrameFactory.createFrame(object);
-	if (ef == null) return;
-	ef.getEnvironment().setFile(fileChooser.getSelectedFile());
+	try {
+	    openFile(file, codecs);
+	} catch (ParseException e) {
+	    JOptionPane.showMessageDialog
+		(source, e.getMessage(),
+		 "Read Error", JOptionPane.ERROR_MESSAGE);
+	}
+    }
+
+    /**
+     * Attempts to open a specified file with a set of codecs.
+     * @param file the file to attempt to open
+     * @param codecs the codecs to use
+     * @throws ParseException if there was an error with all or one of the
+     * codecs
+     */
+    public static void openFile(File file, Codec[] codecs) {
+	ParseException p = null;
+	for (int i=0; i<codecs.length; i++) {
+	    try {
+		Serializable object = codecs[i].decode(file, null);
+		// Set the file on the thing.
+		EnvironmentFrame ef = FrameFactory.createFrame(object);
+		if (ef == null) return;
+		ef.getEnvironment().setFile(file);
+		ef.getEnvironment().setEncoder
+		    (codecs[i].correspondingEncoder());
+		return;
+	    } catch (ParseException e) {
+		p = e;
+	    }
+	}
+	if (codecs.length != 1)
+	    p = new ParseException("No format could read the file!");
+	throw p;
     }
 
     /**
@@ -134,4 +159,15 @@ public class OpenAction extends RestrictedAction {
 
     /** The file chooser. */
     private JFileChooser fileChooser; 
+
+    /** The exception class for when a file could not be read properly. */
+    protected static class FileReadException extends RuntimeException {
+	/**
+	 * Instantiates a file read exception with a given message.
+	 * @param message the specific message for why the read failed
+	 */
+	public FileReadException(String message) {
+	    super(message);
+	}
+    }
 }

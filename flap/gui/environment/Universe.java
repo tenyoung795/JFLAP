@@ -26,9 +26,10 @@
  
 package gui.environment;
 
-import java.util.*;
+import file.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.*;
 import javax.swing.JFileChooser;
 
 /**
@@ -170,11 +171,20 @@ public class Universe {
 	    }
 	};
 
+    /** The registry of codecs universally used for saving. */
+    public static final CodecRegistry CODEC_REGISTRY = new CodecRegistry();
+
     static {
 	try {
 	    CHOOSER = new JFileChooser();
 	} catch (java.security.AccessControlException e) {
 	    // Nothing to do.
 	}
+	// Create the codec registry.
+	XMLCodec xc = new XMLCodec();
+	CODEC_REGISTRY.add(xc);
+	CODEC_REGISTRY.add(new SerializedCodec(xc));
+	CODEC_REGISTRY.add(new JFLAP3Codec());
+	//CODEC_REGISTRY.add(new LenoreSystemsCodec());
     }
 }

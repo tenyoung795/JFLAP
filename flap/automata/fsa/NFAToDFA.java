@@ -137,7 +137,6 @@ public class NFAToDFA {
 	    buffer.append(",");
 	}
 	buffer.append(Integer.toString(states[states.length-1].getID()));
-	//System.out.println("SETTING LABEL TO : " + buffer.toString());
 	return buffer.toString();
     }
 
@@ -156,25 +155,18 @@ public class NFAToDFA {
     public State[] getStatesOnTerminal(String terminal, State[] states, 
 				       Automaton automaton) {
 	ArrayList list = new ArrayList();
-	//System.out.println("GET STATES ON TERMINAL " + terminal);
 	for(int k = 0; k < states.length; k++) {
 	    State state = states[k];
-	    /*System.out.println("CHECKING STATE " + state.toString() + 
-	      " ON " + terminal);*/
 	    Transition[] transitions = 
 		automaton.getTransitionsFromState(state);
 	    for(int i = 0; i < transitions.length; i++) {
 		FSATransition transition = (FSATransition) transitions[i];
-		/*System.out.println("CHECKING TRANSITION " + 
-				   transition.toString() + " WITH LABEL " + 
-				   transition.getLabel());*/
 		if(transition.getLabel().equals(terminal)) {
 		    State toState = transition.getToState();
 		    ClosureTaker fct = new ClosureTaker();
 		    State[] closure = fct.getClosure(toState, automaton);
 		    for(int j = 0; j < closure.length; j++) {
 			if(!list.contains(closure[j])) { 
-			    //System.out.println("ADDING STATE " + closure[j]);
 			    list.add(closure[j]);
 			}
 		    }
@@ -228,17 +220,13 @@ public class NFAToDFA {
      */
     public State getStateForStates
 	(State[] states, Automaton dfa, Automaton nfa) {
-	//System.out.println("GETTING STATE FOR "+getStringForStates(states));
 	State[] dfaStates = dfa.getStates();
 	for(int k = 0; k < dfaStates.length; k++) {
 	    State[] nfaStates = getStatesForState(dfaStates[k],nfa);
 	    if(containSameStates(nfaStates, states)) {
-		//System.out.println("FOUND " + states[k]);
 		return dfaStates[k];
 	    }
 	}
-	/*System.out.println
-	  ("COULD NOT FIND STATE FOR "+getStringForStates(states));*/
 	return null;
     }
 
@@ -261,7 +249,6 @@ public class NFAToDFA {
      * @return a list of States created by expanding <CODE>state</CODE>.
      */
     public ArrayList expandState(State state, Automaton nfa, Automaton dfa) {
-	//System.out.println("EXPAND STATE " + state);
 	ArrayList list = new ArrayList();
 	AlphabetRetriever far = new FSAAlphabetRetriever();
 	String[] alphabet = far.getAlphabet(nfa);
@@ -331,14 +318,11 @@ public class NFAToDFA {
 	/** check if actually nfa. */
 	AutomatonChecker ac = new AutomatonChecker();
 	if(!ac.isNFA(automaton)) {
-	    System.err.println("******NOT NFA!!!");
 	    return (FiniteStateAutomaton) automaton.clone();
 	}
 	/** remove multiple character labels. */
 	FSALabelHandler fsalh = new FSALabelHandler();
 	if(fsalh.hasMultipleCharacterLabels(automaton)) {
-	    System.err.println("*****WARNING******");
-	    System.err.println("MULTIPLE CHARACTER LABELS.");
 	    fsalh.removeMultipleCharacterLabelsFromAutomaton(automaton);
 	}
 	/** create new finite state automaton. */

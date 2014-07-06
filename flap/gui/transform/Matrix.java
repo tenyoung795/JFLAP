@@ -292,12 +292,4 @@ public class Matrix implements Cloneable, Serializable {
     public static final String arrayString(double[] d) {
 	return "( "+d[0]+", "+d[1]+", "+d[2]+" )";
     }
-    public static final void main(String args[]) {
-	Matrix m = new Matrix();
-	m.roll(45);
-	m.pitch(90);
-	m.translate(0,15,0);
-	double[] d = new double[3];
- 	System.out.println("Origin : "+arrayString(m.origin(d)));
-    }
 }

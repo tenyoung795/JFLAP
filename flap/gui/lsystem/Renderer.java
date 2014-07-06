@@ -69,8 +69,10 @@ public class Renderer {
 	handlers.put("{", new BeginPolygonHandler());
 	handlers.put("}", new ClosePolygonHandler());
 	handlers.put("%", new ReverseHandler());
-	handlers.put("#", new HueChangeHandler(true));
-	handlers.put("@", new HueChangeHandler(false));
+	handlers.put("#", new HueChangeHandler(false, true));
+	handlers.put("@", new HueChangeHandler(false, false));
+	handlers.put("##", new HueChangeHandler(true, true));
+	handlers.put("@@", new HueChangeHandler(true, false));
 	
 	// Not to mention the fucking assignment handlers... Jesus Christ.
 	handlers.put("color", new DrawColorHandler());
@@ -119,7 +121,6 @@ public class Renderer {
 		    currentTurtle.assign(key, value);
 		    value = currentTurtle.get(key).toString();
 		}
-		//System.out.println(key+" value is "+value);
 	    } catch (Throwable e) {
 		
 	    }
@@ -142,13 +143,16 @@ public class Renderer {
      * in and the L-system will be drawn in the graphic's clip bounds,
      * or pass in <CODE>null</CODE> to have this function return an
      * image.  This graphics should have a clip area set!
+     * @param origin stores in the passed in point the location where
+     * the turtle started
      * @return an image of a rendering of these symbols, or
      * <CODE>null</CODE> if there was a passed in graphics object
      * @throws IllegalArgumentException if there is a passed in
      * graphics object and its clip area is not set
      */
     public Image render(List symbols, Map parameters,
-			Matrix matrix, Graphics2D graphics) {
+			Matrix matrix, Graphics2D graphics,
+			Point2D origin) {
 	BufferedImage image = null;
 	Rectangle2D bounds = new Rectangle2D.Double();
 	if (graphics != null && graphics.getClip() == null)
@@ -176,6 +180,7 @@ public class Renderer {
 		if (areDrawing) {
 		    g.translate(-bounds.getX()+5.0, 
 				-bounds.getY()+5.0);
+		    origin.setLocation(5.0-bounds.getX(), 5.0-bounds.getY());
 		    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				       RenderingHints.VALUE_ANTIALIAS_ON);
 		}
@@ -211,6 +216,8 @@ public class Renderer {
 		g.scale(scale,scale);
 		g.translate(ourBounds.getX()-newBounds.getX(),
 			    ourBounds.getY()-newBounds.getY());
+		origin.setLocation(ourBounds.getX()-newBounds.getX(),
+				   ourBounds.getY()-newBounds.getY());
 	    }
 	    // Do the initial parameters.
 	    Iterator it = parameters.entrySet().iterator();
@@ -629,7 +636,8 @@ public class Renderer {
      * This handles changing the hue angle.
      */
     private class HueChangeHandler extends CommandHandler {
-	public HueChangeHandler(boolean add) {
+	public HueChangeHandler(boolean polygon, boolean add) {
+	    this.polygon = polygon;
 	    this.add = add;
 	}
 
@@ -637,14 +645,17 @@ public class Renderer {
 	    if (!areDrawing) return;
 	    capLinePath();
 	    if (symbol==null)
-		currentTurtle.changeHue(add);
+		if (polygon) currentTurtle.changePolygonHue(add);
+		else currentTurtle.changeHue(add);
 	    else {
 		double d = currentTurtle.valueOf(symbol).doubleValue();
-		currentTurtle.changeHue(add ? d : -d);
+		d = add ? d : -d;
+		if (polygon) currentTurtle.changePolygonHue(d);
+		else currentTurtle.changeHue(d);
 	    }
 	    g.setColor(currentTurtle.getColor());
 	}
 
-	private boolean add;
+	private boolean add, polygon;
     }
 }

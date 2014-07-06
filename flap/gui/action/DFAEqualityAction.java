@@ -56,7 +56,6 @@ public class DFAEqualityAction extends FSAAction {
     public DFAEqualityAction(FiniteStateAutomaton automaton,
 			     Environment environment) {
 	super("Compare Equivalence", null);
-	this.automaton = automaton;
 	this.environment = environment;
 	/*putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke
 	  (KeyEvent.VK_R, MAIN_MENU_MASK+InputEvent.SHIFT_MASK));*/
@@ -69,17 +68,21 @@ public class DFAEqualityAction extends FSAAction {
     public void actionPerformed(ActionEvent e) {
 	JComboBox combo = new JComboBox();
 	// Figure out what existing environments in the program have
-	// the type of automaton that we need.
+	// the type of structure that we need.
 	EnvironmentFrame[] frames = Universe.frames();
 	for (int i=0; i<frames.length; i++) {
 	    if (!isApplicable(frames[i].getEnvironment().getObject())
 		|| frames[i].getEnvironment() == environment) continue;
 	    combo.addItem(frames[i]);
 	}
+	// Set up our automaton.
+	FiniteStateAutomaton automaton =
+	    (FiniteStateAutomaton) environment.getObject();
+
 	if (combo.getItemCount() == 0) {
 	    JOptionPane
 		.showMessageDialog(Universe.frameForEnvironment(environment),
-				   "No other FSAs around!");
+				   "No other FAs around!");
 	    return;
 	}
 	if (automaton.getInitialState() == null) {
@@ -91,7 +94,7 @@ public class DFAEqualityAction extends FSAAction {
 	// Prompt the user.
 	int result = JOptionPane.showOptionDialog
 	    (Universe.frameForEnvironment(environment),
-	     combo, "Compare against FSA",
+	     combo, "Compare against FA",
 	     JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
 	     null, null, null);
 	if (result != JOptionPane.YES_OPTION &&
@@ -112,8 +115,6 @@ public class DFAEqualityAction extends FSAAction {
 			       checkedMessage);
     }
 
-    /** The automaton. */
-    private FiniteStateAutomaton automaton;
     /** The environment. */
     private Environment environment;
     /** The equality checker. */

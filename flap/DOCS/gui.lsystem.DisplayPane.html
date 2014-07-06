@@ -157,7 +157,7 @@
 <TD>Turn by 180 degrees about the <VAR>z</VAR>-axis, the same axis as the <VAR>+</VAR> and <VAR>-</VAR> turns.</TD></TR>
 
 <TR VALIGN="top"><TD>#</TD>
-<TD>Increments the hue angle of <VAR>color</VAR> by <VAR>hueChange</VAR>.  Changing the hue angle will have no effect if <VAR>color</VAR> has no saturation, e.g., <VAR>color</VAR> is black, or grey, or white, or somesuch.</TD></TR>
+<TD>Increments the hue angle of <VAR>color</VAR> by <VAR>hueChange</VAR>.  Changing the hue angle will have no effect if <VAR>color</VAR> has no saturation, i.e., if <VAR>color</VAR> is black, grey, or white.</TD></TR>
 
 <TR VALIGN="top"><TD>#(<VAR>value</VAR>)</TD>
 <TD>Like the above, but with a specified number of degrees.</TD></TR>
@@ -166,6 +166,18 @@
 <TD>Decrements the hue angle of <VAR>color</VAR> by <VAR>hueChange</VAR>.</TD></TR>
 
 <TR VALIGN="top"><TD>@(<VAR>value</VAR>)</TD>
+<TD>Like the above, but with a specified number of degrees.</TD></TR>
+
+<TR VALIGN="top"><TD>##</TD>
+<TD>Increments the hue angle of <VAR>polygonColor</VAR> by <VAR>hueChange</VAR>.  Changing the hue angle will have no effect if <VAR>polygonColor</VAR> has no saturation, i.e., if <VAR>polygonColor</VAR> is black, grey, or white.</TD></TR>
+
+<TR VALIGN="top"><TD>##(<VAR>value</VAR>)</TD>
+<TD>Like the above, but with a specified number of degrees.</TD></TR>
+
+<TR VALIGN="top"><TD>@@</TD>
+<TD>Decrements the hue angle of <VAR>polygonColor</VAR> by <VAR>hueChange</VAR>.</TD></TR>
+
+<TR VALIGN="top"><TD>@@(<VAR>value</VAR>)</TD>
 <TD>Like the above, but with a specified number of degrees.</TD></TR>
 
 <TR VALIGN="top"><TD><VAR>parameter</VAR>=<VAR>value</VAR></TD>
@@ -178,7 +190,7 @@
 
 <P>Every <VAR>value</VAR> may be as simple as a number, but it may be a mathematical expression involving parameters as values.  One could say <VAR>distance=distance+2</VAR>, which will increment subsequent line lengths by 2.  Moreover, if in the parameters list one specified that <VAR>foo</VAR> was 100, then the symbol <VAR>g(3+(8+foo)/2)</VAR> would yield a line of length 57.  All <VAR>g</VAR> symbols are functionally equivalent to <VAR>g(distance)</VAR>.</P>
 
-<P>The operators allowed in a value are + (addition), - (subtraction), * (multiplication), / (division), ^ (power), ( and ) (parentheses), and they obey the usual rules of order of operations and soforth.  If a symbol appears in a mathematical expression that has not been defined, then a value of 0 is assumed.</P>
+<P>The operators allowed in a value are + (addition), - (subtraction), * (multiplication), / (division), ^ (power), ( and ) (parentheses), and they obey the usual rules of order of operations and soforth.  If an undefined symbol appears in a mathematical expression, then a value of 0 is assumed for that symbol.</P>
 
 <P>For higher performance, avoid the frequent use of expressions.  For example, if you're curious about the relative performance of <VAR>+(5*angle)</VAR> versus <VAR>+ + + + +</VAR>, the <VAR>+ + + + +</VAR> will tend to be faster, though your milage may vary for your particular JVM.</P>
 

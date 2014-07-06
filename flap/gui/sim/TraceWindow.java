@@ -32,6 +32,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.util.*;
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -56,8 +57,9 @@ public class TraceWindow extends JFrame {
 	super("Traceback");
 	getContentPane().setLayout(new BorderLayout());
 	getContentPane().add(getPastPane(last));
-	//setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	pack();
+	if (getSize().height > MAXHEIGHT)
+	    setSize(getSize().width, MAXHEIGHT);
 	setVisible(true);
     }
 
@@ -69,10 +71,15 @@ public class TraceWindow extends JFrame {
      * @return a component with the ancestry of the configuration
      */
     public static Component getPastPane(Configuration configuration) {
-	return new JScrollPane(new PastPane(configuration),
-			       JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-			       JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-	//return new PastPane(configuration);
+	JScrollPane sp =
+	    new JScrollPane(new PastPane(configuration),
+			    JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+			    JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+	sp.validate();
+	if (sp.getSize().height > MAXHEIGHT) {
+	    sp.setSize(sp.getSize().width, MAXHEIGHT);
+	}
+	return sp;
     }
     
     /**
@@ -109,15 +116,25 @@ public class TraceWindow extends JFrame {
 	}
 
 	public void paintComponent(Graphics g) {
-	    g = g.create();
-	    for (int i=icons.length-1; i>=0; i--) {
-		drawArrow(g);
-		drawIcon(g, icons[i]);
+	    Rectangle visible = getVisibleRect();
+	    int height = ARROW_LENGTH + icons[0].getIconHeight();
+	    int max = icons.length-1 - visible.y / height;
+	    int min = icons.length-1 - (visible.y + visible.height) / height;
+	    try {
+		min = Math.max(min, 0);
+		g = g.create();
+		g.translate(0, height*(icons.length-1-max));
+		for (int i=max; i>=min; i--) {
+		    drawArrow(g);
+		    drawIcon(g, icons[i]);
+		}
+		g.dispose();
+	    } catch (Throwable e) {
+		System.err.println(e);
 	    }
-	    g.dispose();
 	}
 
-	public void drawArrow(Graphics g) {
+	public final void drawArrow(Graphics g) {
 	    int center = getWidth()>>1;
 	    g.setColor(Color.black);
 	    g.drawLine(center, 0, center, ARROW_LENGTH);
@@ -126,7 +143,7 @@ public class TraceWindow extends JFrame {
 	    g.translate(0, ARROW_LENGTH);
 	}
 	
-	public void drawIcon(Graphics g, Icon icon) {
+	public final void drawIcon(Graphics g, Icon icon) {
 	    icon.paintIcon(this, g, (getWidth()-icon.getIconWidth())>>1, 0);
 	    g.translate(0, icon.getIconHeight());
 	}
@@ -134,4 +151,7 @@ public class TraceWindow extends JFrame {
 	private Icon[] icons;
 	private static final int ARROW_LENGTH = 20;
     }
+
+    /** The maximum height these trace displays should get to. */
+    private static final int MAXHEIGHT = 400;
 }

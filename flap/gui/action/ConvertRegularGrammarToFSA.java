@@ -57,7 +57,7 @@ public class ConvertRegularGrammarToFSA extends GrammarAction {
      * @param environment the grammar environment
      */
     public ConvertRegularGrammarToFSA(GrammarEnvironment environment) {
-	super("Convert Right Linear Grammar to FSA", null);
+	super("Convert Right-Linear Grammar to FA", null);
 	this.environment = environment;
     }
 
@@ -93,7 +93,7 @@ public class ConvertRegularGrammarToFSA extends GrammarAction {
 	}
 	// Add the view to the environment.
 	final ConvertPane cp = new ConvertPane(grammar, fsa, ptot, environment);
-	environment.add(cp, "Convert to FSA", new CriticalTag() {});
+	environment.add(cp, "Convert to FA", new CriticalTag() {});
 	Rectangle r = cp.getEditorPane().getAutomatonPane().getVisibleRect();
 	LayoutAlgorithm layout = new GEMLayoutAlgorithm();
 	layout.layout(graph, null);

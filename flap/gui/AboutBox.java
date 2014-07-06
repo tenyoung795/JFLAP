@@ -54,7 +54,7 @@ public class AboutBox extends JWindow {
 	JPanel fullPanel = new JPanel(new BorderLayout());
 	fullPanel.setOpaque(false);
 	panel.add(fullPanel, BorderLayout.SOUTH);
-	fullPanel.add(getLabel(VERSION), BorderLayout.WEST);
+	fullPanel.add(getLabel("JFLAP "+VERSION), BorderLayout.WEST);
 	JPanel creditPanel = new JPanel();
 	creditPanel.setLayout(new BoxLayout(creditPanel,BoxLayout.Y_AXIS));
 	creditPanel.setOpaque(false);
@@ -123,7 +123,7 @@ public class AboutBox extends JWindow {
     /** The image to display in the about box. */
     private static Image IMAGE = null;
     /** The version string. */
-    public static final String VERSION = "4.0b6";
+    public static final String VERSION = "4.0b10";
 
     /**
      * Some simple test code for the about box.

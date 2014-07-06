@@ -98,13 +98,17 @@ public class ConvertPane extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 		    controller.export();
 		} }));
+	/*bar.add(new JButton(new AbstractAction("Export Automaton") {
+		public void actionPerformed(ActionEvent e) {
+		    controller.exportAutomaton();
+		    } }));*/
 
 	add(ep, BorderLayout.CENTER);
     }
     
     /** The environment that holds the automaton.  The automaton from
      * the environment is itself not modified. */
-    private AutomatonEnvironment environment;
+    AutomatonEnvironment environment;
     /** The copy of the original automaton, which will be modified
      * throughout this process. */
     private FiniteStateAutomaton automaton;

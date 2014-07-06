@@ -201,7 +201,6 @@ public class ChomskyPane extends JPanel {
 		unneeded++;
 		continue;
 	    }
-	    //System.out.println(Arrays.asList(ps));
 	    editingGrammarModel.deleteRow(r[i]);
 	    for (int j=ps.length-1; j>=0; j--) {
 		editingGrammarModel.addProduction(ps[j], r[i]);

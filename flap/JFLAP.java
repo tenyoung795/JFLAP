@@ -24,7 +24,12 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
  
+import file.Codec;
+import file.ParseException;
 import gui.action.NewAction;
+import gui.action.OpenAction;
+import gui.environment.Universe;
+import java.io.File;
 import java.security.*;
 
 /**
@@ -37,10 +42,34 @@ public class JFLAP {
     /**
      * This sets various system properties before calling on 
      * {@link gui.action.NewAction#showNew}.
-     * @param args the command line arguments, which at this time are
-     * ignored
+     * @param args the command line arguments, which may hold files to open
      */
     public static void main(String[] args) {
+	// Make sure we're not some old version.
+	try {
+	    String v = System.getProperty("java.specification.version");
+	    double version = Double.parseDouble(v)+0.00001;
+	    if (version < 1.4) {
+		javax.swing.JOptionPane.showMessageDialog
+		    (null, "Java 1.4 or higher required to run JFLAP!\n"+
+		     "You appear to be running Java "+v+".\n"+
+		     "This program will now exit.");
+		System.exit(0);
+	    }
+	} catch (SecurityException e) {
+	    // Eh, that shouldn't happen.
+	}
+
+	// Set the AWT exception handler.  This may not work in future
+	// Java versions.
+	try {
+	    System.setProperty("sun.awt.exception.handler",
+			       "gui.ThrowableCatcher");
+	} catch (SecurityException e) {
+	    System.err.println("Warning: could not set the "+
+			       "AWT exception handler.");
+	}
+
 	// Apple is stupid.
 	try {
 	    // Well, Apple was stupid...
@@ -58,5 +87,17 @@ public class JFLAP {
 	}
 	// Prompt the user for newness.
 	NewAction.showNew();
+	if (args.length > 0) {
+	    for (int i=0; i<args.length; i++) {
+		Codec[] codecs = (Codec[]) Universe.CODEC_REGISTRY
+		    .getDecoders().toArray(new Codec[0]);
+		try {
+		    OpenAction.openFile(new File(args[i]), codecs);
+		} catch (ParseException e) {
+		    System.err.println("Could not open "+args[i]+": "+
+				       e.getMessage());
+		}
+	    }
+	}
     }
 }

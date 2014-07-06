@@ -142,7 +142,7 @@ public class NewAction extends RestrictedAction {
 	    JButton button = null;
 	    // Let's hear it for sloth!
 	    
-	    button = new JButton("Finite State Automaton");
+	    button = new JButton("Finite Automaton");
 	    button.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 			createWindow(new automata.fsa.FiniteStateAutomaton());

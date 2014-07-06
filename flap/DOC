@@ -13,6 +13,8 @@ automata.graph \
 automata.pda \
 automata.turing \
 automata.vdg \
+file \
+file.xml \
 grammar \
 grammar.cfg \
 grammar.lsystem \
@@ -39,4 +41,5 @@ gui.sim.multiple \
 gui.transform \
 gui.tree \
 gui.viewer \
-regular
+regular \
+test

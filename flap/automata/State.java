@@ -95,7 +95,10 @@ public class State implements Serializable {
      * @param id the new ID for this state.
      */
     protected void setID(int id) {
+	if (("q"+this.id).equals(name)) name=null;
 	this.id = id;
+	getAutomaton().distributeStateEvent
+	    (new AutomataStateEvent(getAutomaton(), this, false, false, true));
     }
 
     /**

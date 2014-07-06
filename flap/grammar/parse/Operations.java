@@ -232,7 +232,6 @@ public class Operations {
 	startProduction.setLHS(start+"'");
 	for (int i=0; i<prods.length; i++)
 	    g.addProduction(prods[i]);
-	//System.out.println(Arrays.asList(g.getVariables()));
 	return g;
     }
 

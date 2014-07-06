@@ -293,16 +293,13 @@ class LLParseController {
 		    read = string.substring(p,p+1);
 		    p++;
 		} else {
-		    //System.out.println("Error in parse");
 		    return tree;
 		}
 	    } else if (pane.grammar.isVariable(top)) {
 		String entry = get(top, read);
 		if (entry == null) {
-		    //System.out.println("Error in parse");
 		    return tree;
 		} else {
-		    //System.out.println(new Production(top,entry));
 		    DefaultMutableTreeNode node =
 			(DefaultMutableTreeNode) stack.pop();
 		    if (entry.length() == 0) {
@@ -323,13 +320,8 @@ class LLParseController {
 		}
 	    } else {
 		// This should never happen.
-		//System.err.println("BADNESS!  BADNESS!");
 	    }
 	}
-	/*if (!read.equals("$"))
-	  System.out.println("Error in parse");
-	  else
-	  System.out.println("String accepted");*/
 	return tree;
     }
     

@@ -33,6 +33,7 @@ import java.awt.BorderLayout;
 import java.awt.Graphics2D;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
@@ -96,7 +97,7 @@ public class DisplayPane extends JPanel {
     }
 
     /**
-     * Updates the display.
+     * Updates the display.Graphics2D;
      */
     private void updateDisplay() {
 	int recursionDepth = spinnerModel.getNumber().intValue();
@@ -131,13 +132,13 @@ public class DisplayPane extends JPanel {
 		    double pitch=pitchModel.getNumber().doubleValue(),
 			roll=rollModel.getNumber().doubleValue(),
 			yaw=yawModel.getNumber().doubleValue();
-		    //System.out.println("P,R,Y "+pitch+", "+roll+", "+yaw);
 		    m.pitch(pitch);
 		    m.roll(roll);
 		    m.yaw(yaw);
-
-		    imageDisplay.setImage
-			(renderer.render(expansion, parameters, m, null));
+		    Point origin = new Point(); // Ignored, for now.
+		    Image image = renderer.render
+			(expansion, parameters, m, null, origin);
+		    imageDisplay.setImage(image);
 		    t.stop();
 		    imageDisplay.repaint();
 		    imageDisplay.revalidate();
@@ -163,7 +164,7 @@ public class DisplayPane extends JPanel {
 	m.pitch(pitch);
 	m.roll(roll);
 	m.yaw(yaw);
-	renderer.render(expansion, parameters, m, (Graphics2D) g);
+	renderer.render(expansion, parameters, m, (Graphics2D) g, new Point());
     }
 
     /**

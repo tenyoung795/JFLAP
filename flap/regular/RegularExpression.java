@@ -201,6 +201,19 @@ public class RegularExpression implements Serializable {
     }
 
     /**
+     * This handles serialization so that the reference, if it exists,
+     * is resolved to a string rather than being stored itself.
+     * @param out the object output stream
+     */
+    private void writeObject(java.io.ObjectOutputStream out)
+	throws java.io.IOException {
+	// Force the reference to be resolved, and invalidated.
+	asString();
+	// Now we may call the defauult writer.
+	out.defaultWriteObject();
+    }
+
+    /**
      * This handles deserialization so that the listener sets are
      * reset to avoid null pointer exceptions when one tries to add
      * listeners to the object.

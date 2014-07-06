@@ -177,7 +177,6 @@ class UnitController {
 	}
 	pane.editingActive = true;
 
-	System.out.println("Here we are!");
 	if (currentProductions.equals(desiredProductions)) nextStep();
 	else updateDisplay();
     }
@@ -252,7 +251,6 @@ class UnitController {
      * @return if this production should be accepted
      */
     boolean productionAdded(Production production, int row) {
-	System.out.println("Added: "+production);
 	if (currentProductions.contains(production)) {
 	    // We already have it.
 	    JOptionPane.showMessageDialog

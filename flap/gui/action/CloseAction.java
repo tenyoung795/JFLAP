@@ -54,7 +54,7 @@ public class CloseAction extends RestrictedAction {
 	super("Dismiss Tab", null);
 	this.environment = environment;
 	putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke
-		 (KeyEvent.VK_ESCAPE, 0));
+		 (KeyEvent.VK_ESCAPE, MAIN_MENU_MASK));
 	environment.addChangeListener(new ChangeListener() {
 		public void stateChanged(ChangeEvent e) { checkEnabled(); }
 	    });

@@ -51,7 +51,7 @@ public class ConvertFSAToREAction extends FSAAction {
      * @param environment the environment
      */
     public ConvertFSAToREAction(AutomatonEnvironment environment) {
-	super("Convert FSA to RE", null);
+	super("Convert FA to RE", null);
 	this.environment = environment;
     }
 
@@ -76,7 +76,7 @@ public class ConvertFSAToREAction extends FSAAction {
 	    return;
 	}
 	ConvertPane pane = new ConvertPane(environment);
-	environment.add(pane, "Convert FSA to RE", new CriticalTag() {});
+	environment.add(pane, "Convert FA to RE", new CriticalTag() {});
 	environment.setActive(pane);
     }
 
