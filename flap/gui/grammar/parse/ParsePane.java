@@ -1,33 +1,28 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package gui.grammar.parse;
 
 import grammar.Grammar;
 import gui.SplitPaneFactory;
+import gui.TableTextSizeSlider;
 import gui.environment.GrammarEnvironment;
 import gui.grammar.*;
 import gui.tree.*;
@@ -68,7 +63,8 @@ abstract class ParsePane extends JPanel {
 		// Sets up the displays.
 		JComponent pt = initParseTable();
 		JScrollPane parseTable = pt == null ? null : new JScrollPane(pt);
-		JScrollPane grammarTable = new JScrollPane(initGrammarTable(grammar));
+		GrammarTable g = initGrammarTable(grammar);
+		JScrollPane grammarTable = new JScrollPane(g);
 
 		treeDerivationPane.add(initTreePanel(), "0");
 		derivationPane = new JScrollPane(initDerivationTable());
@@ -81,6 +77,7 @@ abstract class ParsePane extends JPanel {
 				topSplit, bottomSplit);
 		add(mainSplit, BorderLayout.CENTER);
 		add(statusDisplay, BorderLayout.SOUTH);
+		add(new TableTextSizeSlider(g), BorderLayout.NORTH);
 	}
 
 	/**

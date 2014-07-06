@@ -1,28 +1,22 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package gui.pumping;
 
@@ -427,7 +421,7 @@ public class CasePanel extends JPanel
      * "Remembers" the most recent <i>i</i> so that we can use it at
      * a later time.
      * 
-     * @param i the <i>i</i> we wish to rembmer
+     * @param i the <i>i</i> we wish to remember
      * @see #addCase()
      */
     protected void setI(int i)
@@ -558,7 +552,7 @@ public class CasePanel extends JPanel
     }
     
     /**
-     * Set the messsage displayed.
+     * Set the message displayed.
      * 
      * @param message the message we wish to display
      */

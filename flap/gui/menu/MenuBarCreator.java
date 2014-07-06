@@ -1,28 +1,22 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package gui.menu;
 
@@ -34,6 +28,7 @@ import java.io.Serializable;
 import grammar.Grammar;
 import grammar.TuringChecker;
 import gui.environment.Environment;
+import gui.environment.AutomatonEnvironment;
 import gui.environment.EnvironmentFrame;
 import gui.environment.Universe;
 import gui.action.*;
@@ -163,6 +158,16 @@ public class MenuBarCreator {
 			addItem(menu, new OpenAction());
 			addItem(menu, new SaveAction(environment));
 			addItem(menu, new SaveAsAction(environment));
+			JMenu saveImageMenu;
+			saveImageMenu = new JMenu("Save Image As...");
+			saveImageMenu.add(new SaveGraphJPGAction(environment, menu));
+			saveImageMenu.add(new SaveGraphPNGAction(environment, menu));
+			saveImageMenu.add(new SaveGraphGIFAction(environment, menu));
+			saveImageMenu.add(new SaveGraphBMPAction(environment, menu));
+            if (environment instanceof AutomatonEnvironment) //this is strictly for non-Grammar
+                saveImageMenu.add(new ExportAction(environment));
+			menu.add(saveImageMenu);
+            
 		}
 		else{
 			addItem(menu, new OpenURLAction());
@@ -183,6 +188,12 @@ public class MenuBarCreator {
 		} catch (SecurityException e) {
 			// Well, can't exit anyway.
 		}
+
+//        if (environment instanceof AutomatonEnvironment){
+//            addItem(menu, new SetUndoAmountAction());
+//        }
+
+
 		return menu;
 	}
 
@@ -300,6 +311,7 @@ public class MenuBarCreator {
 			menu.add(store);			
 			menu.add(store.getRestoreAction());
 			
+			
 			JMenu viewMenu, subMenu;
 			viewMenu = new JMenu("Move Vertices");
 			subMenu = new JMenu("Reflect Across Line...");
@@ -338,6 +350,7 @@ public class MenuBarCreator {
 			viewMenu.add(new LayoutAlgorithmAction("Two Circle", automaton, 
 					environment, LayoutAlgorithmFactory.TWO_CIRCLE));
 			menu.add(viewMenu);
+//			menu.add(new StateColorSelector(automaton,environment,menu));
 		}
 		return menu;
 	}

@@ -1,3 +1,22 @@
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
+ *
+ */
+
+
+
+
 package automata;
 
 import gui.editor.DeleteTool;
@@ -5,6 +24,7 @@ import gui.editor.EditCanvas;
 import gui.editor.EditorPane;
 import gui.editor.Tool;
 import gui.viewer.AutomatonPane;
+import gui.environment.AutomatonEnvironment;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -12,8 +32,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import debug.EDebug;
+
 import javax.swing.JTextArea;
 
+/**
+ * A class that represents notes on the JFLAP canvas.
+ */
 public class Note extends JTextArea{
 	private Point myAutoPoint = null;
 	public boolean moving = false;
@@ -26,6 +51,9 @@ public class Note extends JTextArea{
 		this.setText(message);
 	}
 	
+	/**
+	 * Creates an instance of <CODE>Note</CODE> with a specified message.
+	 */
 	public Note(String message){
 		this.setText(message);
 	}
@@ -34,6 +62,16 @@ public class Note extends JTextArea{
 		setLocationManually(point);
 	}
 	
+    /*
+       For the undo part of cloning, we need a way to store the view without becoming visible / active.
+     */
+    public void setView(AutomatonPane view){
+        myView = view;
+    }
+
+	/**
+	 * Initializes the note with relevant properties.
+	 */
 	public void initializeForView(AutomatonPane view){
 		myView = view;
 		setLocationManually(myAutoPoint);
@@ -65,13 +103,19 @@ public class Note extends JTextArea{
 		this.addMouseListener(new MouseListener(){
 
 			public void mouseClicked(MouseEvent e) {
-
+                if (myView.getDrawer().getAutomaton().getEnvironmentFrame() !=null)
+                    ((AutomatonEnvironment)myView.getDrawer().getAutomaton().getEnvironmentFrame().getEnvironment()).saveStatus();
 				((Note)e.getComponent()).setEnabled(true);
 				((Note)e.getComponent()).setEditable(true);
 				((Note)e.getComponent()).setCaretColor(null);
 			}
 
 			public void mousePressed(MouseEvent e) {
+                if (myView.getDrawer().getAutomaton().getEnvironmentFrame() !=null){
+                    ((AutomatonEnvironment)myView.getDrawer().getAutomaton().getEnvironmentFrame().getEnvironment()).saveStatus();
+                    ((AutomatonEnvironment)myView.getDrawer().getAutomaton().getEnvironmentFrame().getEnvironment()).setDirty();
+                }
+
 				initialPointState = new Point(((Note)e.getSource()).getAutoPoint());
 				initialPointClick = new Point(e.getPoint().x, e.getPoint().y);
 				
@@ -85,6 +129,7 @@ public class Note extends JTextArea{
 				}
 				
 			}
+
 
 			public void mouseReleased(MouseEvent e) {
 				// TODO Auto-generated method stub
@@ -103,14 +148,30 @@ public class Note extends JTextArea{
 			
 		});
         myView.add(this);
+		setEnabled(true);
+		setEditable(true);
+		setCaretColor(null);
+		this.setSelectionStart(0);
+		this.setSelectionEnd(this.getColumnWidth());
+		this.requestFocus();
 	}
 
 	public Point getAutoPoint(){
 		return myAutoPoint;
 	}
 	
-	
+	/**
+	 * Gets the AutomatonPane that the Note belongs to.
+	 * @return the AutomatonPane that the Note belongs to.
+	 */
+    public AutomatonPane getView(){
+        return myView;
+    }
 
+    /**
+     * Sets the Note manually to a specified Point.
+     * @param point 
+     */
 	public void setLocationManually(Point point) {
 		moving = true;
 		myAutoPoint = point;
@@ -139,6 +200,11 @@ public class Note extends JTextArea{
 	public void updateView() {
 		setLocationManually(myAutoPoint);
 		
+	}
+	
+	public int specialHash(){
+//        EDebug.print(myAutoPoint.hashCode() + getText().hashCode());
+        return myAutoPoint == null? -1 : myAutoPoint.hashCode() + this.getText().hashCode();
 	}
 
 

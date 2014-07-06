@@ -1,28 +1,22 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package gui;
 import file.Codec;
@@ -44,6 +38,8 @@ import java.io.InputStreamReader;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
+import javax.swing.UIManager;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -75,6 +71,9 @@ public class Main {
 	 *            the command line arguments, which may hold files to open
 	 */
 	public static void main(String[] args, boolean dont) {
+
+        
+
 		dontQuit=dont;
 		// Make sure we're not some old version.
 		try {
@@ -163,8 +162,7 @@ public class Main {
 			.newInstance();
 			DocumentBuilder builder;
 			try {
-				builder = factory.newDocumentBuilder();
-				Document doc;
+				builder = factory.newDocumentBuilder(); Document doc;
 				try {
 					doc = builder.parse(file);
 					
@@ -186,7 +184,51 @@ public class Main {
 						String turingFinal = parent.getTextContent();
 						if (turingFinal.equals("true"))
 							current.setTransitionsFromTuringFinalStateAllowed(true);
+                        else
+							current.setTransitionsFromTuringFinalStateAllowed(false);
 					}
+
+                    //set the Turing Acceptance ways.
+					parent = doc.getDocumentElement()
+					   .getElementsByTagName(current.ACCEPT_FINAL_STATE).item(0);
+					if (parent!=null) {
+						String acceptFinal = parent.getTextContent();
+						if (acceptFinal.equals("true"))
+							current.setAcceptByFinalState(true);
+                        else
+							current.setAcceptByFinalState(false);
+					}
+
+					parent = doc.getDocumentElement()
+					   .getElementsByTagName(current.ACCEPT_HALT).item(0);
+					if (parent!=null) {
+						String acceptHalt = parent.getTextContent();
+						if (acceptHalt.equals("true"))
+							current.setAcceptByHalting(true);
+                        else
+							current.setAcceptByHalting(false);
+
+					}
+
+                    //set the AllowStay option
+					parent = doc.getDocumentElement()
+					   .getElementsByTagName(current.ALLOW_STAY).item(0);
+					if (parent!=null) {
+						String allowStay = parent.getTextContent();
+						if (allowStay.equals("true"))
+							current.setAllowStay(true);
+                        else
+							current.setAllowStay(false);
+					}
+                    
+                    //Now set the Undo amount
+					parent = doc.getDocumentElement()
+					   .getElementsByTagName(current.UNDO_AMOUNT_NAME).item(0);
+					if (parent!=null) {
+                        String number = parent.getTextContent();
+                        current.setNumUndo(Integer.parseInt(number));
+					}
+
 				} catch (SAXException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

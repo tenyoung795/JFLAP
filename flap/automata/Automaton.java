@@ -1,34 +1,29 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package automata;
 
 import gui.action.OpenAction;
 import gui.environment.EnvironmentFrame;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -49,12 +44,19 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
+import debug.EDebug;
+
 import automata.event.AutomataStateEvent;
 import automata.event.AutomataStateListener;
 import automata.event.AutomataTransitionEvent;
 import automata.event.AutomataTransitionListener;
+import automata.event.AutomataNoteEvent;
+import automata.event.AutomataNoteListener;
 import automata.mealy.MooreMachine;
 import automata.turing.TuringMachine;
+
+import gui.viewer.AutomatonPane;
+
 
 /**
  * The automata object is the root class for the representation of all forms of
@@ -92,9 +94,9 @@ public class Automaton implements Serializable, Cloneable {
 		// Try to create a new object.
 		try {
 			// I am a bad person for writing this hack.
-			if (this instanceof TuringMachine)
-				a = new TuringMachine(((TuringMachine) this).tapes());
-			else
+//			if (this instanceof TuringMachine)
+//				a = new TuringMachine(((TuringMachine) this).tapes());
+//			else
 				a = (Automaton) getClass().newInstance();
 		} catch (Throwable e) {
 			// Well golly, we're sure screwed now!
@@ -111,7 +113,7 @@ public class Automaton implements Serializable, Cloneable {
 			State state = (State) it.next();
 			State nstate = new State(state.getID(),
 					new Point(state.getPoint()), a);
-			copyRelevantDataForBlocks(nstate, state, a);
+//			copyRelevantDataForBlocks(nstate, state, a);
 			nstate.setLabel(state.getLabel());
 			nstate.setName(state.getName());
 			map.put(state, nstate);
@@ -141,29 +143,87 @@ public class Automaton implements Serializable, Cloneable {
 			State from = (State) map.get(state);
 			for (int i = 0; i < ts.length; i++) {
 				State to = (State) map.get(ts[i].getToState());
-				a.addTransition(ts[i].copy(from, to));
+                Transition toBeAdded = (Transition) ts[i].clone(); //call clone instead of copy so that the gui stuff can get appropriately updated
+                toBeAdded.setFromState(from);
+                toBeAdded.setToState(to);
+//				a.addTransition(ts[i].copy(from, to));
+				a.addTransition(toBeAdded);
 			}
 		}
 		for(int k = 0; k < this.getNotes().size(); k++){
 			Note curNote = (Note)this.getNotes().get(k);		
 			a.addNote(new Note(curNote.getAutoPoint(), curNote.getText()));
+            ((Note)a.getNotes().get(k)).setView(curNote.getView());
+            
+
+            //for undo, we must initialize the clone to our view
+
 		}
 
 		// Should be done now!
 		return a;
 	}
+	
+	/**
+	 * Turn a into b. This code is copied from the clone method and tweaked. If I am daring, I will remove it from clone and call this.
+	 * 
+	 * @param dest
+	 * @param src
+	 */
+	public static void become(Automaton dest, Automaton src){
+		
+		dest.clear();
+		// Copy over the states.
+		HashMap map = new HashMap(); // Old states to new states.
+		Iterator it = src.states.iterator();
+		while (it.hasNext()) {
+			State state = (State) it.next();
+			State nstate = new State(state.getID(),
+					new Point(state.getPoint()), dest);
+			nstate.setLabel(state.getLabel());
+			nstate.setName(state.getName());
+			map.put(state, nstate);
+			dest.addState(nstate);
+            /*
+             * If it is a Moore machine, set the state output.
+             */
+            if(src instanceof MooreMachine)
+            {
+                MooreMachine m = (MooreMachine) dest;
+                m.setOutput(nstate, ((MooreMachine)src).getOutput(state));
+            }
+		}
+		// Set special states.
+		it = src.finalStates.iterator();
+		while (it.hasNext()) {
+			State state = (State) it.next();
+			dest.addFinalState((State) map.get(state));
+		}
+		dest.setInitialState((State) map.get(src.getInitialState()));
 
-	//A messy way of copying the necessary data over when making a new block from another one.
-	private void copyRelevantDataForBlocks(State state, State old,
-			Automaton newAuto) {
-		state.setParentBlock(old.getParentBlock()); //set the parent block
-		String name = old.getInternalName();        //get the name
-		if (name == null)
-			return;
-		state.setInternalName(name);				//if the block has a name, copy it
-		putBlockContentsInAutomaton(state, (Automaton) this.getBlockMap().get(
-				name), name, newAuto);
+		// Copy over the transitions.
+		it = src.states.iterator();
+		while (it.hasNext()) {
+			State state = (State) it.next();
+			Transition[] ts = src.getTransitionsFromState(state);
+			State from = (State) map.get(state);
+			for (int i = 0; i < ts.length; i++) {
+				State to = (State) map.get(ts[i].getToState());
+                Transition toBeAdded = (Transition) ts[i].clone(); //call clone instead of copy so that the gui stuff can get appropriately updated
+                toBeAdded.setFromState(from);
+                toBeAdded.setToState(to);
+//				dest.addTransition(ts[i].copy(from, to));
+				dest.addTransition(toBeAdded);
+			}
+		}
+		for(int k = 0; k < src.getNotes().size(); k++){
+			Note curNote = (Note)src.getNotes().get(k);		
+			dest.addNote(new Note(curNote.getAutoPoint(), curNote.getText()));
+            ((Note)dest.getNotes().get(k)).initializeForView(curNote.getView());
+		}
+        dest.setEnvironmentFrame(src.getEnvironmentFrame());
 	}
+
 
 	/**
 	 * Retrieves all transitions that eminate from a state.
@@ -324,156 +384,9 @@ public class Automaton implements Serializable, Cloneable {
 				false, false));
 	}
 
-	/**
-	 * Creates a state, inserts it in this automaton, and returns that state.
-	 * The ID for the state is set appropriately.
-	 * 
-	 * @param point
-	 *            the point to put the state at
-	 */
-	public final State createBlock(Point point) {
-		int i = 0;
-		while (getStateWithID(i) != null)
-			i++;
-		OpenAction read = new OpenAction();
-		OpenAction.setOpenOrRead(true);
-		JButton button = new JButton(read);
-		button.doClick();
-		OpenAction.setOpenOrRead(false);
-		return getAutomatonFromFile(i, point);
-	}
 	
-	//Reads the automaton in from a file.
-	private State getAutomatonFromFile(int i, Point point) {
-		State block = new State(i, point, this);
-		Serializable serial = OpenAction.getLastObjectOpened();
-		File lastFile = OpenAction.getLastFileOpened();
-		if (lastFile == null || OpenAction.isOpened() == false) {
-			return null;
-		}
-		block = putBlockContentsInAutomaton(block, serial, lastFile.getName(),
-				this);
-		block.setName(lastFile.getName().substring(0, lastFile.getName().length() - 4));
-		addState(block);
-		return block;
-	}
-	//Takes the contents of a block and adds them to the automaton.
-	private State putBlockContentsInAutomaton(State block, Serializable serial,
-			String name, Automaton target) {
-		if (serial instanceof Automaton) {
-			Automaton automaton = (Automaton) serial;
-			automaton.setEnvironmentFrame(target.getEnvironmentFrame());
-			block.setInternalName(name);
-			if (!target.getBlockMap().containsKey(name)) {
-				//System.out.println("Put block in map as " + name);
-				target.getBlockMap().put(name, automaton);
-			}
-			State[] newStates = automaton.getStates();
-			for (int k = 0; k < newStates.length; k++) {
-				State cur = newStates[k];
-				cur.setParentBlock(block);
-				if (automaton.isFinalState(cur)) cur.setFinalStateInBlock(true);
-				cur.setAutomaton(target);
-				List fromList = makeListFromArray(automaton
-						.getTransitionsFromState(cur));
-				List toList = makeListFromArray(automaton
-						.getTransitionsToState(cur));
-				target.transitionFromStateMap.put(cur, fromList);
-				target.transitionToStateMap.put(cur, toList);
-			}
-		}
-
-		return block;
-	}
-
-	/**
-	 * Creates a state, inserts it in this automaton, and returns that state.
-	 * The ID for the state is set appropriately.
-	 * 
-	 * @param point
-	 *            the point to put the state at
-	 * @param i
-	 */
-	public final State createBlockFromAutomaton(Point point, Serializable auto,
-			String name, int i) {
-		State block = new State(i, point, this);
-		putBlockContentsInAutomaton(block, auto, name, this);
-		addState(block);
-		return block;
-	}
 	
 
-	public final void replaceBlock(State block, Automaton inside) {
-		//Someone should probably write a .equals method for automaton.
-		if(((Automaton)blockMap.get(block.getInternalName())) == null) {
-            JOptionPane.showMessageDialog(null, "JFLAP failed to find the block you were editing, your changes have not taken effect.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-       
-		List fromList = makeListFromArray(getTransitionsFromState(block));
-		List toList = makeListFromArray(getTransitionsToState(block));
-		int found = 0;
-        boolean initial = false;
-        boolean finalState = false;
-		State[] states = this.getStates();
-		
-		for (int k = 0; k < states.length; k++) {
-			State temp = states[k];
-			//System.out.println("Temp d Name: " +temp.getID());
-			if (temp.getInternalName() != null) {
-				//System.out.println("Temp Internal Name: " +temp.getInternalName());
-				if (temp.getInternalName().equals(block.getInternalName())) {
-					if (temp.getID() == block.getID()){
-                        if(this.getInitialState()==block) initial=true;
-                        State[] finals = this.getFinalStates();
-                        for(int m = 0; m < finals.length; m++){
-                            if(finals[m]==block){
-                                this.removeFinalState(block);
-                                finalState = true;
-                            }
-                        }
-                        removeState(temp);
-                    }
-					found++;
-				}
-			}
-		}
-		//System.out.println("Found " + found);
-		if(found==1) blockMap.remove(block.getInternalName());
-		State newBlock = new State(block.getID(), block.getPoint(), this);
-		String newName = block.getInternalName();
-		if(found>1){
-			int add = block.getID();
-			while(this.getBlockMap().containsKey(newName)){
-				newName = newName.concat(Integer.toString(add));
-				add++;
-			}
-		}
-        
-
-        newBlock.setLabel(block.getLabel());
-        newBlock.setName(block.getName());     
-		//System.out.println("New Name: "+newName);
-        newBlock.setParentBlock(block.getParentBlock());
-		newBlock.setInternalName(newName);
-		
-		putBlockContentsInAutomaton(newBlock, inside, newBlock
-				.getInternalName(), this);
-		addState(newBlock);     
-        if(initial) this.setInitialState(newBlock);
-        if(finalState) this.addFinalState(newBlock);
-		for (int k = 0; k < fromList.size(); k++) {
-			Transition tempFrom = (Transition) fromList.get(k);
-			tempFrom.setFromState(newBlock);
-			addTransition(tempFrom);
-		}
-		for (int k = 0; k < toList.size(); k++) {
-			Transition tempTo = (Transition) toList.get(k);
-			tempTo.setToState(newBlock);
-			addTransition(tempTo);
-		}
-		return;
-	}
 
 	
 	/**
@@ -497,7 +410,7 @@ public class Automaton implements Serializable, Cloneable {
 	 * @param point
 	 *            the point to put the state at
 	 */
-	public final State createState(Point point) {
+	public State createState(Point point) {
 		int i = 0;
 		while (getStateWithID(i) != null)
 			i++;
@@ -563,15 +476,15 @@ public class Automaton implements Serializable, Cloneable {
 		transitionArrayToStateMap.remove(state);
 
 		cachedStates = null;
-		Iterator statIt = states.iterator();
-		while (statIt.hasNext()) {
-			State temp = (State) statIt.next();
-			if (temp.getParentBlock() != null) {
-				if (temp.getParentBlock().equals(state)) {
-					removeState(temp);
-				}
-			}
-		}
+//		Iterator statIt = states.iterator();
+//		while (statIt.hasNext()) {
+//			State temp = (State) statIt.next();
+//			if (temp.getParentBlock() != null) {
+//				if (temp.getParentBlock().equals(state)) {
+//					removeState(temp);
+//				}
+//			}
+//		}
 	}
 
 	/**
@@ -587,6 +500,8 @@ public class Automaton implements Serializable, Cloneable {
 	public State setInitialState(State initialState) {
 		State oldInitialState = this.initialState;
 		this.initialState = initialState;
+		distributeStateEvent(new AutomataStateEvent(this, initialState, false, false,
+				true));
 		return oldInitialState;
 	}
 
@@ -638,6 +553,7 @@ public class Automaton implements Serializable, Cloneable {
 
 	public void addNote(Note note){
 		myNotes.add(note);
+        distributeNoteEvent(new AutomataNoteEvent(this, note, true, false));
 	}
 	
 
@@ -645,6 +561,7 @@ public class Automaton implements Serializable, Cloneable {
 		for(int k = 0; k < myNotes.size(); k++){
 			if(note == myNotes.get(k)) myNotes.remove(k);
 		}
+        distributeNoteEvent(new AutomataNoteEvent(this, note, true, false));
 	}
 	/**
 	 * Adds a single final state to the set of final states. Note that the
@@ -658,6 +575,8 @@ public class Automaton implements Serializable, Cloneable {
 	public void addFinalState(State finalState) {
 		cachedFinalStates = null;
 		finalStates.add(finalState);
+		distributeStateEvent(new AutomataStateEvent(this, finalState, false, false,
+				true));
 	}
 
 	/**
@@ -670,6 +589,8 @@ public class Automaton implements Serializable, Cloneable {
 	public void removeFinalState(State state) {
 		cachedFinalStates = null;
 		finalStates.remove(state);
+		distributeStateEvent(new AutomataStateEvent(this, state, false, false,
+				true));
 	}
 
 	/**
@@ -800,6 +721,16 @@ public class Automaton implements Serializable, Cloneable {
 	}
 
 	/**
+	 * Adds a <CODE>AutomataNoteListener</CODE> to this automata.
+	 * 
+	 * @param listener
+	 *            the listener to add
+	 */
+	public void addNoteListener(AutomataNoteListener listener) {
+		noteListeners.add(listener);
+	}
+
+	/**
 	 * Gives an automata state change event to all state listeners.
 	 * 
 	 * @param event
@@ -812,6 +743,8 @@ public class Automaton implements Serializable, Cloneable {
 			listener.automataStateChange(event);
 		}
 	}
+
+
 
 	/**
 	 * Removes a <CODE>AutomataStateListener</CODE> from this automata.
@@ -834,6 +767,16 @@ public class Automaton implements Serializable, Cloneable {
 	}
 
 	/**
+	 * Removes a <CODE>AutomataNoteListener</CODE> from this automata.
+	 * 
+	 * @param listener
+	 *            the listener to remove
+	 */
+	public void removeNoteListener(AutomataNoteListener listener) {
+		noteListeners.remove(listener);
+	}
+
+	/**
 	 * Gives an automata transition change event to all transition listeners.
 	 * 
 	 * @param event
@@ -849,23 +792,31 @@ public class Automaton implements Serializable, Cloneable {
 	}
 
 	/**
+	 * Gives an automata note change event to all state listeners.
+	 * 
+	 * @param event
+	 *            the event to distribute
+	 */
+	void distributeNoteEvent(AutomataNoteEvent event) {
+		Iterator it = noteListeners.iterator();
+		while (it.hasNext()) {
+			AutomataNoteListener listener = (AutomataNoteListener) it.next();
+			listener.automataNoteChange(event);
+		}
+	}
+
+	/**
 	 * This handles deserialization so that the listener sets are reset to avoid
 	 * null pointer exceptions when one tries to add listeners to the object.
 	 * 
+     * @deprecated 
 	 * @param in
 	 *            the input stream for the object
 	 */
 	private void readObject(java.io.ObjectInputStream in)
 			throws java.io.IOException, ClassNotFoundException {
 		// Reset all nonread objects.
-		transitionListeners = new HashSet();
-		stateListeners = new HashSet();
-		transitionFromStateMap = new HashMap();
-		transitionToStateMap = new HashMap();
-		transitionArrayFromStateMap = new HashMap();
-		transitionArrayToStateMap = new HashMap();
-		transitions = new HashSet();
-		states = new HashSet();
+/*         resetForLoad();
 
 		// Do the reading in of objects.
 		int version = in.readInt();
@@ -889,13 +840,15 @@ public class Automaton implements Serializable, Cloneable {
 		}
 		while (!in.readObject().equals("SENT"))
 			; // Read until sentinel.
+            */
 	}
 
 	/**
-	 * This handles serialization.
+	 * This handles serialization. No longer used.
 	 */
 	private void writeObject(java.io.ObjectOutputStream out)
 			throws java.io.IOException {
+                /*
 		out.writeInt(0); // Version of the stream.
 		// Version 0 outstuff...
 		out.writeObject(states);
@@ -906,16 +859,17 @@ public class Automaton implements Serializable, Cloneable {
 			out.writeInt(((TuringMachine) this).tapes);
 		}
 		out.writeObject("SENT"); // The sentinel object.
+        */
 	}
 
-	/**
-	 * Gets the map of blocks for this automaton.
-	 *
-	 * @return the map of blocks
-	 */
-	public Map getBlockMap() {
-		return blockMap;
-	}
+//	/**
+//	 * Gets the map of blocks for this automaton.
+//	 *
+//	 * @return the map of blocks
+//	 */
+//	public Map getBlockMap() {
+//		return blockMap;
+//	}
 
 	/**
 	 * Gets the Environment Frame the automaton is in.
@@ -950,6 +904,22 @@ public class Automaton implements Serializable, Cloneable {
 		
 		return fileName.substring(0, last+1);
 	}
+	
+	public int hashCode(){
+//        EDebug.print("The Hash is that is hashed, is truly hashed");
+		int ret = 0;
+		for (Object o: states)
+			ret+= ((State) o).specialHash();
+		for (Object o:transitions)
+			ret+=((Transition) o).specialHash();
+		for (Object o: myNotes)
+			ret+=((Note) o).specialHash();
+        ret+=finalStates.hashCode(); 
+        ret+=initialState == null? 0: (int)(initialState.specialHash()*Math.PI); 
+
+//        EDebug.print(ret);
+		return ret;
+	}
 
 	// AUTOMATA SPECIFIC CRAP
 	// This includes lots of stuff not strictly necessary for the
@@ -960,7 +930,7 @@ public class Automaton implements Serializable, Cloneable {
 	private EnvironmentFrame myEnvFrame = null;
 
 	/** The collection of states in this automaton. */
-	private Set states;
+	protected Set states;
 
 	/** The cached array of states. */
 	private State[] cachedStates = null;
@@ -975,13 +945,13 @@ public class Automaton implements Serializable, Cloneable {
 	 * The collection of final states in this automaton. This is a subset of the
 	 * "states" collection.
 	 */
-	private Set finalStates;
+	protected Set finalStates;
 
 	/** The initial state. */
-	private State initialState = null;
+	protected State initialState = null;
 
 	/** The list of transitions in this automaton. */
-	private Set transitions;
+	protected Set transitions;
 
 	/**
 	 * A mapping from states to a list holding transitions from those states.
@@ -1005,14 +975,16 @@ public class Automaton implements Serializable, Cloneable {
 	 */
 	private HashMap transitionArrayToStateMap = new HashMap();
 
-	/**
-	 * A mapping from the name of an automaton to the automaton. Used for
-	 * referencing the same automaton from multiple buliding blocks
-	 */
-	private HashMap blockMap = new HashMap();
+//	/**
+//	 * A mapping from the name of an automaton to the automaton. Used for
+//	 * referencing the same automaton from multiple buliding blocks
+//	 */
+//	private HashMap blockMap = new HashMap();
 	
 
 	private ArrayList myNotes = new ArrayList();
+	
+	public Color myColor = new Color(255, 255, 150);
 
 	// LISTENER STUFF
 	// Structures related to this object as something that generates
@@ -1021,7 +993,58 @@ public class Automaton implements Serializable, Cloneable {
 	private transient HashSet transitionListeners = new HashSet();
 
 	private transient HashSet stateListeners = new HashSet();
-	
 
+	private transient HashSet noteListeners = new HashSet();
+	
+	/**
+	 * Reset all non-transient data structures.
+	 */
+    protected void clear(){
+    	
+    	
+    	
+		
+		
+    	HashSet t = new HashSet(transitions);
+		for (Object o:t)
+			removeTransition((Transition)o);
+		transitions = new HashSet();
+		
+		
+		t = new HashSet(states);
+		for (Object o:t)
+			removeState((State)o);
+		states = new HashSet();
+		
+		
+		finalStates = new HashSet();
+		
+		
+		initialState = null;
+    
+    
+    	cachedStates = null;
+    
+    	 cachedTransitions = null;
+    
+    	 cachedFinalStates = null;
+    
+    	transitionFromStateMap = new HashMap();
+    	transitionToStateMap = new HashMap();
+    
+    	transitionArrayFromStateMap = new HashMap();
+    
+    	transitionArrayToStateMap = new HashMap();
+    
+    	
+    
+    	while (myNotes.size() != 0){
+            AutomatonPane ap = ((Note) myNotes.get(0)).getView();  
+            ap.remove((Note)myNotes.get(0));
+            ap.repaint();
+            deleteNote((Note)myNotes.get(0));
+        }
+        
+    }
 
 }

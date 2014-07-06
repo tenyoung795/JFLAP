@@ -1,28 +1,22 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package automata;
 
@@ -30,6 +24,8 @@ import java.awt.Point;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+
+import debug.EDebug;
 
 import automata.event.AutomataStateEvent;
 
@@ -225,52 +221,62 @@ public class State implements Serializable {
 	public String[] getLabels() {
 		return labels;
 	}
-	/**
-	 * Returns the block that is the parent of this one.
-	 * @return the parent block
-	 */
-	public State getParentBlock() {
-		return parentBlock;
-	}
-	/**
-	 * Set the parent block.
-	 * @param block the parent block.
-	 */
-	public void setParentBlock(State block) {
-		parentBlock = block;
-	}
-	/**
-	 * Get whether this block is the final state in a block or not.
-	 * @return <CODE>true</CODE> if this state the final state in the building block
-	 */
-	public boolean getFinalStateInBlock() {
-		return finalStateInBlock;
-	}
-	/**
-	 * Sets whether this state is the final state in a block or not.
-	 * @param type <CODE>true</CODE> if this state is the final state in a block.
-	 */
-	public void setFinalStateInBlock(boolean type) {
-		finalStateInBlock = type;
-	}
+//	/**
+//	 * Returns the block that is the parent of this one.
+//	 * @return the parent block
+//	 */
+//	public State getParentBlock() {
+//		return parentBlock;
+//	}
+//	/**
+//	 * Set the parent block.
+//	 * @param block the parent block.
+//	 */
+//	public void setParentBlock(State block) {
+//		parentBlock = block;
+//	}
+//	/**
+//	 * Get whether this block is the final state in a block or not.
+//	 * @return <CODE>true</CODE> if this state the final state in the building block
+//	 */
+//	public boolean getFinalStateInBlock() {
+//		return finalStateInBlock;
+//	}
+//	/**
+//	 * Sets whether this state is the final state in a block or not.
+//	 * @param type <CODE>true</CODE> if this state is the final state in a block.
+//	 */
+//	public void setFinalStateInBlock(boolean type) {
+//		finalStateInBlock = type;
+//	}
 
-	/**
-	 * Returns the Automaton that the block represents.
-	 * 
-	 * @return the name of the block
-	 */
-	public String getInternalName() {
-		return internalName;
-	}
+//	/**
+//	 * Returns the Automaton that the block represents.
+//	 * 
+//	 * @return the name of the block
+//	 */
+//	public String getInternalName() {
+//		return internalName;
+//	}
 
-	/**
-	 * Sets the Automaton the block represents.
-	 * 
-	 * @param auto the name of the block
-	 */
-	public void setInternalName(String auto) {
-		internalName = auto;
-	}
+
+//	/**
+//	 * Sets the Automaton the block represents.
+//	 * 
+//	 * @param auto the name of the block
+//	 */
+//	public void setInternalName(String auto) {
+//		internalName = auto;
+//	}
+	
+    public int specialHash(){
+    	
+         return point.hashCode() 
+         + (myNote == null? -1 : myNote.specialHash()) 
+         + (getLabel() == null ? -1 
+        		 : getLabel().hashCode());
+    }
+	
 	
 	public void setNote(Note note){
 		myNote = note;
@@ -301,11 +307,11 @@ public class State implements Serializable {
 	/** If there are multiple labels, return those. */
 	private String[] labels = new String[0];
 	
-	/** If the state has a parent block, this is it.  It is null if there is no parent block. */
-	private State parentBlock = null;
+//	/** If the state has a parent block, this is it.  It is null if there is no parent block. */
+//	private State parentBlock = null;
 	
-	/** If it is the final state in the block, this is <CODE>true</CODE>*/
-	private boolean finalStateInBlock = false;
+//	/** If it is the final state in the block, this is <CODE>true</CODE>*/
+//	private boolean finalStateInBlock = false;
 	
 	private boolean selected = false;
 

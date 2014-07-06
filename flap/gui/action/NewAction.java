@@ -1,28 +1,22 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package gui.action;
 
@@ -116,7 +110,7 @@ public class NewAction extends RestrictedAction {
 		 */
 		public NewDialog() {
 			// super((java.awt.Frame)null, "New Document");
-			super("New Document");
+			super("JFLAP 7.0");
 			getContentPane().setLayout(new GridLayout(0, 1));
 			initMenu();
 			initComponents();
@@ -159,8 +153,19 @@ public class NewAction extends RestrictedAction {
             MenuBarCreator.addItem(menu, new TestAction());
             menuBar.add(menu);
             menu = new JMenu("Preferences");
+
+            JMenu tmPrefMenu = new JMenu("Turing Machine Preferences");
+            tmPrefMenu.add(Universe.curProfile.getTuringFinalCheckBox());
+            tmPrefMenu.add(Universe.curProfile.getAcceptByFinalStateCheckBox());
+            tmPrefMenu.add(Universe.curProfile.getAcceptByHaltingCheckBox());
+            tmPrefMenu.add(Universe.curProfile.getAllowStayCheckBox());
+
             MenuBarCreator.addItem(menu, new EmptyStringCharacterAction());
-            menu.add(Universe.curProfile.getTuringFinalCheckBox());
+//            menu.add(Universe.curProfile.getTuringFinalCheckBox());
+            menu.add(new SetUndoAmountAction());
+
+            menu.add(tmPrefMenu);
+
             menuBar.add(menu);
 			setJMenuBar(menuBar);
 		}
@@ -199,7 +204,16 @@ public class NewAction extends RestrictedAction {
 			button = new JButton("Pushdown Automaton");
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					createWindow(new automata.pda.PushdownAutomaton());
+					Object[] possibleValues = {"Multiple Character Input", "Single Character Input"};
+					Object selectedValue = JOptionPane.showInputDialog(null,
+				            "Type of PDA Input", "Input",
+				            JOptionPane.INFORMATION_MESSAGE, null,
+				            possibleValues, possibleValues[0]);
+					if (selectedValue==possibleValues[0]){
+						createWindow(new automata.pda.PushdownAutomaton());
+					}else if(selectedValue==possibleValues[1]){
+						createWindow(new automata.pda.PushdownAutomaton(true));
+					}
 				}
 			});
 			getContentPane().add(button);

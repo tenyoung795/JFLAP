@@ -1,40 +1,39 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package gui.grammar;
 
 import grammar.Grammar;
 import grammar.Production;
 import gui.HighlightTable;
+import gui.TableTextSizeSlider;
 import gui.environment.Universe;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
+
 import javax.swing.*;
 import javax.swing.table.*;
+import debug.EDebug;
 
 /**
  * The <CODE>GrammarTable</CODE> is a simple extension to the <CODE>JTable</CODE>
@@ -78,18 +77,29 @@ public class GrammarTable extends HighlightTable {
 	 * This constructor helper function customizes the view of the table.
 	 */
 	private void initView() {
+		setTableHeader(new JTableHeader(getColumnModel()));
 		getTableHeader().setReorderingAllowed(false);
+		getTableHeader().setResizingAllowed(true);
 		TableColumn lhs = getColumnModel().getColumn(0);
 		TableColumn arrows = getColumnModel().getColumn(1);
+		TableColumn rhs = getColumnModel().getColumn(2);
+		lhs.setHeaderValue("LHS");
+		getTableHeader().resizeAndRepaint();
+		rhs.setHeaderValue("RHS");
+		getTableHeader().resizeAndRepaint();
+		getColumnModel().getColumn(0).setPreferredWidth(70);
 		lhs.setMaxWidth(200);
-		lhs.setMinWidth(20);
+		//lhs.setMinWidth(200);
 		arrows.setMaxWidth(30);
 		arrows.setMinWidth(30);
 		getColumnModel().getColumn(1).setPreferredWidth(30);
 		setShowGrid(true);
 		setGridColor(Color.lightGray);
+		this.rowHeight = 30;
+		this.setFont(new Font("TimesRoman", Font.PLAIN, 20));
 
 		getColumnModel().getColumn(2).setCellRenderer(RENDERER);
+		add(new TableTextSizeSlider(this), BorderLayout.NORTH);
 	}
 
 	/**
@@ -118,6 +128,7 @@ public class GrammarTable extends HighlightTable {
 		try {
 			grammar = (Grammar) grammarClass.newInstance();
 		} catch (NullPointerException e) {
+            EDebug.print("Throwing a Null Pointer Back at YOU.");
 			throw e;
 		} catch (Throwable e) {
 			throw new IllegalArgumentException("Bad grammar class "

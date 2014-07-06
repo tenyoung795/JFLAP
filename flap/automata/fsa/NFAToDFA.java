@@ -1,32 +1,28 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package automata.fsa;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
@@ -79,7 +75,6 @@ public class NFAToDFA {
 	public State createInitialState(Automaton nfa, Automaton dfa) {
 		/** get closure of initial state from nfa. */
 		State initialState = nfa.getInitialState();
-		ClosureTaker fsac = new ClosureTaker();
 		State[] initialClosure = ClosureTaker.getClosure(initialState, nfa);
 		/**
 		 * create state in dfa to represent closure of initial state in nfa.
@@ -178,7 +173,6 @@ public class NFAToDFA {
 				FSATransition transition = (FSATransition) transitions[i];
 				if (transition.getLabel().equals(terminal)) {
 					State toState = transition.getToState();
-					ClosureTaker fct = new ClosureTaker();
 					State[] closure = ClosureTaker.getClosure(toState,
 							automaton);
 					for (int j = 0; j < closure.length; j++) {
@@ -226,8 +220,22 @@ public class NFAToDFA {
 		int len2 = states2.length;
 		if (len1 != len2)
 			return false;
+		
+	    Arrays.sort(states1, new Comparator<State>(){
+	    	    public int compare(State s, State t){
+	                return s.hashCode() - t.hashCode();	        	
+	    	    }
+	    }); 
+	    Arrays.sort(states2, new Comparator<State>(){
+	    	    public int compare(State s, State t){
+	                return s.hashCode() - t.hashCode();	        	
+	    	    }
+	    }); 
+		
 		for (int k = 0; k < states1.length; k++) {
-			if (!containsState(states1[k], states2))
+//			if (!containsState(states1[k], states2))
+//				return false;
+			if (states1[k] != states2[k])
 				return false;
 		}
 		return true;
@@ -356,9 +364,8 @@ public class NFAToDFA {
 			return (FiniteStateAutomaton) automaton.clone();
 		}
 		/** remove multiple character labels. */
-		FSALabelHandler fsalh = new FSALabelHandler();
-		if (fsalh.hasMultipleCharacterLabels(automaton)) {
-			fsalh.removeMultipleCharacterLabelsFromAutomaton(automaton);
+		if (FSALabelHandler.hasMultipleCharacterLabels(automaton)) {
+			FSALabelHandler.removeMultipleCharacterLabelsFromAutomaton(automaton);
 		}
 		/** create new finite state automaton. */
 		FiniteStateAutomaton dfa = new FiniteStateAutomaton();

@@ -1,39 +1,51 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+
+
+
+
 package gui.viewer;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
+
+import debug.EDebug;
 
 import automata.Automaton;
 import automata.Note;
 import automata.State;
 import automata.Transition;
-import automata.event.*;
-import java.awt.*;
-import java.util.*;
-import java.awt.geom.Rectangle2D;
+import automata.event.AutomataStateEvent;
+import automata.event.AutomataStateListener;
+import automata.event.AutomataTransitionEvent;
+import automata.event.AutomataTransitionListener;
+import java.util.HashSet;
 
 /**
  * This is the very basic class of an Automaton drawer. It has facilities to
@@ -75,6 +87,13 @@ public class AutomatonDrawer {
 		return automaton;
 	}
 
+    //naive optimization for drawing
+    ArrayList<State> hs = new ArrayList<State>();
+    HashSet<Point> lhs = new HashSet<Point>();
+    int specHash = Integer.MIN_VALUE;
+    //
+
+
 	/**
 	 * Draws our automaton.
 	 * 
@@ -94,11 +113,35 @@ public class AutomatonDrawer {
 		g.setColor(Color.black);
 		drawTransitions(g);
 
-		// Draw every state.
-		State[] states = automaton.getStates();
-		for (int i = 0; i < states.length; i++) {
-			drawState(g, states[i]);
-		}
+
+//        int sh = automaton.hashCode();
+
+//        if (specHash != sh){
+//            specHash = sh;
+//            hs.clear();
+//            lhs.clear();
+//            // Draw every state...or not
+//            State[] states = automaton.getStates();
+//
+//    //		for (int i = 0; i < states.length; i++) {
+//            for (int i = states.length - 1; i >= 0; i--) {
+//    //			drawState(g, states[i]);
+//                if (!lhs.contains(states[i].getPoint())){
+//                    hs.add(states[i]);
+//                    lhs.add(states[i].getPoint());
+//                }
+//            }
+//        }
+        
+
+//        //reverse again, to get the correct ordering for non-overlapping things
+//        for (int i = hs.size() - 1; i >= 0; i--)
+//			drawState(g, hs.get(i));
+        
+        State[] states = automaton.getStates();
+        for (int i = 0; i < states.length; i++){
+            drawState(g, states[i]);
+        }
 		
 		
 		this.drawSelectionBox(g);
@@ -115,8 +158,15 @@ public class AutomatonDrawer {
 	 *         itself
 	 */
 	public Rectangle getBounds(State state) {
-		int radius = statedrawer.getRadius();
+//		int radius = (int)(statedrawer.getRadius()*scaleBy);
+//		int radius = (int)(statedrawer.getRadius()*curTransform.getScaleX()); //getScaleX and Y should be same
+		int radius = statedrawer.getRadius(); //getScaleX and Y should be same
+		
+		
 		Point p = state.getPoint();
+		
+		
+		
 		int yAdd = state.getLabels().length * 15;
 		if (getAutomaton().getInitialState() == state)
 			return new Rectangle(p.x - radius * 2, p.y - radius, radius * 3,
@@ -150,8 +200,10 @@ public class AutomatonDrawer {
 	 *         if there is nothing to draw, i.e., the automaton has no states
 	 */
 	public Rectangle getBounds() {
-		if (validBounds)
+		if (validBounds){
+//			System.out.println("Using cache");
 			return cachedBounds;
+		}
 		if (!valid)
 			refreshArrowMap();
 		State[] states = getAutomaton().getStates();
@@ -174,7 +226,8 @@ public class AutomatonDrawer {
 			rect.add(arrowBounds);
 		}
 		validBounds = true;
-		return cachedBounds = rect;
+//		return cachedBounds = rect;
+		return cachedBounds = curTransform.createTransformedShape(rect).getBounds();
 	}
 
 	/**
@@ -205,7 +258,12 @@ public class AutomatonDrawer {
 		Iterator it = arrows.iterator();
 		while (it.hasNext()) {
 			CurvedArrow arrow = (CurvedArrow) it.next();
-			arrow.draw(g2);
+            if (arrow.myTransition.isSelected){
+                arrow.drawHighlight(g2);
+                arrow.drawControlPoint(g2);
+            }
+            else 
+                arrow.draw(g2);
 		}
 	}
 
@@ -244,29 +302,40 @@ public class AutomatonDrawer {
 				if (itoj.length + jtoi.length == 0)
 					continue;
 
-				// Get where points should appear to emenate from.
+				
+				// Get where points should appear to emanate from.
 				double angle = angle(states[i], states[j]);
 				Point fromI = pointOnState(states[i], angle - ANGLE);
 				Point fromJ = pointOnState(states[j], angle + Math.PI + ANGLE);
 				for (int n = 0; n < itoj.length; n++) {
-					float curvy = top + n;
+					if(curveTransitionMap.containsKey(itoj[n])){
+						top = curveTransitionMap.get(itoj[n]);
+					}
+					float curvy = top+n;
 					CurvedArrow arrow = n == 0 ? new CurvedArrow(fromI, fromJ,
-							curvy) : new InvisibleCurvedArrow(fromI, fromJ,
-							curvy);
+							curvy, itoj[n]) : new InvisibleCurvedArrow(fromI, fromJ,
+							curvy, itoj[n]);
+
+
 					arrow.setLabel(itoj[n].getDescription());
+
 					arrowToTransitionMap.put(arrow, itoj[n]);
 					transitionToArrowMap.put(itoj[n], arrow);
 				}
 				fromI = pointOnState(states[i], angle + ANGLE);
 				fromJ = pointOnState(states[j], angle + Math.PI - ANGLE);
 				for (int n = 0; n < jtoi.length; n++) {
-					float curvy = bottom + n;
+					if(curveTransitionMap.containsKey(jtoi[n])){
+						bottom = curveTransitionMap.get(jtoi[n]);
+					}
+					float curvy = bottom+n;
 					CurvedArrow arrow = n == 0 ? new CurvedArrow(fromJ, fromI,
-							curvy) : new InvisibleCurvedArrow(fromJ, fromI,
-							curvy);
+							curvy, jtoi[n]) : new InvisibleCurvedArrow(fromJ, fromI,
+							curvy, jtoi[n]);
 					String label = jtoi[n].getDescription();
+
+
 					arrow.setLabel(label);
-					//System.out.println("Label: " + label);
 					arrowToTransitionMap.put(arrow, jtoi[n]);
 					transitionToArrowMap.put(jtoi[n], arrow);
 				}
@@ -279,11 +348,33 @@ public class AutomatonDrawer {
 			Point from = pointOnState(states[i], -Math.PI * 0.333);
 			Point to = pointOnState(states[i], -Math.PI * 0.667);
 			for (int n = 0; n < trans.length; n++) {
-				CurvedArrow arrow = n == 0 ? new CurvedArrow(from, to, -2.0f)
-						: new InvisibleCurvedArrow(from, to, -2.0f - n);
-				arrow.setLabel(trans[n].getDescription());
-				arrowToTransitionMap.put(arrow, trans[n]);
-				transitionToArrowMap.put(trans[n], arrow);
+				if(selfTransitionMap.containsKey(trans[n])){
+					//EDebug.print(selfTransitionMap);
+					Point storedfrom = pointOnState(states[i], (selfTransitionMap.get(trans[n])+Math.PI*.166));
+					Point storedto = pointOnState(states[i], (selfTransitionMap.get(trans[n])-Math.PI*.166));
+					CurvedArrow arrow = n == 0 ? new CurvedArrow(storedfrom, storedto, -2.0f, trans[n])
+					: new InvisibleCurvedArrow(storedfrom, storedto, -2.0f - n, trans[n]);
+
+
+					arrow.setLabel(trans[n].getDescription());
+					arrowToTransitionMap.put(arrow, trans[n]);
+					transitionToArrowMap.put(trans[n], arrow);
+				}else{
+					//EDebug.print(selfTransitionMap);
+					selfTransitionMap.put(trans[n], -Math.PI*.5);
+					CurvedArrow arrow = n == 0 ? new CurvedArrow(from, to, -2.0f, trans[n])
+						: new InvisibleCurvedArrow(from, to, -2.0f - n, trans[n]);
+
+                    //INSERTED for TransitionGUI
+                    arrow.myTransition = trans[n];
+                    //END INSERTED for TransitionGUI
+                    //MERLIN MERLIN MERLIN MERLIN MERLIN//
+
+
+					arrow.setLabel(trans[n].getDescription());
+					arrowToTransitionMap.put(arrow, trans[n]);
+					transitionToArrowMap.put(trans[n], arrow);
+				}
 			}
 		}
 		valid = true;
@@ -332,7 +423,7 @@ public class AutomatonDrawer {
 	 *            the angle on the state
 	 * @return the point on the outside of the state with this angle
 	 */
-	private Point pointOnState(State state, double angle) {
+	public Point pointOnState(State state, double angle) {
 		Point point = new Point(state.getPoint());
 		double x = Math.cos(angle) * (double) StateDrawer.STATE_RADIUS;
 		double y = Math.sin(angle) * (double) StateDrawer.STATE_RADIUS;
@@ -404,7 +495,7 @@ public class AutomatonDrawer {
 	 * 
 	 * @return the state drawer
 	 */
-	protected StateDrawer getStateDrawer() {
+	public StateDrawer getStateDrawer() {
 		return statedrawer;
 	}
 
@@ -484,7 +575,14 @@ public class AutomatonDrawer {
 	}
 	public Rectangle getSelectionBounds() {
 		return mySelectionBounds;
-		
+	}
+	
+//	public void setScale(double scale){
+//	    scaleBy = scale;	
+//	    validBounds = false;
+//	}
+	public void setTransform(AffineTransform af){
+		curTransform = af;
 	}
 	
 	private Rectangle mySelectionBounds = new Rectangle(0, 0, -1, -1);
@@ -514,18 +612,35 @@ public class AutomatonDrawer {
 
 	/** The cached bounds. */
 	private Rectangle cachedBounds = null;
+	
+	/**
+	 * A map of self transitions mapped to their angle of appearance.
+	 */
+	public HashMap<Transition, Double> selfTransitionMap = new HashMap();
+	
+	/**
+	 * Map of curvatures for transitions
+	 */
+	public HashMap<Transition, Float> curveTransitionMap = new HashMap();
 
 	/**
 	 * A map of curved arrows to transitions. This object is also used for
 	 * iteration over all arrows when drawing must be done
 	 */
-	private HashMap arrowToTransitionMap = new HashMap();
+	public HashMap arrowToTransitionMap = new HashMap();
 
 	/** The map from transitions to their respective arrows. */
-	private HashMap transitionToArrowMap = new HashMap();
+	public HashMap transitionToArrowMap = new HashMap();
 
 	/** The state drawer. */
-	private StateDrawer statedrawer = new StateDrawer();
+	public StateDrawer statedrawer = new StateDrawer();
+	
+//	/**Amount to scale by, purely for scroll calclulation*/
+//	private double scaleBy = 1;
+	
+	/**The transform instead*/
+	private AffineTransform curTransform = new AffineTransform();
+	
 
 	/**
 	 * This automaton listener takes care of responding to the events.

@@ -1,28 +1,22 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package gui.viewer;
 
@@ -37,6 +31,7 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.util.ArrayList;
@@ -139,16 +134,19 @@ public class AutomatonPane extends JPanel implements Scrollable {
 	 *            the graphics object to draw upon
 	 */
 	public void paintComponent(Graphics g) {
+		
+	    
 		super.paintComponent(g);
+		
 		if (transformNeedsReform)
 			reformTransform(new Rectangle(getSize()));
 		g.setColor(java.awt.Color.white);
 		g.fillRect(0, 0, getSize().width, getSize().height);
 		Graphics2D g2 = (Graphics2D) g;
 
-
-		
 		g2.transform(transform);
+		
+		
 		drawer.drawAutomaton(g);
 
 		//g2.translate(-transform.getTranslateX(), -transform.getTranslateY());
@@ -204,8 +202,19 @@ public class AutomatonPane extends JPanel implements Scrollable {
 	 *            the current bounds of the drawing area, which may be used if
 	 *            this component adapts it's size
 	 */
-	private void reformTransform(Rectangle viewBounds) {
+	public void reformTransform(Rectangle viewBounds) {
+		//completely unrelated
+//		MouseListener[] k;
+//	    System.out.println((k = this.getListeners(MouseListener.class)).length);	
+//	    for (int i = 0; i < k.length; i++)
+//	    	System.out.println(k[i]);
+		
+		//end completely unrelated
+	    
+	    
+	    
 		transformNeedsReform = false;
+//		System.out.print("hello\n");
 		Rectangle bounds = new Rectangle(getAutomatonBounds());
 		if (!adapt) {
 			// Much of this is to make sure that this component
@@ -225,7 +234,21 @@ public class AutomatonPane extends JPanel implements Scrollable {
 			// Make the transform draw the automaton in the
 			// appropriate location.
 			transform = new AffineTransform();
+		    //push to drawer
+			drawer.setTransform(transform);
+			drawer.invalidateBounds();
+			
 			transform.translate(-componentUpperLeft.x, -componentUpperLeft.y);
+			
+		    
+			//inserted by Henry
+//			if (scaleBy > 0){
+//                System.out.println("scaling now");
+			    transform.scale(scaleBy, scaleBy); 	 //always and forever, you should scale
+//				scaleBy = -1;
+//			}
+			
+			
 			// Set the size of the thing appropriately.
 			Dimension newSize = new Dimension(Math.max(bounds.width + bounds.x,
 					viewportUpperLeft.x + visible.width)
@@ -235,6 +258,7 @@ public class AutomatonPane extends JPanel implements Scrollable {
 			if (newSize.equals(getPreferredSize()))
 				return;
 			
+			
 			setPreferredSize(newSize);
 			// Scroll to make viewportUpperLeft an "isopoint".
 			/*Rectangle scrollRect = new Rectangle(viewportUpperLeft.x
@@ -242,8 +266,6 @@ public class AutomatonPane extends JPanel implements Scrollable {
 					- componentUpperLeft.y, visible.width, visible.height);*/
 			revalidate();
 			scrollRectToVisible(visible);
-			
-
 			
 			return;
 		}
@@ -271,8 +293,10 @@ public class AutomatonPane extends JPanel implements Scrollable {
 		}
 		double scale = ourBounds.getWidth() / bounds.getWidth();
 		transform.scale(scale, scale);
+		System.out.println(scale+"..."+(ourBounds.getX() - bounds.getX()));
 		transform.translate(ourBounds.getX() - bounds.getX(), ourBounds.getY()
 				- bounds.getY());
+		
 	}
 
 	/**
@@ -471,7 +495,6 @@ public class AutomatonPane extends JPanel implements Scrollable {
         adapt = newAdapt;
         transformNeedsReform = true;
         repaint();
- 
     }
     
     
@@ -487,6 +510,19 @@ public class AutomatonPane extends JPanel implements Scrollable {
 	
 	public EditorPane getCreator(){
 		return myCreator;
+	}
+	
+	public void setScale(double scale){
+	    scaleBy = scale;	
+//	    drawer.setScale(scale);
+	}
+	public double getScale(){
+		return scaleBy;
+	}
+	
+	public void requestTransform(){
+		transformNeedsReform = true;
+		repaint();
 	}
 	
 
@@ -510,4 +546,8 @@ public class AutomatonPane extends JPanel implements Scrollable {
 
 	/** THe table... bleh. */
 	private JTable table;
+	
+	
+	/**Factor to scale everyone by, when we don't use auto-scale*/
+	private double scaleBy = 1;
 }

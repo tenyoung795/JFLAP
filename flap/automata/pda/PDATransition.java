@@ -1,28 +1,22 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package automata.pda;
 
@@ -121,6 +115,10 @@ public class PDATransition extends Transition {
 		 * if (!automata.StringChecker.isAlphanumeric(stringToPop)) throw new
 		 * IllegalArgumentException("Pop string must "+ "be alphanumeric!");
 		 */
+		PushdownAutomaton myPDA = (PushdownAutomaton) this.getAutomaton();
+		if (myPDA.singleInputPDA && stringToPop.length() > 1){
+			throw new IllegalArgumentException("Pop string must have no more than one character!");
+		}
 		myStringToPop = stringToPop;
 	}
 
@@ -145,6 +143,10 @@ public class PDATransition extends Transition {
 		 * if (!automata.StringChecker.isAlphanumeric(stringToPush)) throw new
 		 * IllegalArgumentException("Push string must "+ "be alphanumeric!");
 		 */
+		PushdownAutomaton myPDA = (PushdownAutomaton) this.getAutomaton();
+		if (myPDA.singleInputPDA && stringToPush.length() > 1)
+			throw new IllegalArgumentException(
+					"Push string must have no more than one character!");
 		myStringToPush = stringToPush;
 	}
 

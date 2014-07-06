@@ -1,28 +1,22 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package gui.viewer;
 
@@ -30,6 +24,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Area;
+import automata.Transition;
 
 /**
  * An invisible curved arrow is a curved arrow where the actual line and arrow
@@ -55,8 +50,8 @@ public class InvisibleCurvedArrow extends CurvedArrow {
 	 *            the curvi-ness factor; 0 will create a straight line; 1 and -1
 	 *            are rather curvy
 	 */
-	public InvisibleCurvedArrow(int x1, int y1, int x2, int y2, float curvy) {
-		super(x1, y1, x2, y2, curvy);
+	public InvisibleCurvedArrow(int x1, int y1, int x2, int y2, float curvy, Transition t) {
+		super(x1, y1, x2, y2, curvy, t);
 	}
 
 	/**
@@ -70,8 +65,8 @@ public class InvisibleCurvedArrow extends CurvedArrow {
 	 *            the curvi-ness factor; 0 will create a straight line; 1 and -1
 	 *            are rather curvy
 	 */
-	public InvisibleCurvedArrow(Point start, Point end, float curvy) {
-		super(start, end, curvy);
+	public InvisibleCurvedArrow(Point start, Point end, float curvy, Transition t) {
+		super(start, end, curvy, t);
 	}
 
 	/**

@@ -1,28 +1,22 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package gui.environment;
 
@@ -39,6 +33,10 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import debug.EDebug;
+
+import sun.security.util.Debug;
 
 /**
  * The environment class is the central view that manages various "hangers on"
@@ -341,6 +339,7 @@ public abstract class Environment extends JPanel {
 	 * Distributes a change event to all listeners.
 	 */
 	protected void distributeChangeEvent() {
+		
 		ChangeEvent e = new ChangeEvent(this);
 		Iterator it = (new HashSet(changeListeners)).iterator();
 		while (it.hasNext())
@@ -445,6 +444,7 @@ public abstract class Environment extends JPanel {
 	 * Sets the dirty bit. This should be called if the object is changed.
 	 */
 	public void setDirty() {
+//		EDebug.print("Change has come");
 		dirty = true;
 	}
 

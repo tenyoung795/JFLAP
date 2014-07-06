@@ -1,38 +1,40 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package gui.editor;
 
 import javax.swing.*;
 
+import debug.EDebug;
+
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import gui.viewer.AutomatonDrawer;
+
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -117,6 +119,18 @@ public class ToolBar extends JToolBar implements ActionListener {
 		if (tool != null) {
 			adapter.setAdapter(tool);
 			currentTool = tool;
+			view.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		}
+		if(tool instanceof DeleteTool){
+			   Toolkit toolkit = Toolkit.getDefaultToolkit();  
+			   //Image image = toolkit.getImage("/JFLAP09CVS/ICON/deletecursor.gif");   
+			   URL url = getClass().getResource("/ICON/deletecursor.gif");
+			   Image image = getToolkit().getImage(url);
+			   Point hotSpot = new Point(5,5);  
+			   Cursor cursor = toolkit.createCustomCursor(image, hotSpot, "Delete");  
+			   view.setCursor(cursor);
+			   //Cursor hourglassCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
+			   //view.setCursor(hourglassCursor);
 		}
 	}
 

@@ -1,40 +1,38 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package gui.editor;
 
-import automata.State;
+import gui.environment.AutomatonEnvironment;
 import gui.viewer.AutomatonDrawer;
 import gui.viewer.AutomatonPane;
+
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
+
 import javax.swing.Icon;
 import javax.swing.KeyStroke;
+
+import automata.State;
 
 /**
  * A tool that handles the creation of transitions.
@@ -98,6 +96,8 @@ public class TransitionTool extends Tool {
 	 *            the mouse event
 	 */
 	public void mousePressed(MouseEvent event) {
+		if (getDrawer().getAutomaton().getEnvironmentFrame() !=null)
+    		((AutomatonEnvironment)getDrawer().getAutomaton().getEnvironmentFrame().getEnvironment()).saveStatus();
 		first = getDrawer().stateAtPoint(event.getPoint());
 		if (first == null)
 			return;
@@ -131,7 +131,7 @@ public class TransitionTool extends Tool {
 			return;
 		State state = getDrawer().stateAtPoint(event.getPoint());
 		if (state != null) {
-			creator.createTransition(first, state);
+		    creator.createTransition(first, state);
 		}
 		first = null;
 		getView().repaint();

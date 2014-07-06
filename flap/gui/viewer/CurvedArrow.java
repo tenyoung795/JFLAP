@@ -1,28 +1,22 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package gui.viewer;
 
@@ -33,6 +27,8 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
+
+import automata.Transition;
 
 /**
  * This is a simple class for storing and drawing a curved line with possible
@@ -57,7 +53,7 @@ public class CurvedArrow {
 	 *            the curvi-ness factor; 0 will create a straight line; 1 and -1
 	 *            are rather curvy
 	 */
-	public CurvedArrow(int x1, int y1, int x2, int y2, float curvy) {
+	public CurvedArrow(int x1, int y1, int x2, int y2, float curvy, Transition t) {
 		curve = new QuadCurve2D.Float();
 		start = new Point();
 		end = new Point();
@@ -65,6 +61,7 @@ public class CurvedArrow {
 		setStart(x1, y1);
 		setEnd(x2, y2);
 		setCurvy(curvy);
+        myTransition = t;
 		refreshCurve();
 	}
 
@@ -79,12 +76,13 @@ public class CurvedArrow {
 	 *            the curvi-ness factor; 0 will create a straight line; 1 and -1
 	 *            are rather curvy
 	 */
-	public CurvedArrow(Point start, Point end, float curvy) {
+	public CurvedArrow(Point start, Point end, float curvy, Transition t) {
 		curve = new QuadCurve2D.Float();
 		setStart(start);
 		setEnd(end);
 		control = new Point();
 		setCurvy(curvy);
+        myTransition = t;
 		refreshCurve();
 	}
 
@@ -110,6 +108,7 @@ public class CurvedArrow {
 	 */
 	public void setStart(Point start) {
 		this.start = start;
+		needsRefresh = true;
 	}
 
 	/**
@@ -134,6 +133,7 @@ public class CurvedArrow {
 	 */
 	public void setEnd(Point end) {
 		this.end = end;
+		needsRefresh = true;
 	}
 
 	/**
@@ -160,6 +160,10 @@ public class CurvedArrow {
 		drawArrow(g, end, control); // Draws the arrow head.
 		drawText(g);
 	}
+
+    public void drawControlPoint(Graphics2D g){ //adjust later to center of circle = focus point
+        g.drawOval((int)curve.getCtrlX() - 5, (int)curve.getCtrlY() - 5, 10,10);
+    }
 
 	/**
 	 * Draws a highlight of the curve.
@@ -278,31 +282,47 @@ public class CurvedArrow {
 	/**
 	 * Refreshes the curve object.
 	 */
-	protected void refreshCurve() {
+	public void refreshCurve() {
+//        System.out.println("Curve refreshing");
 		needsRefresh = false;
 
-		double lengthx = end.x - start.x;
-		double lengthy = end.y - start.y;
-		double centerx = ((double) (start.x + end.x)) / 2.0;
-		double centery = ((double) (start.y + end.y)) / 2.0;
+        double lengthx = end.x - start.x;
+        double lengthy = end.y - start.y;
+        double centerx = ((double) (start.x + end.x)) / 2.0;
+        double centery = ((double) (start.y + end.y)) / 2.0;
 
-		double length = Math.sqrt(lengthx * lengthx + lengthy * lengthy);
-		double factorx = length == 0.0 ? 0.0 : lengthx / length;
-		double factory = length == 0.0 ? 0.0 : lengthy / length;
+        double length = Math.sqrt(lengthx * lengthx + lengthy * lengthy);
+        double factorx = length == 0.0 ? 0.0 : lengthx / length;
+        double factory = length == 0.0 ? 0.0 : lengthy / length;
 
-		control.x = (int) (centerx + curvy * HEIGHT * factory);
-		control.y = (int) (centery - curvy * HEIGHT * factorx);
-		high.x = (int) (centerx + curvy * HEIGHT * factory / 2.0);
-		high.y = (int) (centery - curvy * HEIGHT * factorx / 2.0);
+        if (myTransition.getControl() == null){
 
-		curve.setCurve((float) start.x, (float) start.y, (float) control.x,
-				(float) control.y, (float) end.x, (float) end.y);
+            control.x = (int) (centerx + curvy * HEIGHT * factory);
+            control.y = (int) (centery - curvy * HEIGHT * factorx);
+            high.x = (int) (centerx + curvy * HEIGHT * factory / 2.0);
+            high.y = (int) (centery - curvy * HEIGHT * factorx / 2.0);
 
-		affineToText = new AffineTransform();
-		affineToText.translate(high.x, high.y);
-		affineToText.rotate(Math.atan2(lengthy, lengthx));
-		if (end.x < start.x)
-			affineToText.rotate(Math.PI);
+        }
+        else{
+            control.x = (int) myTransition.getControl().x;
+            control.y = (int) myTransition.getControl().y;
+
+            //take the vector from the center to the control, and take half of that
+            double xt = control.x - centerx;
+            double yt = centery - control.y;
+
+            high.x = (int) (centerx + xt / 2); 
+            high.y = (int) (centery - yt / 2);
+        }
+
+            curve.setCurve((float) start.x, (float) start.y, (float) control.x,
+                    (float) control.y, (float) end.x, (float) end.y);
+
+            affineToText = new AffineTransform();
+            affineToText.translate(high.x, high.y);
+            affineToText.rotate(Math.atan2(lengthy, lengthx));
+            if (end.x < start.x)
+                affineToText.rotate(Math.PI);
 	}
 
 	/**
@@ -372,6 +392,11 @@ public class CurvedArrow {
 		c.subdivide(f1, f2);
 		return intersects(point, fudge, f1) || intersects(point, fudge, f2);
 	}
+	
+	public QuadCurve2D getCurve(){
+		return curve;
+	}
+
 
 	/** The start, end, and single control points. */
 	protected Point start, end, control;
@@ -438,4 +463,6 @@ public class CurvedArrow {
 
 	public static java.awt.Color HIGHLIGHT_COLOR = new java.awt.Color(255, 0,
 			0, 128);
+
+    public Transition myTransition;
 }

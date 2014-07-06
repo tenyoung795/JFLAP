@@ -1,28 +1,22 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package gui.sim;
 
@@ -35,15 +29,19 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Stack;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 
 import automata.Automaton;
 import automata.AutomatonSimulator;
-import automata.Configuration;
-import automata.State;
+import automata.Configuration; import automata.State;
 import automata.turing.TMSimulator;
+import automata.turing.TMConfiguration;
+import automata.turing.TMState;
+import automata.turing.TuringMachine;
+
 
 /**
  * This is an intermediary object between the simulator GUI and the automaton
@@ -140,17 +138,39 @@ public class ConfigurationController implements ConfigurationSelectionListener {
 		// Clear out old states.
 		configurations.clearThawed();
 
-		for (int i = 0; i < configs.length; i++) {
-			//System.out.println("HERE!");
-			ArrayList next = simulator.stepConfiguration(configs[i]);
-			if (next.size() == 0) {
-                //System.out.println("Rejected");
-				reject.add(configs[i]);
-				list.add(configs[i]);
-			} else
-				list.addAll(next);
+        if (!blockStep){ //for ordinary automaton
+            for (int i = 0; i < configs.length; i++) {
+                //System.out.println("HERE!");
+                ArrayList next = simulator.stepConfiguration(configs[i]);
+                //MERLIN MERLIN MERLIN MERLIN MERLIN//
+                if (next.size() == 0) { //crucial check for rejection
+                    //System.out.println("Rejected");
+                    reject.add(configs[i]);
+                    list.add(configs[i]);
+                } else
+                    list.addAll(next);
 
-		}
+            }
+        }
+        else{
+            do{
+            assert configs.length == 1;
+            assert configs[0] instanceof TMConfiguration;
+            assert simulator instanceof TMSimulator;
+
+            if (configs.length == 0) break; //bit of a hack, but not much time to debug right now.
+            
+            List next = ((TMSimulator) simulator).stepBlock((TMConfiguration)configs[0]);
+            //MERLIN MERLIN MERLIN MERLIN MERLIN//
+            if (next.size() == 0) { //crucial check for rejection
+                //System.out.println("Rejected");
+                reject.add(configs[0]);
+                list.add(configs[0]);
+            } else
+                list.addAll(next);
+            
+            }while(false);
+        }
 
 		// Replace them with the successors.
 		Iterator it = list.iterator();
@@ -183,35 +203,34 @@ public class ConfigurationController implements ConfigurationSelectionListener {
 
 		}
 		
-		;
-		State current = null;
-		Iterator iter = list.iterator();
-		int count = 0;
-      if (blockStep) {
-      while (iter.hasNext()) {
-          Configuration configure = (Configuration) iter.next();
-              current = configure.getCurrentState();
-          if (configure.getBlockStack().size() > 0) {
-                  if(((Automaton)configure.getAutoStack().peek()).getInitialState() != current || configure.getBlockStack().size()>1){
-                      if(!configure.isAccept()){
-                          count++;
-                          if(count > 10000){
-                              int result = JOptionPane.showConfirmDialog(null, "JFLAP has generated 10000 configurations. Continue?");
-                              switch (result) {
-                              case JOptionPane.CANCEL_OPTION:
-                                  return;
-                              case JOptionPane.NO_OPTION:
-                                  return;
-                              default:
-                              }
-                          }
-                          step(blockStep);
-                      }
-                      break;
-                  }
-          }
-      }
-  }
+//		State current = null;
+//		Iterator iter = list.iterator();
+//		int count = 0;
+
+        //MERLIN MERLIN MERLIN MERLIN MERLIN// //forgetting BlockStep for now
+////      if (blockStep) { //should ONLY apply to Turing Machines //      while (iter.hasNext()) {
+////          Configuration configure = (Configuration) iter.next();
+////              current = configure.getCurrentState();
+////          if (configure.getBlockStack().size() > 0) {
+////                  if(((Automaton)configure.getAutoStack().peek()).getInitialState() != current || configure.getBlockStack().size()>1){
+////                      if(!configure.isAccept()){
+////                          count++;
+////                          if(count > 10000){
+////                              int result = JOptionPane.showConfirmDialog(null, "JFLAP has generated 10000 configurations. Continue?");
+////                              switch (result) {
+////                              case JOptionPane.CANCEL_OPTION:
+////                              case JOptionPane.NO_OPTION:
+////                                  return;
+////                              default:
+////                              }
+////                          }
+//              step(blockStep);
+////                      }
+////                      break;
+////                  }
+////          }
+////      }
+//  }
 	}
 
 	/**
@@ -270,22 +289,23 @@ public class ConfigurationController implements ConfigurationSelectionListener {
 
 		Configuration toFocus = configs[0];
 		configurations.setFocused(toFocus);
-		toFocus.setFocused(true);
-		State block = toFocus.getCurrentState().getParentBlock();
-		State parent = block;
-		Automaton checkTop = null;
-		Stack heirarchy = new Stack();
-		if (parent != null) {
-			checkTop = findAutomaton(checkTop, heirarchy, parent, false);
-			//System.out.println("Call from focus");
-			if (checkTop != null)
-				drawer.setAutomaton(checkTop);
-		}
+		toFocus.setFocused(true); 
+
+//		State block = toFocus.getCurrentState().getParentBlock();
+//		State parent = block;
+//		Automaton checkTop = null;
+//		Stack heirarchy = new Stack();
+//		if (parent != null) {
+//			checkTop = findAutomaton(checkTop, heirarchy, parent, false);
+//			//System.out.println("Call from focus");
+//			if (checkTop != null)
+//				drawer.setAutomaton(checkTop);
+//		}
 		// drawer.invalidate();
 		component.repaint();
 	}
 
-	public Automaton findAutomaton(Automaton checkTop, Stack heirarchy,
+	/*public Automaton findAutomaton(Automaton checkTop, Stack heirarchy,
 			State parent, boolean select) {
 		Configuration[] configs;
 		configs = configurations.getConfigurations();
@@ -313,6 +333,7 @@ public class ConfigurationController implements ConfigurationSelectionListener {
 		}
 		return checkTop;
 	}
+    */
 
 	/**
 	 * Sets the drawer to draw the selected configurations' states as selected,
@@ -328,16 +349,24 @@ public class ConfigurationController implements ConfigurationSelectionListener {
 		for (int i = 0; i < configs.length; i++) {
 			Configuration current = configs[i];
 			foundFocused = setFocusIfNeeded(current, foundFocused);
-			Stack blocks = (Stack) configs[i].getBlockStack().clone();
-			if (!blocks.empty()) {
-				State parent = (State) configs[i].getBlockStack().peek();
-				int start = blocks.lastIndexOf(parent);
-				while (start >= 0) {
-					parent = (State) blocks.get(start);
-					drawer.addSelected(parent);
-					start--;
-				}
-			}
+            
+            if (current instanceof TMConfiguration){
+                //then blocks become relevant
+                TMState cur = (TMState) current.getCurrentState();
+                while (((TuringMachine) cur.getAutomaton()).getParent() != null) cur = ((TuringMachine) cur.getAutomaton()).getParent();
+                drawer.addSelected(cur);
+            }
+            
+//			Stack blocks = (Stack) configs[i].getBlockStack().clone();
+//			if (!blocks.empty()) {
+//				State parent = (State) configs[i].getBlockStack().peek();
+//				int start = blocks.lastIndexOf(parent);
+//				while (start >= 0) {
+//					parent = (State) blocks.get(start);
+//					drawer.addSelected(parent);
+//					start--;
+//				}
+//			}
 			drawer.addSelected(configs[i].getCurrentState());
 
 		}
@@ -354,10 +383,12 @@ public class ConfigurationController implements ConfigurationSelectionListener {
 			if (!foundFocused) {
 				configurations.setFocused(current);
 				current.setFocused(true);
-				Automaton setWith = (Automaton) current.getAutoStack().peek();
+
+                //MERLIN MERLIN MERLIN MERLIN MERLIN// //not sure what might have been broken here
+//				Automaton setWith = (Automaton) current.getAutoStack().peek();
 				//System.out.println("Stack size "
 				//		+ current.getAutoStack().size());
-				drawer.setAutomaton(setWith);
+//				drawer.setAutomaton(setWith);
 				foundFocused = true;
 			}
 		}

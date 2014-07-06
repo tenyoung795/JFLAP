@@ -1,28 +1,22 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package gui.editor;
 
@@ -47,6 +41,7 @@ import automata.State;
 import automata.Transition;
 import automata.turing.TMTransition;
 import automata.turing.TuringMachine;
+import debug.EDebug;
 
 /**
  * This is the creator of transitions in turing machines.
@@ -241,19 +236,36 @@ public class TMTransitionCreator extends TableTransitionCreator {
 		blockTransition = block;
 	}
 
+    public static void setDirs(boolean allowStay){
+        if (allowStay)
+            DIRS = new String[] { "R", "S", "L" }; //made this non-static to allow for switching option
+        else{
+//            EDebug.print("Reduction");
+            DIRS = new String[] { "R", "L" }; //made this non-static to allow for switching option
+        }
+
+		STROKES = new KeyStroke[DIRS.length]; //we shall see ...arrays can't change size though
+		for (int i = 0; i < STROKES.length; i++)
+			STROKES[i] = KeyStroke.getKeyStroke("shift " + DIRS[i]);
+
+        BOX.removeAllItems();
+        for (int i = 0; i < DIRS.length; i++)
+            BOX.addItem(DIRS[i]);
+    }
+
 	private boolean blockTransition = false;
 
 	/** The Turing machine. */
 	private TuringMachine machine;
 
 	/** The directions. */
-	private static final String[] DIRS = new String[] { "R", "S", "L" };
+	private static String[] DIRS = new String[] { "R", "S", "L" }; //made this non-static to allow for switching option
 
 	/** The direction field combo box. */
-	private static final JComboBox BOX = new JComboBox(DIRS);
+	private static JComboBox BOX = new JComboBox(DIRS);
 
 	/** The array of keystrokes for the direction field. */
-	private static final KeyStroke[] STROKES;
+	private static KeyStroke[] STROKES;
 
 	/** The action for the strokes for the direction field. */
 	private static final Action CHANGE_ACTION = new AbstractAction() {

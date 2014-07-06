@@ -1,28 +1,22 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package automata.pda;
 
@@ -40,6 +34,16 @@ import automata.State;
  */
 
 public class PDAConfiguration extends Configuration {
+	
+	/** The mode of acceptance (either by final state or empty stack). */
+	protected int myAcceptance;
+	
+	/** The variable to represent accept by empty stack. */
+	protected static final int EMPTY_STACK = 0;
+
+	/** The variable to represent accept by final state. */
+	protected static final int FINAL_STATE = 1;
+	
 	/**
 	 * Instantiates a new PDAConfiguration.
 	 * 
@@ -55,11 +59,12 @@ public class PDAConfiguration extends Configuration {
 	 *            the stack contents
 	 */
 	public PDAConfiguration(State state, PDAConfiguration parent, String input,
-			String unprocessed, CharacterStack stack) {
+			String unprocessed, CharacterStack stack, int acceptance) {
 		super(state, parent);
 		myInput = input;
 		myUnprocessedInput = unprocessed;
 		myStack = stack;
+		myAcceptance = acceptance;
 	}
 
 	/**
@@ -122,11 +127,20 @@ public class PDAConfiguration extends Configuration {
 	 *         otherwise
 	 */
 	public boolean isAccept() {
-		if (getUnprocessedInput().length() != 0)
-			return false;
-		State s = getCurrentState();
-		Automaton a = s.getAutomaton();
-		return a.isFinalState(s);
+		if(myAcceptance == FINAL_STATE){
+			if (getUnprocessedInput().length() != 0)
+				return false;
+			State s = getCurrentState();
+			Automaton a = s.getAutomaton();
+			return a.isFinalState(s);
+		}else if(myAcceptance == EMPTY_STACK){
+			CharacterStack stack = this.getStack();
+			if (this.getUnprocessedInput() == ""
+					&& stack.height() == 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

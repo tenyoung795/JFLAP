@@ -1,28 +1,22 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package gui.regular;
 
@@ -145,7 +139,7 @@ public class FSAToREController {
 			currentStep = FINISHED;
 		case FINISHED:
 			mainStep.setText("Generalized Transition Graph Finished!");
-			computedRE = convert.getExpressionFromGTG(automaton);
+			computedRE = FSAToRegularExpressionConverter.getExpressionFromGTG(automaton);
 			detailStep.setText(computedRE);
 		}
 	}
@@ -265,7 +259,7 @@ public class FSAToREController {
 						"Transition Already Exists", JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
-			Transition t = convert.addTransitionOnEmptySet(from, to, automaton);
+			Transition t = FSAToRegularExpressionConverter.addTransitionOnEmptySet(from, to, automaton);
 			remaining--;
 			nextStep();
 			frame.repaint();
@@ -301,7 +295,7 @@ public class FSAToREController {
 					"Too Few Transitions", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
-		Transition t = convert.combineToSingleTransition(from, to, ts,
+		Transition t = FSAToRegularExpressionConverter.combineToSingleTransition(from, to, ts,
 				automaton);
 		remaining--;
 		frame.repaint();
@@ -340,7 +334,7 @@ public class FSAToREController {
 		drawer.clearSelected();
 		drawer.addSelected(collapseState);
 		transitionWindow = new TransitionWindow(this);
-		transitionWindow.setTransitions(convert.getTransitionsForRemoveState(
+		transitionWindow.setTransitions(FSAToRegularExpressionConverter.getTransitionsForRemoveState(
 				state, automaton));
 		transitionWindow.setVisible(true);
 		// transitionWindow.show();
@@ -358,7 +352,7 @@ public class FSAToREController {
 					"No State Selected", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		convert.removeState(collapseState, transitionWindow.getTransitions(),
+		FSAToRegularExpressionConverter.removeState(collapseState, transitionWindow.getTransitions(),
 				automaton);
 		remaining--;
 		nextStep();
@@ -439,9 +433,9 @@ public class FSAToREController {
 				if (automaton.getFinalStates()[0] == s[i]
 						|| automaton.getInitialState() == s[i])
 					continue;
-				Transition[] t = convert.getTransitionsForRemoveState(s[i],
+				Transition[] t = FSAToRegularExpressionConverter.getTransitionsForRemoveState(s[i],
 						automaton);
-				convert.removeState(s[i], t, automaton);
+				FSAToRegularExpressionConverter.removeState(s[i], t, automaton);
 			}
 			remaining = 0;
 			nextStep();
@@ -515,8 +509,6 @@ public class FSAToREController {
 	/** The final answer, or null if not done. */
 	private String computedRE = null;
 
-	/** The converter object. */
-	private static final FSAToRegularExpressionConverter convert = new FSAToRegularExpressionConverter();
 
 	/**
 	 * The state IDs of each of the steps. Fine, this sucks. So sue me.

@@ -1,33 +1,28 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package automata;
 
 import automata.State;
 import java.io.Serializable;
+import java.awt.Point;
 
 /**
  * A <CODE>Transition</CODE> object is a simple abstract class representing a
@@ -38,7 +33,7 @@ import java.io.Serializable;
  * @see automata.State
  * @see automata.Automaton
  * 
- * @author Thomas Finley
+ * @author Thomas Finley, Henry Qin
  */
 
 public abstract class Transition implements Serializable, Cloneable {
@@ -74,7 +69,10 @@ public abstract class Transition implements Serializable, Cloneable {
 	 * @return a copy of this transition as described
 	 */
 	public Object clone() {
-		return copy(getFromState(), getToState());
+		Transition res = copy(getFromState(), getToState());
+        res.isSelected = this.isSelected;
+        res.myControlPoint = this.myControlPoint == null? null : new Point(this.myControlPoint);
+        return res;
 	}
 
 	/**
@@ -166,7 +164,33 @@ public abstract class Transition implements Serializable, Cloneable {
 	public int hashCode() {
 		return from.hashCode() ^ to.hashCode();
 	}
+	
+    /**
+      *This hash code is specifically for dealing with clone matching.
+    */
+
+	public int specialHash(){
+		int t = from == to ? from.specialHash() : from.specialHash() ^ to.specialHash();
+        if (myControlPoint != null) t ^= myControlPoint.hashCode();
+        return t;
+	}
+
+    public Point getControl(){
+        return myControlPoint;
+    }
+
+    public void setControl(Point p){
+        myControlPoint = p; 
+    }
+
 
 	/** The states this transition goes between. */
 	protected State from, to;
+
+
+
+    /**The control point, if this transition is under manual control*/
+    private Point myControlPoint;
+
+    public boolean isSelected = false;
 }

@@ -1,33 +1,31 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package automata.fsa;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
+
+import debug.EDebug;
 
 import automata.Automaton;
 import automata.AutomatonSimulator;
@@ -92,7 +90,26 @@ public class FSAStepByStateSimulator extends AutomatonSimulator {
 			FSATransition transition = (FSATransition) transitions[k];
 			/** get all information from transition. */
 			String transLabel = transition.getLabel();
-			if (unprocessedInput.startsWith(transLabel)) {
+			HashSet<String> trange = new HashSet<String>();
+			if (transLabel.contains("[")){
+				for(int i=transLabel.charAt(transLabel.indexOf("[")+1); i<=transLabel.charAt(transLabel.indexOf("[")+3); i++){
+					trange.add(Character.toString((char)i));
+					EDebug.print(Character.toString((char)i));
+				}
+				for(String element : trange){
+					if (unprocessedInput.startsWith(element)) {
+						String input = "";
+						if (element.length() < unprocessedInput.length()) {
+							input = unprocessedInput.substring(element.length());
+						}
+						State toState = transition.getToState();
+						FSAConfiguration configurationToAdd = new FSAConfiguration(
+								toState, configuration, totalInput, input);
+						list.add(configurationToAdd);
+					}
+				}
+			}
+			else if (unprocessedInput.startsWith(transLabel)) {
 				String input = "";
 				if (transLabel.length() < unprocessedInput.length()) {
 					input = unprocessedInput.substring(transLabel.length());
@@ -119,7 +136,7 @@ public class FSAStepByStateSimulator extends AutomatonSimulator {
 		while (it.hasNext()) {
 			FSAConfiguration configuration = (FSAConfiguration) it.next();
 			State currentState = configuration.getCurrentState();
-			if (configuration.getUnprocessedInput() == ""
+			if (configuration.getUnprocessedInput().equals("")
 					&& myAutomaton.isFinalState(currentState)) {
 				return true;
 			}

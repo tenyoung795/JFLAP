@@ -1,28 +1,22 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package gui.viewer;
 
@@ -132,7 +126,7 @@ public class StateDrawer {
 		
 		// Draw the outline.
 		// //System.out.println("State name:" + state.getInternalName());
-		if (state.getInternalName() == null) {
+//		if (state.getInternalName() == null) {
 			g.drawOval(point.x - radius, point.y - radius,
 
 			2 * radius, 2 * radius);
@@ -150,25 +144,25 @@ public class StateDrawer {
 				g.setColor(Color.black);
 				g.drawPolygon(x, y, 3);
 			}
-		} else {
-			Double temp = new Double(radius * 1.5);
-			g.drawRect(point.x - radius, point.y - radius, 2 * radius,
-					2 * radius);
-			// If this is a final state, draw the little "inner rectangle."
-			if (automaton.isFinalState(state))
-				g.drawRect(point.x - radius + 3, point.y - radius + 3,
-						(radius - 3) << 1, (radius - 3) << 1);
-			// If this is the initial state.
-			if (automaton.getInitialState() == state) {
-				int[] x = { point.x - radius, point.x - (radius << 1),
-						point.x - (radius << 1) };
-				int[] y = { point.y, point.y - radius, point.y + radius };
-				g.setColor(Color.white);
-				g.fillPolygon(x, y, 3);
-				g.setColor(Color.black);
-				g.drawPolygon(x, y, 3);
-			}
-		}
+//		} else {
+//			Double temp = new Double(radius * 1.5);
+//			g.drawRect(point.x - radius, point.y - radius, 2 * radius,
+//					2 * radius);
+//			// If this is a final state, draw the little "inner rectangle."
+//			if (automaton.isFinalState(state))
+//				g.drawRect(point.x - radius + 3, point.y - radius + 3,
+//						(radius - 3) << 1, (radius - 3) << 1);
+//			// If this is the initial state.
+//			if (automaton.getInitialState() == state) {
+//				int[] x = { point.x - radius, point.x - (radius << 1),
+//						point.x - (radius << 1) };
+//				int[] y = { point.y, point.y - radius, point.y + radius };
+//				g.setColor(Color.white);
+//				g.fillPolygon(x, y, 3);
+//				g.setColor(Color.black);
+//				g.drawPolygon(x, y, 3);
+//			}
+//		}
 	}
 
 	/**
@@ -234,13 +228,13 @@ public class StateDrawer {
 	public void drawBackground(Graphics g, State state, Point point, Color color) {
 		g.setColor(color);
 		if(state.isSelected()) g.setColor(new Color(100, 200, 200));
-		if (state.getInternalName() == null)
+//		if (state.getInternalName() == null)
 			g.fillOval(point.x - radius, point.y - radius, 2 * radius,
 					2 * radius);
-		else {
-			g.fillRect(point.x - radius, point.y - radius, 2 * radius,
-					2 * radius);
-		}
+//		else {
+//			g.fillRect(point.x - radius, point.y - radius, 2 * radius,
+//					2 * radius);
+//		}
 	}
 
 	/**

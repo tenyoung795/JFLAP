@@ -1,3 +1,22 @@
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
+ *
+ */
+
+
+
+
 package gui.action;
 
 import grammar.CNFConverter;
@@ -12,6 +31,8 @@ import gui.environment.Universe;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JOptionPane;
+
+import debug.EDebug;
 
 /**
  * Action for testing grammar to see what type of grammar it is.
@@ -44,6 +65,9 @@ public class GrammarTypeTestAction extends GrammarAction {
 	 */
 	public void actionPerformed(ActionEvent e) {
 		Grammar g=environment.getGrammar(UnrestrictedGrammar.class);
+//        EDebug.print(g == null);
+        if (g == null) return;
+
 		Production[] p=g.getProductions();
 		boolean isRegular=checkforLinearity(p);
 		if (!isRegular)

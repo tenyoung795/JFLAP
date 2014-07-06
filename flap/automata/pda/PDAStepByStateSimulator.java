@@ -1,28 +1,22 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package automata.pda;
 
@@ -30,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.swing.JOptionPane;
+
+import debug.EDebug;
 
 import automata.Automaton;
 import automata.AutomatonSimulator;
@@ -55,7 +51,21 @@ public class PDAStepByStateSimulator extends AutomatonSimulator {
 	public PDAStepByStateSimulator(Automaton automaton) {
 		super(automaton);
 		/** default acceptance is by final state. */
-		myAcceptance = FINAL_STATE;
+		
+		Object[] possibleValues = {"Final State", "Empty Stack"};
+		Object selectedValue = JOptionPane.showInputDialog(null,
+		            "Accept by", "Input",
+		            JOptionPane.INFORMATION_MESSAGE, null,
+		            possibleValues, possibleValues[0]);
+		if(selectedValue.equals(possibleValues[0])){
+			myAcceptance = FINAL_STATE;
+			//EDebug.print("fstate");
+		}else if(selectedValue.equals(possibleValues[1])){
+			myAcceptance = EMPTY_STACK;
+			//EDebug.print("estack");
+		}
+		//myAcceptance = FINAL_STATE;
+		//myAcceptance=selectedValue;
 	}
 
 	/**
@@ -72,7 +82,7 @@ public class PDAStepByStateSimulator extends AutomatonSimulator {
 		CharacterStack stack = new CharacterStack();
 		stack.push("Z");
 		configs[0] = new PDAConfiguration(myAutomaton.getInitialState(), null,
-				input, input, stack);
+				input, input, stack, myAcceptance);
 		return configs;
 	}
 
@@ -110,7 +120,7 @@ public class PDAStepByStateSimulator extends AutomatonSimulator {
 				State toState = transition.getToState();
 				stack.push(transition.getStringToPush());
 				PDAConfiguration configurationToAdd = new PDAConfiguration(
-						toState, configuration, totalInput, input, stack);
+						toState, configuration, totalInput, input, stack, myAcceptance);
 				list.add(configurationToAdd);
 			}
 		}

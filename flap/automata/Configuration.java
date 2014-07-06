@@ -1,28 +1,22 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package automata;
 
@@ -153,38 +147,38 @@ public abstract class Configuration implements Cloneable {
 	public void setFocused(boolean focus) {
 		focused = focus;
 	}
-	/**
-	 * Gets the stack of parent automatons (arranged in a hierarchy, top level of the stack
-	 * is the immediate parent automaton)
-	 * @return the stack of automatons
-	 */
-	public Stack getAutoStack() {
-		return parentAutos;
-	}
-
-	/**
-	 * Sets the stack of parent automatons
-	 * @param parentAutos the stack of parents
-	 */
-	public void setAutoStack(Stack autos) {
-		parentAutos = autos;
-	}
-	
-	/**
-	 * Get the stack of blocks
-	 * TODO: What is this?
-	 * @return
-	 */
-	public Stack getBlockStack() {
-		return parentBlocks;
-	}
-
-	/**
-	 * @param parentAutos
-	 */
-	public void setBlockStack(Stack blocks) {
-		parentBlocks = blocks;
-	}
+//	/**
+//	 * Gets the stack of parent automatons (arranged in a hierarchy, top level of the stack
+//	 * is the immediate parent automaton)
+//	 * @return the stack of automatons
+//	 */
+//	public Stack getAutoStack() {
+//		return parentAutos;
+//	}
+//
+//	/**
+//	 * Sets the stack of parent automatons
+//	 * @param parentAutos the stack of parents
+//	 */
+//	public void setAutoStack(Stack autos) {
+//		parentAutos = autos;
+//	}
+//	
+//	/**
+//	 * Get the stack of blocks
+//	 * TODO: What is this?
+//	 * @return
+//	 */
+//	public Stack getBlockStack() {
+//		return parentBlocks;
+//	}
+//
+//	/**
+//	 * @param parentAutos
+//	 */
+//	public void setBlockStack(Stack blocks) {
+//		parentBlocks = blocks;
+//	}
 	/**
 	 * Resets to be unfocused.
 	 *
@@ -192,11 +186,9 @@ public abstract class Configuration implements Cloneable {
 	public void reset() {
 		this.setFocused(false);
 	}
-	/** The stack of parent automatons - top of the stack is closest parent*/
-	private Stack parentAutos = new Stack();
+//	/** The stack of parent automatons - top of the stack is closest parent*/
+//	private Stack parentAutos = new Stack();
 	
-	/*TODO ????*/
-	private Stack parentBlocks = new Stack();
 	
 	/** True if focused in on a block, false otherwise. */
 	private boolean focused = false;

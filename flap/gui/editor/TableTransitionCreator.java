@@ -1,28 +1,22 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package gui.editor;
 
@@ -41,6 +35,7 @@ import java.awt.event.MouseListener;
 
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
@@ -48,7 +43,7 @@ import automata.State;
 import automata.Transition;
 import automata.turing.TMTransition;
 import automata.turing.Tape;
-
+import debug.EDebug;
 /**
  * This allows the user to create transition creators that have tables directly
  * in the editing window with a minimum of effort.
@@ -166,9 +161,10 @@ public abstract class TableTransitionCreator extends TransitionCreator {
 			if (t != null) {
 				if (isNew) {
 					getParent().getDrawer().getAutomaton().addTransition(t);
-				} else
+				} else{
 					getParent().getDrawer().getAutomaton().replaceTransition(
 							transition, t);
+				}
 			}
 		}
 		if (this instanceof TMTransitionCreator) {
@@ -197,6 +193,10 @@ public abstract class TableTransitionCreator extends TransitionCreator {
 	public Transition createTransition(State from, State to) {
 		Transition t = initTransition(from, to);
 		editTransition(t, null);
+		
+		//can you say "ugly hack?"
+//		editTransition(t, new Point((from.getPoint().x+to.getPoint().x)/2, (from.getPoint().y+to.getPoint().y)/2));
+		
 		return null;
 	}
 
@@ -247,9 +247,21 @@ public abstract class TableTransitionCreator extends TransitionCreator {
 			public void componentShown(ComponentEvent e) {
 			}
 		});
+		
+		
 		editingTable.setLocation(tablePoint);
 		editingTable.setSize(tableDimensions);
+		
+//		editingTable.editCellAt(0, 0);
+		
+		editingTable.setCellSelectionEnabled(true);
+		editingTable.changeSelection(0, 0, false, false);
 		editingTable.requestFocus();
+		
+//		EDebug.print("Focus has been requested");
+//	    EDebug.print("hasFocus? "+editingTable.hasFocus());	
+//	    EDebug.print(getParent().getClass().getName());
+		
 		getParent().repaint();
 	}
 

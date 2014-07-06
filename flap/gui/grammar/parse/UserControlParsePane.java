@@ -1,3 +1,22 @@
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
+ *
+ */
+
+
+
+
 package gui.grammar.parse;
 
 import java.awt.BorderLayout;
@@ -20,6 +39,7 @@ import grammar.parse.ParseNode;
 import grammar.parse.Unrestricted;
 import grammar.parse.UserParser;
 import gui.SplitPaneFactory;
+import gui.TableTextSizeSlider;
 import gui.environment.GrammarEnvironment;
 import gui.grammar.GrammarTable;
 import gui.grammar.GrammarTableModel;
@@ -81,7 +101,8 @@ public class UserControlParsePane extends BruteParsePane {
 		// Sets up the displays.
 		JComponent pt = initParseTable();
 		JScrollPane parseTable = pt == null ? null : new JScrollPane(pt);
-		JScrollPane grammarTable = new JScrollPane(initGrammarTable(grammar));
+		GrammarTable g = initGrammarTable(grammar);
+		JScrollPane grammarTable = new JScrollPane(g);
 		
 		myJListModel=new DefaultListModel();
 		myStringJList=new JList(myJListModel);
@@ -104,6 +125,7 @@ public class UserControlParsePane extends BruteParsePane {
 				topSplit, bottomSplit);
 		add(mainSplit, BorderLayout.CENTER);
 		add(statusDisplay, BorderLayout.SOUTH);
+		add(new TableTextSizeSlider(g), BorderLayout.NORTH);
 		
 	}
 	

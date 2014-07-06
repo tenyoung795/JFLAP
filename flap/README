@@ -1,38 +1,15 @@
-Building JFLAP
---------------
-Compiling and running JFLAP requires Java 1.4 and 1.5.  In order to
-build JFLAP and the JAR, a Makefile has been provided.  To build JFLAP
-with gnumake, enter
+Thanks for your interest in JFLAP!
 
-	make
+We are distributing both the JFLAP source and binary under the JFLAP 7.0 license, available in the file LICENSE.
+Summary of the license: The license text must be included in any distribution of JFLAP. Any distribution of JFLAP or any work that includes it modified or unmodified must be available free of charge.
 
-from the command line.  This will create the compiled '.class' Java
-files, as well as the JFLAP.jar executable jar file.  The script used to
-create the JFLAP.jar executable requires Python 2.2.
+Please send us feedback as to how you ended up using JFLAP, as well as any changes you would like to see in the official version. Please send this to jflap@cs.duke.edu
 
-To run from the class files:
+We are working on setting up a version controlled repository, so that more people can get more directly involved in the development of JFLAP.
+Once this is up, we will announce it on www.jflap.org, together with details on how to become a privileged contributor with commit rights. 
+If you are interested in participating, please keep an eye on the website, or email jflap@cs.duke.edu indicating this interest.
 
-	java JFLAP
 
-To run as a JAR:
+Regards,
 
-	java -jar JFLAP.jar
-
-Alternatively on OS X and on a correctly configured Windows machine, you
-can double click the JFLAP.jar file and it should just work.
-
-JFLAPplet
----------
-The demo.html page shows a very simple example of embedding JFLAP as an
-applet, and requires that a JAR file for JFLAP be built as described
-above.
-
-Javadoc
--------
-Entering
-
-	make doc
-
-will create Javadoc documentation for all the JFLAP code and packages in
-the javadoc directory.  The javadoc that comes with the 1.4 SDK is
-required.
+Susan Rodger

@@ -1,28 +1,22 @@
-/* -- JFLAP 4.0 --
-*
-* Copyright information:
-*
-* Susan H. Rodger, Thomas Finley
-* Computer Science Department
-* Duke University
-* April 24, 2003
-* Supported by National Science Foundation DUE-9752583.
-*
-* Copyright (c) 2003
-* All rights reserved.
-*
-* Redistribution and use in source and binary forms are permitted
-* provided that the above copyright notice and this paragraph are
-* duplicated in all such forms and that any documentation,
-* advertising materials, and other materials related to such
-* distribution and use acknowledge that the software was developed
-* by the author.  The name of the author may not be used to
-* endorse or promote products derived from this software without
-* specific prior written permission.
-* THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
+ *
+ */
+
+
+
+
 
 package gui.action;
 
@@ -199,14 +193,14 @@ public class TestAction extends  RestrictedAction{
     	  fileChooser.setDialogTitle("Choose file of strings to test on machines");
           fileChooser.setFileFilter(new inputFilter());
         int result = fileChooser.showOpenDialog(source);
-        //open text file of inputs and ouputs
+        //open text file of inputs and outputs
       
         
         ArrayList testStrings = new ArrayList();
         ArrayList transStrings = new ArrayList();
         if (result != JFileChooser.APPROVE_OPTION){
         }
-        else{    
+        else{
 	        File textFile = fileChooser.getSelectedFile();  
 	        try {                  
 	            BufferedReader in = new BufferedReader(new FileReader(textFile));
@@ -275,7 +269,7 @@ public class TestAction extends  RestrictedAction{
 
     protected void displayMultipleRunPane(Environment env, Object obj){
     	if(obj instanceof FiniteStateAutomaton){
-    		MultipleSimulateAction act = new MultipleSimulateAction((Automaton)obj,env);
+    		BatchMultipleSimulateAction act = new BatchMultipleSimulateAction((Automaton)obj,env);
 			act.performAction(env);
     	}
 		

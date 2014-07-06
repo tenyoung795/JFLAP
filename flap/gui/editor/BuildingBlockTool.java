@@ -1,4 +1,23 @@
 /*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
+ *
+ */
+
+
+
+
+/*
  * Created on Jun 13, 2005
  *
  * TODO To change the template for this generated file go to
@@ -16,6 +35,8 @@ import javax.swing.Icon;
 import javax.swing.KeyStroke;
 
 import automata.State;
+import automata.turing.TuringMachine;
+import automata.turing.TMState;
 
 /**
  * @author Andrew
@@ -76,7 +97,9 @@ public class BuildingBlockTool extends Tool {
 	 *            the mouse event
 	 */
 	public void mousePressed(MouseEvent event) {
-		block = getAutomaton().createBlock(event.getPoint());
+//MERLIN MERLIN MERLIN MERLIN MERLIN//
+
+		block = ((TuringMachine) getAutomaton()).createBlock(event.getPoint());
 		getView().repaint();
 	}
 
@@ -129,5 +152,5 @@ public class BuildingBlockTool extends Tool {
 	protected Point hover;
 
 	/** The state that was created. */
-	automata.State block = null;
+	automata.turing.TMState block = null;
 }

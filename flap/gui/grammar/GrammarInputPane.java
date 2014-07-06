@@ -1,28 +1,22 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package gui.grammar;
 
@@ -30,6 +24,8 @@ import grammar.Grammar;
 import grammar.TuringChecker;
 import grammar.cfg.ContextFreeGrammar;
 import grammar.reg.RegularGrammar;
+import gui.TableTextSizeSlider;
+
 import javax.swing.table.*;
 import javax.swing.*;
 import java.awt.*;
@@ -73,11 +69,17 @@ public class GrammarInputPane extends JPanel {
 		table.getTableHeader().setReorderingAllowed(false);
 		TableColumn lhs = table.getColumnModel().getColumn(0);
 		TableColumn arrows = table.getColumnModel().getColumn(1);
-		lhs.setMaxWidth(400);
-		lhs.setMinWidth(100);
-		arrows.setMaxWidth(30);
-		arrows.setMinWidth(30);
-		table.getColumnModel().getColumn(1).setPreferredWidth(30);
+		TableColumn rhs = table.getColumnModel().getColumn(2);
+		lhs.setHeaderValue("LHS");
+		table.getTableHeader().resizeAndRepaint();
+		rhs.setHeaderValue("RHS");
+		table.getTableHeader().resizeAndRepaint();
+		table.getColumnModel().getColumn(0).setPreferredWidth(100);
+		//lhs.setMaxWidth(400);
+		//lhs.setMinWidth(100);
+		//arrows.setMaxWidth(30);
+		//arrows.setMinWidth(30);
+		// table.getColumnModel().getColumn(1).setPreferredWidth(30);
 		table.setShowGrid(true);
 		table.setGridColor(Color.lightGray);
 
@@ -91,11 +93,19 @@ public class GrammarInputPane extends JPanel {
 	private void initView() {
 		// Set up the table.
 		table = new GrammarTable(model);
+		table.setTableHeader(new JTableHeader(table.getColumnModel()));
 		table.getTableHeader().setReorderingAllowed(false);
+		table.getTableHeader().setResizingAllowed(true);
 		TableColumn lhs = table.getColumnModel().getColumn(0);
 		TableColumn arrows = table.getColumnModel().getColumn(1);
-		lhs.setMaxWidth(100);
-		lhs.setMinWidth(20);
+		TableColumn rhs = table.getColumnModel().getColumn(2);
+		lhs.setHeaderValue("LHS");
+		table.getTableHeader().resizeAndRepaint();
+		rhs.setHeaderValue("RHS");
+		table.getTableHeader().resizeAndRepaint();
+		table.getColumnModel().getColumn(0).setPreferredWidth(70);
+		lhs.setMaxWidth(200);
+		//lhs.setMinWidth(20);
 		arrows.setMaxWidth(30);
 		arrows.setMinWidth(30);
 		table.getColumnModel().getColumn(1).setPreferredWidth(30);
@@ -105,6 +115,7 @@ public class GrammarInputPane extends JPanel {
 		// Put the table in this pane.
 		setLayout(new BorderLayout());
 		add(new JScrollPane(table), BorderLayout.CENTER);
+		add(new TableTextSizeSlider(table), BorderLayout.NORTH);
 	}
 
 	/**

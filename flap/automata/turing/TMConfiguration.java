@@ -1,28 +1,22 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package automata.turing;
 
@@ -50,9 +44,10 @@ public class TMConfiguration extends Configuration implements Cloneable {
 	 * @param tapes
 	 *            the read/write tapes
 	 */
-	public TMConfiguration(State state, TMConfiguration parent, Tape[] tapes) {
+	public TMConfiguration(State state, TMConfiguration parent, Tape[] tapes, AcceptanceFilter[] filters) {
 		super(state, parent);
 		this.myTapes = tapes;
+        myFilters = filters;
 	}
 
 	/**
@@ -85,48 +80,22 @@ public class TMConfiguration extends Configuration implements Cloneable {
 
 	/**
 	 * Returns <CODE>true</CODE> if this configuration is an accepting
-	 * configuration, which in this case means our state is an accept state.
+	 * configuration, based on the chosen criteria. Currently, we look at accept by halting and accept by final state. 
+     //MERLIN MERLIN MERLIN MERLIN MERLIN//
 	 * 
 	 * @return <CODE>true</CODE> if this configuration is accepting, <CODE>false</CODE>
 	 *         otherwise
 	 */
 	public boolean isAccept() {
-		State s = getCurrentState();
-        if(s == null) return false;
-		boolean bottom = false;
-		boolean top = false;
-         Stack parentAutosClone = (Stack) this.getAutoStack().clone();
-         Stack parentBlocksClone = (Stack) this.getBlockStack().clone();
-         
-         //Check if no layers
-         if(!s.getFinalStateInBlock() && parentAutosClone.size()==1){
-             //System.out.println("in first test");
-             State[] finals = ((Automaton)parentAutosClone.firstElement()).getFinalStates();
-             for(int m = 0; m < finals.length; m++){
-                 if(finals[m]==s){
-                     return true;
-                 }
-             }
-             return false;
-         }
 
-         Automaton current;
+        for (int i = 0; i < myFilters.length; i++){
+             if (myFilters[i].accept(this)) return true;
+        }
+        return false;
 
-         boolean finalState = true;
-         parentBlocksClone.push(s);
-         int count = 0;
-         while(parentAutosClone.size()>0){
-             finalState = isFinalStateInAutomaton((Automaton)parentAutosClone.pop(), (State)parentBlocksClone.pop());
-             if(!finalState) return false;
-             count++;
-             //System.out.println("Count = " + count);
-         }
-        
-         
-		return true;
 	}
     
-    
+   /* 
     private boolean isFinalStateInAutomaton(Automaton auto, State state){
         State[] finals = auto.getFinalStates();
         for(int m = 0; m < finals.length; m++){
@@ -135,7 +104,7 @@ public class TMConfiguration extends Configuration implements Cloneable {
           }
         }
         return false;
-    }
+    }*/
 
 	/**
 	 * Compares two TM configurations for equality. Two configurations are equal
@@ -180,12 +149,23 @@ public class TMConfiguration extends Configuration implements Cloneable {
 	/** The tapes. */
 	protected Tape[] myTapes;
 
+    private AcceptanceFilter[] myFilters; //constructed outside and passed in in the constructor. //Constructed once and passed to multiple people.
+
+    //MERLIN MERLIN MERLIN MERLIN MERLIN//
+    private boolean isHalted = false; //this is a special flag which is checked by the accept by halt. The first time that step-configuration method of TMSimulator cannot go forth, it will set this flag, and return the thing that it was handed. The second time, it will see this flag, and return an empty list to indicate failure, if the configuration was not previously accepted by the filter (that is, if the filter was not activated)
+
+    public boolean isHalted(){
+        return isHalted;
+    }
+    public void setHalted(boolean b){
+        isHalted = b;
+    }
+
 	public Object clone() {
 		TMConfiguration newConfig = new TMConfiguration(this.getCurrentState(),
-				(TMConfiguration) this.getParent(), myTapes);
-		newConfig.setAutoStack((Stack) this.getAutoStack().clone());
-		newConfig.setBlockStack((Stack) this.getBlockStack().clone());
+				(TMConfiguration) this.getParent(), myTapes, myFilters);
 		newConfig.setFocused(this.getFocused());
+        newConfig.setHalted(this.isHalted());
 		return newConfig;
 
 	}

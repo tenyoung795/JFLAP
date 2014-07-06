@@ -1,33 +1,33 @@
-/* -- JFLAP 4.0 --
+/*
+ *  JFLAP - Formal Languages and Automata Package
+ * 
+ * 
+ *  Susan H. Rodger
+ *  Computer Science Department
+ *  Duke University
+ *  August 27, 2009
+
+ *  Copyright (c) 2002-2009
+ *  All rights reserved.
+
+ *  JFLAP is open source software. Please see the LICENSE for terms.
  *
- * Copyright information:
- *
- * Susan H. Rodger, Thomas Finley
- * Computer Science Department
- * Duke University
- * April 24, 2003
- * Supported by National Science Foundation DUE-9752583.
- *
- * Copyright (c) 2003
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the author.  The name of the author may not be used to
- * endorse or promote products derived from this software without
- * specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+
+
+
 
 package gui.environment;
 
+import gui.editor.UndoKeeper;
 import automata.Automaton;
-import automata.event.*;
+import automata.event.AutomataStateEvent;
+import automata.event.AutomataStateListener;
+import automata.event.AutomataTransitionEvent;
+import automata.event.AutomataTransitionListener;
+import automata.event.AutomataNoteEvent;
+import automata.event.AutomataNoteListener;
 
 public class AutomatonEnvironment extends Environment {
 	/**
@@ -44,6 +44,8 @@ public class AutomatonEnvironment extends Environment {
 		Listener listener = new Listener();
 		automaton.addStateListener(listener);
 		automaton.addTransitionListener(listener);
+		automaton.addNoteListener(listener);
+		initUndoKeeper();
 	}
 
 	/**
@@ -54,13 +56,42 @@ public class AutomatonEnvironment extends Environment {
 	public Automaton getAutomaton() {
 		return (Automaton) super.getObject();
 	}
+	
+	/*Start undo methods*/
+    public UndoKeeper getUndoKeeper(){
+        return myKeeper;	
+    }
+    public void initUndoKeeper(){
+        myKeeper = new UndoKeeper(getAutomaton());
+    }
+    public void saveStatus(){
+        myKeeper.saveStatus();	
+    }
+    public void restoreStatus(){
+        myKeeper.restoreStatus();	
+    }
+    
+    public boolean shouldPaint(){
+        return myKeeper == null ? true: !myKeeper.sensitive;	
+    }
+    
+    public void setWait(){
+    	myKeeper.setWait();
+    }
+
+    public void redo(){
+        myKeeper.redo();
+    }
+	
+	private UndoKeeper myKeeper;
+    /*End undo methods*/
 
 	/**
 	 * The transition and state listener for an automaton detects if there are
 	 * changes in the environment, and if so, sets the dirty bit.
 	 */
 	private class Listener implements AutomataStateListener,
-			AutomataTransitionListener {
+			AutomataTransitionListener, AutomataNoteListener {
 		public void automataTransitionChange(AutomataTransitionEvent e) {
 			setDirty();
 		}
@@ -68,5 +99,9 @@ public class AutomatonEnvironment extends Environment {
 		public void automataStateChange(AutomataStateEvent e) {
 			setDirty();
 		}
+
+        public void automataNoteChange(AutomataNoteEvent e){
+            setDirty();
+        }
 	}
 }
