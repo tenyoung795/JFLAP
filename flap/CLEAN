@@ -1,2 +1,0 @@
-#rm -rf JFLAP.jar
-find . \( -name "*.class" -o -name "*~" -o -name ".DS_Store" \) -a -exec rm {} \;

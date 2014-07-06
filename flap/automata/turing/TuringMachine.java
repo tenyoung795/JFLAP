@@ -67,7 +67,7 @@ public class TuringMachine extends Automaton {
 
     /**
      * Adds a transition to this Turing machine.
-     * @param transition the transition to add
+     * @param t the transition to add
      * @throws IllegalArgumentException if this transition requires a
      * different number of tapes than required by other Turing
      * machines

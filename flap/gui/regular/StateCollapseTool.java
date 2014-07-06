@@ -50,8 +50,8 @@ public class StateCollapseTool extends Tool {
      * Instantiates a new transition tool.
      * @param view the view where the automaton is drawn
      * @param drawer the object that draws the automaton
-     * @param creator the transition creator for the type of automata
-     * we are editing
+     * @param controller the controller object for the transition from
+     * an FSA to an RE
      */
     public StateCollapseTool(AutomatonPane view, AutomatonDrawer drawer,
 			     FSAToREController controller) {

@@ -24,7 +24,8 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
  
-// I lifted this code directly from http://www.codeguru.com/java/articles/122.shtml.
+// I lifted this code directly from
+// http://www.codeguru.com/java/articles/122.shtml.
 
 // JMultiLineToolTip.java
 package gui;

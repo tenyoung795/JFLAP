@@ -44,7 +44,6 @@ public class ConfigurationIconFactory {
      * Returns an instance of an appropriate subclass of the
      * configuration icon for this sort of configuration.
      * @param configuration the configuration to return the icon for
-     * @param automaton the automaton this configuration arose from
      * @return some instance of a subclass of
      * <CODE>ConfigurationIcon</CODE>, or <CODE>null</CODE> if this
      * factory is not set up to handle this sort of configuration

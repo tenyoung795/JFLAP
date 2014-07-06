@@ -55,6 +55,7 @@ public class LRParseTable extends AbstractTableModel
     public LRParseTable(Grammar grammar, FiniteStateAutomaton fsa) {
 	ArrayList term = new ArrayList(Arrays.asList(grammar.getTerminals()));
 	ArrayList vars = new ArrayList(Arrays.asList(grammar.getVariables()));
+	this.grammar = grammar;
 	Collections.sort(term);
 	Collections.sort(vars);
 	term.add("$");
@@ -80,6 +81,7 @@ public class LRParseTable extends AbstractTableModel
     public LRParseTable(LRParseTable table) {
 	terminals = table.terminals;
 	variables = table.variables;
+	grammar = table.grammar;
 	entries = new String[table.entries.length][table.entries[0].length];
 	for (int i=0; i<entries.length; i++)
 	    for (int j=0; j<entries[i].length; j++)
@@ -208,6 +210,7 @@ public class LRParseTable extends AbstractTableModel
 	    return "acc";
 	case 's':
 	case 'r':
+	    if (value.length() < 2) return null;
 	    int startDigits = 1;
 	    while (!Character.isDigit(value.charAt(startDigits)))
 		startDigits++;
@@ -317,13 +320,66 @@ public class LRParseTable extends AbstractTableModel
     public boolean isCellEditable(int row, int column) {
 	return column != 0;
     }
-    
+
+    /**
+     * Returns an desciption of a particular entry in a parse table.
+     * @param entry the entry
+     * @return the description of that entry
+     */
+    private String getContentDescription(String entry) {
+	switch (entry.charAt(0)) {
+	case 'a':
+	    return "Accept";
+	case 's':
+	    return "Shift current input and state "+entry.substring(1)
+		+" to stack";
+	case 'r':
+	    Production p[] = grammar.getProductions();
+	    int i = Integer.parseInt(entry.substring(1));
+	    String reduceDesc = "Reduce by production "+i+", ";
+	    try {
+		reduceDesc += p[i];
+	    } catch (ArrayIndexOutOfBoundsException e) {
+		reduceDesc += "which does not exist";
+	    }
+	    return reduceDesc;
+	default:
+	    return "Goto state "+entry;
+	}
+    }
+
+    /**
+     * Gets a plaintext user readable description of the contents of a
+     * cell.
+     * @param row the row index
+     * @param column the column index
+     * @return the plaintext desciption of the parse table entry at
+     * this row and column
+     */
+    public String getContentDescription(int row, int column) {
+	StringTokenizer st = new StringTokenizer(entries[row][column]);
+	StringBuffer description = new StringBuffer();
+	int n = 0;
+	while (st.hasMoreTokens()) {
+	    String token = st.nextToken();
+	    if ((n++)!=0)
+		description.append('\n');
+	    description.append(getContentDescription(token));
+	}
+	// Nothing indicates that the string should be rejected.
+	if (description.length() == 0)
+	    return "Reject";
+	return description.toString();
+    }
+
     /** The terminals of the grammar. */
     private String[] variables;
     /** The nonterminals of the grammar, including $ at the end. */
     private String[] terminals;
     /** The entries of the table. */
     private String[][] entries;
+    /** The grammar for the parse table. */
+    private Grammar grammar;
 
     /** The mapping of grammar symbols to an Integer indicating the column. */
     private Map symbolsToColumn = new HashMap();

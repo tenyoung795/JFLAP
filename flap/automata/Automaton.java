@@ -200,6 +200,41 @@ public class Automaton implements Serializable, Cloneable {
     }
 
     /**
+     * Replaces a <CODE>Transition</CODE> in this automaton with another
+     * transition with the same from and to states.  This method
+     * will delete the old if the transition is already in the automaton.
+     * @param oldTrans the transition object to add to the automaton
+     * @param newTrans the transition object to add to the automaton
+     */
+    public void replaceTransition(Transition oldTrans,
+				  Transition newTrans) {
+	if (!getTransitionClass().isInstance(newTrans)) {
+	    throw new IncompatibleTransitionException();
+	}
+	if (oldTrans.equals(newTrans)) {
+	    return;
+	}
+	if (transitions.contains(newTrans)) {
+	    removeTransition(oldTrans);
+	    return;
+	}
+	if (!transitions.remove(oldTrans)) {
+	    throw new IllegalArgumentException
+		("Replacing transition that not already in the automaton!");
+	}
+	transitions.add(newTrans);
+	List list = (List) transitionFromStateMap.get(oldTrans.getFromState());
+	list.set(list.indexOf(oldTrans), newTrans);
+	list = (List) transitionToStateMap.get(oldTrans.getToState());
+	list.set(list.indexOf(oldTrans), newTrans);
+ 	transitionArrayFromStateMap.remove(oldTrans.getFromState());
+ 	transitionArrayToStateMap.remove(oldTrans.getToState());
+	cachedTransitions = null;
+	distributeTransitionEvent
+	    (new AutomataTransitionEvent(this, newTrans, true, false));
+    }
+
+    /**
      * Removes a <CODE>Transition</CODE> from this automaton.
      * @param trans the transition object to remove from this
      * automaton.
@@ -269,6 +304,7 @@ public class Automaton implements Serializable, Cloneable {
 	
 	transitionArrayFromStateMap.remove(state);
 	transitionArrayToStateMap.remove(state);
+	//cachedTransitions = null;
 
 	cachedStates = null;
     }
@@ -298,13 +334,20 @@ public class Automaton implements Serializable, Cloneable {
 
     /**
      * Returns an array that contains every state in this automaton.
-     * The array is not necessarily gauranteed to be in any particular
-     * order.
+     * The array is gauranteed to be in order of ascending state IDs.
      * @return an array containing all the states in this automaton
      */
     public State[] getStates() {
-	if (cachedStates == null)
+	if (cachedStates == null) {
 	    cachedStates = (State[]) states.toArray(new State[0]);
+	    Arrays.sort(cachedStates, new Comparator() {
+		    public int compare(Object o1, Object o2) {
+			return ((State)o1).getID() - ((State)o2).getID();
+		    }
+		    public boolean equals(Object o) {
+			return this==o;
+		    } });
+	}
 	return cachedStates;
     }
 
@@ -480,17 +523,6 @@ public class Automaton implements Serializable, Cloneable {
 		(AutomataTransitionListener) it.next();
 	    listener.automataTransitionChange(event);
 	}
-    }
-
-    /**
-     * Indicates that a transition has changed.  Transitions should
-     * call this method on the automaton to register changes in their
-     * parameters.
-     * @param transition the transition that changed
-     */
-    public void transitionChanged(Transition transition) {
-	distributeTransitionEvent
-	    (new AutomataTransitionEvent(this, transition, false, true));
     }
 
     /**

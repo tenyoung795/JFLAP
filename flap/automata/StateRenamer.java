@@ -42,7 +42,7 @@ public class StateRenamer {
      * numbers so that all the ID numbers go from 0 up without
      * interruption in the numeric sequence.  This will modify the
      * automaton passed in.
-     * @param automaton the automaton to change the IDs of the states
+     * @param a the automaton to change the IDs of the states
      */
     public static void rename(Automaton a) {
 	State[] s = a.getStates();

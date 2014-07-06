@@ -90,8 +90,8 @@ q     * @param state the state of the configuration, either NORMAL,
     }
 
     /**
-     * Determines if this pane already contains this transition.
-     * @param transition the transition to test for membership
+     * Determines if this pane already contains this configuration.
+     * @param configuration the configuration to test for membership
      * @return <CODE>true</CODE> if the pane holds this transition,
      * <CODE>false</CODE> if it does not
      */

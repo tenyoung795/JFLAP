@@ -31,6 +31,7 @@ import automata.State;
 import automata.Transition;
 import automata.turing.*;
 import file.ParseException;
+import file.DataException;
 import java.util.*;
 import javax.xml.parsers.*;
 import org.w3c.dom.*;
@@ -55,11 +56,11 @@ public class TMTransducer extends AutomatonTransducer {
 	try {
 	    int tapes = Integer.parseInt(s);
 	    if (tapes<1 || tapes>5)
-		throw new ParseException
+		throw new DataException
 		    (tapes+" invalid # of tapes.  Valid # of tapes 1-5.");
 	    return new TuringMachine(tapes);
 	} catch (NumberFormatException e) {
-	    throw new ParseException
+	    throw new DataException
 		("Error reading "+s+" as number of tapes.");
 	}
     }
@@ -106,11 +107,11 @@ public class TMTransducer extends AutomatonTransducer {
 		try {
 		    tape = Integer.parseInt(tapeString);
 		    if (tape<1 || tape>tapes)
-			throw new ParseException
+			throw new DataException
 			    ("In "+tag+" tag, tape "+tape+
 			     " identified but only 1-"+tapes+" are valid.");
 		} catch (NumberFormatException e) {
-		    throw new ParseException
+		    throw new DataException
 			("In "+tag+" tag, error reading "
 			 +tapeString+" as tape.");
 		}
@@ -126,7 +127,7 @@ public class TMTransducer extends AutomatonTransducer {
 	    return new TMTransition(from, to, readStrings, writeStrings,
 				    moveStrings);
 	} catch (IllegalArgumentException e) {
-	    throw new ParseException(e.getMessage());
+	    throw new DataException(e.getMessage());
 	}
     }
 

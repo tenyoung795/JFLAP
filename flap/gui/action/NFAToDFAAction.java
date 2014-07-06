@@ -61,7 +61,7 @@ public class NFAToDFAAction extends FSAAction {
 
     /**
      * Puts the DFA form in another window.
-     * @param event the action event
+     * @param e the action event
      */
     public void actionPerformed(ActionEvent e) {
 	if (automaton.getInitialState() == null) {

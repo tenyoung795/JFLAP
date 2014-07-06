@@ -138,22 +138,24 @@ public class TMTransitionCreator extends TableTransitionCreator {
     /**
      * Modifies a transition according to what's in the table.
      */
-    public boolean modifyTransition(Transition transition, TableModel model) {
+    public Transition modifyTransition(Transition transition,
+				       TableModel model) {
 	TMTransition t = (TMTransition) transition;
 	try {
+	    String[] reads = new String[machine.tapes()];
+	    String[] writes = new String[machine.tapes()];
+	    String[] dirs = new String[machine.tapes()];
 	    for (int i=0; i<machine.tapes(); i++) {
-		String read = (String) model.getValueAt(i,0);
-		String write = (String) model.getValueAt(i,1);
-		String dir = (String) model.getValueAt(i,2);
-		t.setRead(read, i);
-		t.setWrite(write, i);
-		t.setDirection(dir, i);
+		reads[i] = (String) model.getValueAt(i,0);
+		writes[i] = (String) model.getValueAt(i,1);
+		dirs[i] = (String) model.getValueAt(i,2);
 	    }
+	    return new TMTransition(t.getFromState(), t.getToState(),
+				    reads, writes, dirs);
 	} catch (IllegalArgumentException e) {
 	    reportException(e);
-	    return false;
+	    return null;
 	}
-	return true;
     }
 
     /** The Turing machine. */

@@ -88,19 +88,18 @@ public class PDATransitionCreator extends TableTransitionCreator {
     /**
      * Modifies a transition according to what's in the table.
      */
-    public boolean modifyTransition(Transition transition, TableModel model) {
+    public Transition modifyTransition(Transition transition,
+				       TableModel model) {
 	String input = (String) model.getValueAt(0,0);
 	String pop = (String) model.getValueAt(0,1);
 	String push = (String) model.getValueAt(0,2);
 	PDATransition t = (PDATransition) transition;
 	try {
-	    t.setInputToRead(input);
-	    t.setStringToPop(pop);
-	    t.setStringToPush(push);
+	    return new PDATransition(t.getFromState(), t.getToState(),
+				     input, pop, push);
 	} catch (IllegalArgumentException e) {
 	    reportException(e);
-	    return false;
+	    return null;
 	}
-	return true;
     }
 }

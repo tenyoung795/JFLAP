@@ -85,15 +85,14 @@ public class FSATransitionCreator extends TableTransitionCreator {
     /**
      * Modifies a transition according to what's in the table.
      */
-    public boolean modifyTransition(Transition transition, TableModel model) {
+    public Transition modifyTransition(Transition t,
+				       TableModel model) {
 	String s = (String) model.getValueAt(0,0);
-	FSATransition t = (FSATransition) transition;
 	try {
-	    t.setLabel(s);
+	    return new FSATransition(t.getFromState(), t.getToState(), s);
 	} catch (IllegalArgumentException e) {
 	    reportException(e);
-	    return false;
+	    return null;
 	}
-	return true;
     }
 }

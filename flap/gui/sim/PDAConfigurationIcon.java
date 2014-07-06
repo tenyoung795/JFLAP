@@ -45,8 +45,6 @@ public class PDAConfigurationIcon extends ConfigurationIcon {
     /**
      * Instantiates a new <CODE>PDAConfigurationIcon</CODE>.
      * @param configuration the PDA configuration that is represented
-     * @param automaton the PD-automaton that this configuration
-     * "arose" from
      */
     public PDAConfigurationIcon(Configuration configuration) {
 	super(configuration);

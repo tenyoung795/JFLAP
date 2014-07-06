@@ -79,7 +79,7 @@ public class Unrestricted {
      * some string smaller than it.  For a normal grammar, of course,
      * this would be just those variables with, but for an
      * unrestricted grammar this can include the symbol <I>b</I> and
-     * <I>c</I> where <I>babca->aa</I> is a rule.  <I>a</I> is not
+     * <I>c</I> where <I>babca - aa</I> is a rule.  <I>a</I> is not
      * included because there are <I>a</I> terminals in the result.
      * @param grammar the grammar to find the "small" symbols for
      */

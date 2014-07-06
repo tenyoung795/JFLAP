@@ -51,7 +51,7 @@ public class TraceWindow extends JFrame {
     /**
      * Instantiates a new step window with the given configuration.
      * @param last the last configuration that we are tracing; we
-     * display it along with its parents
+     * display it along with all its ancestors
      */
     public TraceWindow(Configuration last) {
 	super("Traceback");
@@ -69,8 +69,9 @@ public class TraceWindow extends JFrame {
      * @param configuration the configuration whose ancestry we want
      * to display
      * @return a component with the ancestry of the configuration
+     * contained within a scroll pane
      */
-    public static Component getPastPane(Configuration configuration) {
+    public static JScrollPane getPastPane(Configuration configuration) {
 	JScrollPane sp =
 	    new JScrollPane(new PastPane(configuration),
 			    JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -87,9 +88,10 @@ public class TraceWindow extends JFrame {
      * configuration.
      * @param configuration the configuration whose ancestry we want
      * to display
-     * @return a component with the ancestry of the configuration
+     * @return a component with the ancestry of the configuration, not
+     * contained within any scroll pane
      */
-    public static PastPane getPastPane2(Configuration configuration) {
+    public static PastPane getPastPaneNoScroll(Configuration configuration) {
 	return new PastPane(configuration);
     }
 

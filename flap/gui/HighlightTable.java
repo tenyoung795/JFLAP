@@ -151,7 +151,7 @@ public class HighlightTable extends JTable {
     }
 
     /** The built in renderer. */
-    private static final TableHighlighterRendererGenerator THRG =
+    private static TableHighlighterRendererGenerator THRG =
 	new TableHighlighterRendererGenerator() {
 	    public TableCellRenderer getRenderer(int row, int column) {
 		if (renderer == null) {

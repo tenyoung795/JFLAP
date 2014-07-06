@@ -100,7 +100,7 @@ public class FSAToREController {
 	    currentStep = TRANSITIONS_TO_SINGLE_FINAL;
 	case TRANSITIONS_TO_SINGLE_FINAL:
 	    detailStep.setText
-		("Put lambda transitions from old final states to new.");
+		("Put \u03BB-transitions from old final states to new.");
 	    // We know we're done when...
 	    if (drawer.numberSelected() != 0) return;
 	    currentStep = CONVERT_TRANSITIONS;

@@ -36,7 +36,9 @@ import java.util.*;
  * bring up a help page appropriate to whatever context.  It also
  * serves as a general sort of database to relate types of objects to
  * a particular URL to bring up in the help web frame for the various
- * subclasses that will implement this action.
+ * subclasses that will implement this action.  The idea is that an
+ * object can store its help page in the <CODE>HelpAction</CODE> via
+ * <CODE>setURL</CODE>
  * 
  * @see gui.WebFrame
  * 
@@ -54,23 +56,30 @@ public abstract class HelpAction extends RestrictedAction {
     }
 
     /**
-     * Associates a particular object with a URL.
-     * @param key the key which will map to a URL
+     * Associates a particular object with a URL.  This object may be
+     * a particular instance (in which case when this instance gets
+     * its help it gets it immediately) or a Class object holding the
+     * class or superclass of the instance.
+     * @param object the key which will map to a URL
      * @param url the string representation of the URL to visit
+     * @see #getURL(Object)
      */
     public static void setURL(Object object, String url) {
 	HELP_MAP.put(object, url);
     }
 
     /**
-     * Returns the URL for a particular object.  If there is a direct
-     * mapping from object to a URL, that URL is returned.  If there
-     * is no direct mapping, a mapping from this object's class to a
-     * URL is attempted.  If that yields nothing, then
-     * <CODE>null</CODE> is returned.
+     * Returns the URL for a particular object as set via
+     * <CODE>setURL</CODE>.  If there is a direct mapping from the
+     * object to a URL, that URL is returned.  If there is no direct
+     * mapping, a mapping from this object's class to a URL is
+     * attempted.  If <i>that</i> yields nothing, then a mapping from
+     * the object's superclass to a URL is attempted.  If no
+     * superclass yields a URL, then <CODE>null</CODE> is returned.
      * @param object the object to get help for
      * @return a URL of help for this object, or <CODE>null</CODE> if
      * no help for this object exists
+     * @see #setURL(Object, String)
      */
     public static String getURL(Object object) {
 	String url = (String) HELP_MAP.get(object);
@@ -108,14 +117,4 @@ public abstract class HelpAction extends RestrictedAction {
     public static final String DEFAULT_HELP = "/DOCS/nohelp.html";
     /** The web frame. */
     private static final WebFrame FRAME = new WebFrame("/DOCS/index.html");
-
-    /**
-     * This manually adds the help topics.  The preferred method is to
-     * make the HTML file name (before .html) the name of the class,
-     * i.e., gui.editor.EditorPane.html.
-     */
-    static {
-	/*setURL(gui.editor.EditorPane.class,
-	  "/DOCS/automatonEditor.html");*/
-    }
 }

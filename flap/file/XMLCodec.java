@@ -31,6 +31,9 @@ import java.io.*;
 import java.util.Map;
 import javax.xml.parsers.*;
 import org.w3c.dom.*;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 /**
  * This is the codec for reading and writing JFLAP structures as XML
@@ -88,27 +91,18 @@ public class XMLCodec extends Codec {
 	    transducer = TransducerFactory.getTransducer(structure);
 	    Document dom = transducer.toDOM(structure);
 	    DOMPrettier.makePretty(dom);
-	    
-	    PrintWriter writer = new PrintWriter(new FileWriter(file));
-	    NodeList list = dom.getChildNodes();
-	    for (int i=0; i<list.getLength(); i++) {
-		Object itemText = null;
-		if (list.item(i) instanceof ProcessingInstruction) {
-		    ProcessingInstruction pi =
-			(ProcessingInstruction) list.item(i);
-		    itemText = "<?"+pi.getTarget()+" "+pi.getData()+"?>";
-		} else {
-		    itemText = list.item(i);
-		}
-		writer.println(itemText);
-	    }
-	    writer.flush();
-	    writer.close();
+	    Source s = new DOMSource(dom);
+	    Result r = new StreamResult(file);
+	    Transformer t = TransformerFactory.newInstance().newTransformer();
+	    t.transform(s, r);
 	    return file;
 	} catch (IllegalArgumentException e) {
 	    throw new EncodeException
 		("No XML transducer available for this structure!");
-	} catch (IOException e) {
+	} catch (TransformerConfigurationException e) {
+	    throw new EncodeException
+		("Could not open file to write!");
+	} catch (TransformerException e) {
 	    throw new EncodeException
 		("Could not open file to write!");
 	}

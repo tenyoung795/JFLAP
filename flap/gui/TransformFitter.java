@@ -24,36 +24,28 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
  
-package grammar;
+package gui;
+
+import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 
 /**
- * An unbound grammar has no restrictions whatsoever in the way of
- * what productions can be added to it.  Since we may no longer depend
- * on the first production being restricted, the start variable is
- * assumed to be S until the grammar is told otherwise.
- *
+ * This class defines methods for producing transforms that will allow.
+ * 
  * @author Thomas Finley
  */
 
-public class UnboundGrammar extends Grammar {
+public abstract class TransformFitter {
     /**
-     * Creates a new grammar.
+     * This produces a transform whereby content within rectangle
+     * <I>rectDraw</I> will fit entirely within the area defined by
+     * rectangle <I>rectSpace</I>.
+     * @param rectDraw the rectangle defining the area painting
+     * commands will be sent
+     * @param rectSpace the rec
      */
-    public UnboundGrammar() {
-	setStartVariable("S");
-    }
-
-    /**
-     * Every production is all right except those with lambda in the
-     * left hand side of the production.
-     * @param production the production to check
-     * @throws IllegalArgumentException if the production is lambda on
-     * the left hand side
-     */
-    public void checkProduction(Production production) {
-	/*if (production.getLHS().length() == 0) {
-	    throw new IllegalArgumentException
-		("The left hand side cannot be empty.");
-	}*/
+    public static AffineTransform fit(Rectangle rectDraw,
+				      Rectangle rectSpace) {
+	return new AffineTransform();
     }
 }

@@ -31,7 +31,10 @@ import java.awt.event.ActionEvent;
 /**
  * The <CODE>NewHelpAction</CODE> is an extension of the
  * <CODE>HelpAction</CODE> that, whenever an action is received, puts
- * up the help code for the {@link gui.action.NewAction}.
+ * up the help code for the {@link gui.action.NewAction}.  This class
+ * is intended only for the special purpose of being used in the new
+ * structure creation window, which is just a list of buttons and does
+ * not have the same structure as a document window.
  * 
  * @author Thomas Finley
  */
@@ -39,8 +42,6 @@ import java.awt.event.ActionEvent;
 public class NewHelpAction extends HelpAction {
     /**
      * Instantiates an <CODE>EnvironmentHelpAction</CODE>.
-     * @param environment the environment that this help action will
-     * get the current panel from
      */
     public NewHelpAction() {
 	

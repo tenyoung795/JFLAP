@@ -42,7 +42,7 @@ import java.io.Serializable;
  * @author Thomas Finley
  */
 
-public abstract class Transition implements Serializable {
+public abstract class Transition implements Serializable, Cloneable {
     /**
      * Instantiates a new <CODE>Transition</CODE>.
      * @param from the state this transition is from
@@ -61,7 +61,16 @@ public abstract class Transition implements Serializable {
      * @return a copy of this transition as described
      */
     public abstract Transition copy(State from, State to);
-    
+
+    /**
+     * Returns a copy of this transition with the same <CODE>from</CODE>
+     * and <CODE>to</CODE> state.
+     * @return a copy of this transition as described
+     */
+    public Object clone() {
+	 return copy(getFromState(), getToState());
+    }
+
     /**
      * Returns the state this transition eminates from.
      * @return the state this transition eminates from

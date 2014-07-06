@@ -241,8 +241,10 @@ public class Production implements Serializable {
     public String toString() {
 	StringBuffer buffer = new StringBuffer();
 	buffer.append(getLHS());
-	buffer.append("->");
-	buffer.append(getRHS());
+	//buffer.append("->");
+	buffer.append('\u2192');
+	String rhs = getRHS();
+	buffer.append(rhs.length()==0 ? "\u03BB" : rhs);
 	//buffer.append('\n');
 	return buffer.toString();
     }
@@ -261,7 +263,7 @@ public class Production implements Serializable {
 	}
 	return (String[]) list.toArray(new String[0]);
     }
-    
+
     /** the left hand side of the production. */
     protected String myLHS;
     /** the right hand side of the production. */

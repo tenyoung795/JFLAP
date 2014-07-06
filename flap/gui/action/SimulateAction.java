@@ -170,8 +170,6 @@ public class SimulateAction extends AutomatonAction {
      */
     public static boolean isApplicable(Object object) {
 	return object instanceof Automaton;
-	/* &&
-	   !(object instanceof automata.ttm.TwoTapeTuringMachine);*/
     }
 
     /**
@@ -194,7 +192,4 @@ public class SimulateAction extends AutomatonAction {
     private Automaton automaton;
     /** The environment that the simulation pane will be put in. */
     private Environment environment;
-
-    /** The two tape input. */
-   
 }

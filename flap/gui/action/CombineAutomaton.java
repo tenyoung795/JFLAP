@@ -54,7 +54,7 @@ public class CombineAutomaton extends AutomatonAction {
 
     /**
      * Creates a new automaton.
-     * @param event the action event
+     * @param e the action event
      */
     public void actionPerformed(ActionEvent e) {
 	JComboBox combo = new JComboBox();

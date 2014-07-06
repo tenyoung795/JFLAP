@@ -30,35 +30,36 @@ import automata.Automaton;
 import automata.AutomatonSimulator;
 import automata.Configuration;
 import automata.SimulatorFactory;
+import automata.turing.TMSimulator;
+import automata.turing.TuringMachine;
+import gui.SplitPaneFactory;
 import gui.editor.ArrowDisplayOnlyTool;
 import gui.environment.Environment;
 import gui.environment.Universe;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import javax.swing.*;
-import javax.swing.table.*;
+import gui.environment.tag.CriticalTag;
+import gui.sim.TraceWindow;
+import gui.sim.multiple.InputTableModel;
+import gui.viewer.AutomatonPane;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.*;
-import gui.viewer.AutomatonPane;
-import gui.sim.multiple.InputTableModel;
-import gui.environment.tag.CriticalTag;
-import automata.turing.TuringMachine;
-import automata.turing.TMSimulator;
-import gui.SplitPaneFactory;
+import javax.swing.*;
+import javax.swing.table.*;
 
 /**
- * This is the action used for the simulation of input on an automaton
- * with no interaction.  This method can operate on any automaton.  It
- * uses a special exception for the two tape case.
+ * This is the action used for the simulation of multiple inputs on an
+ * automaton with no interaction.  This method can operate on any
+ * automaton.
  * 
  * @author Thomas Finley
  */
 
 public class MultipleSimulateAction extends NoInteractionSimulateAction {
     /**
-     * Instantiates a new <CODE>SimulateAction</CODE>.
+     * Instantiates a new <CODE>MultipleSimulateAction</CODE>.
      * @param automaton the automaton that input will be simulated on
      * @param environment the environment object that we shall add our
      * simulator pane to
@@ -66,45 +67,62 @@ public class MultipleSimulateAction extends NoInteractionSimulateAction {
     public MultipleSimulateAction(Automaton automaton,
 				  Environment environment) {
 	super(automaton, environment);
-	putValue(NAME, "Multiple Run...");
+	putValue(NAME, "Multiple Run");
 	//putValue(ACCELERATOR_KEY, null);
+    }
+
+    /**
+     * Returns the title for the type of compontent we will add to the
+     * environment.
+     * @return in this base class, returns "Multiple Inputs"
+     */
+    public String getComponentTitle() {
+	return "Multiple Run";
     }
 
     /**
      * This will search configurations for an accepting configuration.
      * @param automaton the automaton input is simulated on
      * @param simulator the automaton simulator for this automaton
-     * @param configurations the initial configurations generated
+     * @param configs the initial configurations generated from a
+     * single input
      * @param initialInput the object that represents the initial
-     * input; this is a String object in most cases, but may differ
-     * for multiple tape turing machines
+     * input; this is a String object in most cases, but for Turing
+     * Machines is an array of String objects
+     * @param associatedConfigurations the first accepting
+     * configuration encountered will be added to this list, or the
+     * last configuration considered if there was no accepted
+     * configuration
      * @return <CODE>0</CODE> if this was an accept, <CODE>1</CODE> if
      * reject, and <CODE>2</CODE> if the user cancelled the run
      */
     protected int handleInput(Automaton automaton,
 			      AutomatonSimulator simulator,
-			      Configuration[] configs,
-			      Object initialInput) {
+			      Configuration[] configs, Object initialInput,
+			      List associatedConfigurations) {
 	JFrame frame = Universe.frameForEnvironment(getEnvironment());
 	// How many configurations have we had?
 	int numberGenerated = 0;
 	// When should the next warning be?
 	int warningGenerated = WARNING_STEP;
-	// How many have accepted?
-	int numberAccepted = 0;
+	Configuration lastConsidered = configs[configs.length-1];
 	while (configs.length > 0) {
 	    numberGenerated += configs.length;
 	    // Make sure we should continue.
 	    if (numberGenerated >= warningGenerated) {
-		if (!confirmContinue(numberGenerated, frame)) return 2;
+		if (!confirmContinue(numberGenerated, frame)) {
+		    associatedConfigurations.add(lastConsidered);
+		    return 2;
+		}
 		while (numberGenerated >= warningGenerated)
 		    warningGenerated *= 2;
 	    }
 	    // Get the next batch of configurations.
 	    ArrayList next = new ArrayList();
 	    for (int i=0; i<configs.length; i++) {
+		lastConsidered = configs[i];
 		if (configs[i].isAccept()) {
-		    numberAccepted++;
+		    associatedConfigurations.add(configs[i]);
 		    return 0;
 		} else {
 		    next.addAll(simulator.stepConfiguration(configs[i]));
@@ -112,11 +130,8 @@ public class MultipleSimulateAction extends NoInteractionSimulateAction {
 	    }
 	    configs = (Configuration[]) next.toArray(new Configuration[0]);
 	}
-	if (numberAccepted == 0) {
-	    //JOptionPane.showMessageDialog(frame, "The input was rejected.");
-	    return 1;
-	}
-	return 0;
+	associatedConfigurations.add(lastConsidered);
+	return 1;
     }
 
     /**
@@ -124,14 +139,27 @@ public class MultipleSimulateAction extends NoInteractionSimulateAction {
      * @param automaton the automaton to provide the multiple input
      * table for
      * @return a table object for this automaton
+     * @see gui.sim.multiple.InputTableModel
      */
     protected JTable initializeTable(Automaton automaton) {
-	JTable table = new JTable(InputTableModel.getModel((getAutomaton())));
+	InputTableModel model = InputTableModel.getModel(getAutomaton());
+	JTable table = new JTable(model);
+	// In this regular multiple simulate pane, we don't care about
+	// the outputs, so get rid of them.
+	TableColumnModel tcmodel = table.getColumnModel();
+	for (int i=model.getInputCount(); i>0; i--) {
+	    tcmodel.removeColumn(tcmodel.getColumn(model.getInputCount()));
+	}
+	// Set up the last graphical parameters.
 	table.setShowGrid(true);
 	table.setGridColor(Color.lightGray);
 	return table;
     }
 
+    /**
+     * Handles the creation of the multiple input pane.
+     * @param e the action event
+     */
     public void actionPerformed(ActionEvent e) {
 	if (getAutomaton().getInitialState() == null) {
 	    JOptionPane.showMessageDialog
@@ -162,19 +190,23 @@ public class MultipleSimulateAction extends NoInteractionSimulateAction {
 		    for (int r=0; r<inputs.length; r++) {
 			Configuration[] configs = null;
 			Object input = null;
-			// Is this two tape?
+			// Is this a Turing machine?
 			if (getAutomaton() instanceof TuringMachine) {
 			    configs = ((TMSimulator)simulator)
 				.getInitialConfigurations(inputs[r]);
 			    input = inputs[r];
-			} else { // If it's NOT two tape...
+			} else { // If it's a Turing machine.
 			    configs = simulator.getInitialConfigurations
 				(inputs[r][0]);
 			    input = inputs[r][0];
 			}
+			List associated = new ArrayList();
 			int result=handleInput(getAutomaton(), simulator,
-					       configs, input);
-			model.setResult(r, RESULT[result]);
+					       configs, input, associated);
+			Configuration c = null;
+			if (associated.size() != 0)
+			    c = (Configuration) associated.get(0);
+			model.setResult(r, RESULT[result], c);
 		    }
 		}
 	    });
@@ -200,6 +232,49 @@ public class MultipleSimulateAction extends NoInteractionSimulateAction {
 			table.getModel().setValueAt("", row, column);
 		}
 	    });
+	bar.add(new AbstractAction("View Trace") {
+		public void actionPerformed(ActionEvent e) {
+		    int[] rows = table.getSelectedRows();
+		    InputTableModel tm=(InputTableModel)table.getModel();
+		    List nonassociatedRows = new ArrayList();
+		    for (int i=0; i<rows.length; i++) {
+			if (rows[i] == tm.getRowCount()-1) continue;
+			Configuration c=tm.
+			    getAssociatedConfigurationForRow(rows[i]);
+			if (c == null) {
+			    nonassociatedRows.add(new Integer(rows[i]+1));
+			    continue;
+			}
+			TraceWindow window = new TraceWindow(c);
+			window.show();
+			window.toFront();
+		    }
+		    // Print the warning message about rows without
+		    // configurations we could display.
+		    if (nonassociatedRows.size() > 0) {
+			StringBuffer sb = new StringBuffer("Row");
+			if (nonassociatedRows.size() > 1) sb.append("s");
+			sb.append(" ");
+			sb.append(nonassociatedRows.get(0));
+			for (int i=1; i<nonassociatedRows.size(); i++) {
+			    if (i == nonassociatedRows.size()-1) {
+				// Last one!
+				sb.append(" and ");
+			    } else {
+				sb.append(", ");
+			    }
+			    sb.append(nonassociatedRows.get(i));
+			}
+			sb.append("\ndo");
+			if (nonassociatedRows.size() == 1) sb.append("es");
+			sb.append(" not have end configurations.");
+			JOptionPane.showMessageDialog
+			    ((Component)e.getSource(),
+			     sb.toString(),
+			     "Bad Rows Selected", JOptionPane.ERROR_MESSAGE);
+		    }
+		}
+	    });
 
 	// Set up the final view.
 	AutomatonPane ap = new AutomatonPane(getAutomaton());
@@ -207,7 +282,7 @@ public class MultipleSimulateAction extends NoInteractionSimulateAction {
 	JSplitPane split = SplitPaneFactory.createSplit
 	    (getEnvironment(), true, 0.5, ap, panel);
 	MultiplePane mp = new MultiplePane(split);
-	getEnvironment().add(mp, "Multiple Inputs", new CriticalTag(){});
+	getEnvironment().add(mp, getComponentTitle(), new CriticalTag(){});
 	getEnvironment().setActive(mp);
     }
 

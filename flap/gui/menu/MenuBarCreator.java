@@ -136,6 +136,9 @@ public class MenuBarCreator {
 	if (MultipleSimulateAction.isApplicable(object))
 	    addItem(menu, new MultipleSimulateAction
 		    ((Automaton) object, environment));
+	if (MultipleOutputSimulateAction.isApplicable(object))
+	    addItem(menu, new MultipleOutputSimulateAction
+		    ((Automaton) object, environment));
 	/*if (GrammarOutputAction.isApplicable(object))
 	    addItem(menu, new GrammarOutputAction
 	    ((gui.environment.GrammarEnvironment) environment));*/

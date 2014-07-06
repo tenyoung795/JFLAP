@@ -40,8 +40,12 @@ import javax.swing.event.ChangeListener;
 
 /**
  * The environment class is the central view that manages various
- * "hangers on" of an object.  A hanger on is a component that has
- * some relevance to the object that this environment contains.
+ * "hangers on" of an object.  By "hanger on" I mean a component that
+ * has some relevance to the object that this environment contains.
+ * For example, each <CODE>Environment</CODE> instance has, at minimum
+ * some sort of component whereby this structure can be edited.  The
+ * <CODE>Environment</CODE> instance keeps track of and displays these
+ * various components.
  * 
  * @see gui.environment.EnvironmentFrame
  * @see gui.environment.tag
@@ -221,8 +225,9 @@ public abstract class Environment extends JPanel {
     /**
      * Adds a component with the specified name.  This is the same as
      * the other add method, except without that tag field, which is
-     * assumed to be a basic tag object with no other tagness ascribed
-     * to it (i.e. a generic tag).
+     * assumed to be a tag object with no other tagness ascribed to it
+     * (i.e. a generic tag).  That is, the component is assumed to
+     * have an empty tag.
      * @param component the component to add, which should be unique
      * for this environment
      * @param name the name this component should be labeled with,

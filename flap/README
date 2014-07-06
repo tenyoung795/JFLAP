@@ -1,35 +1,25 @@
 Building JFLAP
 --------------
-Compiling JFLAP requires Java 1.4, however, running JFLAP requires Java
-1.3 for nearly everything except L-Systems rendering, which requires 1.4.  
-The dependence on 1.4 will likely increase in the future, so beware.  To
-compile this source on Unix, execute the following command from this
-directory:
+Compiling and running JFLAP requires Java 1.4 and 1.5.  In order to
+build JFLAP and the JAR, a Makefile has been provided.  To build JFLAP
+with gnumake, enter
 
-	javac JFLAP.java JFLAPplet.java
+	make
 
-To run JFLAP in this way, then you can execute:
+from the command line.  This will create the compiled '.class' Java
+files, as well as the JFLAP.jar executable jar file.  The script used to
+create the JFLAP.jar executable requires Python 2.2.
 
-	java JFLAP.java
+To run from the class files:
 
-JAR Distribution
-----------------
-The JAR.py script will compile all the .class files into a JFLAP.jar
-single file distribution.  Naturally, it requires successful compilation
-of JFLAP into all the .class files, as described in the compilation
-section.
-
-	python JAR.py
-
-This, of course, requires Python, and has been verified to work only with
-Python 2.2 and higher, but it probably works on previous versions.
+	java JFLAP
 
 To run as a JAR:
 
 	java -jar JFLAP.jar
 
-Alternatively on OS X and on a correct configured Windows machine, you can 
-double click the JFLAP.jar file and it should just work.
+Alternatively on OS X and on a correctly configured Windows machine, you
+can double click the JFLAP.jar file and it should just work.
 
 JFLAPplet
 ---------
@@ -39,9 +29,10 @@ above.
 
 Javadoc
 -------
-The ./DOC script will create Javadoc documentation for all the JFLAP code
-and packages in the javadoc directory.  Preferred is the javadoc that
-comes with the 1.4 SDK; you may have to remove the "-breakiterator" line
-to make it compatible with these early versions, plus there were some bugs
-in the previous versions of javadoc that led to it failing to compile
-javadoc.
+Entering
+
+	make doc
+
+will create Javadoc documentation for all the JFLAP code and packages in
+the javadoc directory.  The javadoc that comes with the 1.4 SDK is
+required.

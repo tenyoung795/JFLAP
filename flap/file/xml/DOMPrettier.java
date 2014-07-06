@@ -65,9 +65,8 @@ public class DOMPrettier {
 	    nodes[i] = list.item(i);
 	
 	boolean lastChild = true; // If no children, don't want text inside.
-	String newIndent = indent+INDENT;
 	for (int i=0; i<nodes.length; i++)
-	    lastChild = makePretty(dom, newIndent, nodes[i]);
+	    lastChild = makePretty(dom, indent+INDENT, nodes[i]);
 	if (!lastChild)
 	    node.appendChild(dom.createTextNode(indent));
 	return false;

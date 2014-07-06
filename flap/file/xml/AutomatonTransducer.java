@@ -31,6 +31,7 @@ import automata.State;
 import automata.Transition;
 import automata.graph.*;
 import file.ParseException;
+import file.DataException;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
@@ -64,7 +65,7 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
      * filled with those states that have their X and Y coordinates
      * specified in the DOM and do not need to be laid out
      * @return a map from state identifiers to the specific state
-     * @throws ParseException in the case of non-numeric, negative, or
+     * @throws DataException in the case of non-numeric, negative, or
      * duplicate IDs
      * @see #readTransitions
      */
@@ -94,12 +95,12 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 	    String idString = ((Element) stateNode)
 		.getAttribute(STATE_ID_NAME);
 	    if (idString == null)
-		throw new ParseException
+		throw new DataException
 		    ("State without id attribute encountered!");
 	    Object id = parseID(idString);
 	    // Check for duplicates.
 	    if (i2sn.put(id, stateNode) != null)
-		throw new ParseException("The state ID "+id+" appears twice!");
+		throw new DataException("The state ID "+id+" appears twice!");
 	}
 	// Go through the map, and turn the state nodes into states.
 	Iterator it = i2sn.keySet().iterator();
@@ -118,7 +119,7 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 	    } catch (NullPointerException e) {
 		hasLocation = false;
 	    } catch (NumberFormatException e) {
-		throw new ParseException
+		throw new DataException
 		    ("The x coordinate "+e2t.get(STATE_X_COORD_NAME)+
 		     " could not be read for state "+id+".");
 	    }
@@ -128,7 +129,7 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 	    } catch (NullPointerException e) {
 		hasLocation = false;
 	    } catch (NumberFormatException e) {
-		throw new ParseException
+		throw new DataException
 		    ("The y coordinate "+e2t.get(STATE_Y_COORD_NAME)+
 		     " could not be read for state "+id+".");
 	    }
@@ -172,7 +173,7 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
      * @param document the DOM document to read transitions from
      * @param automaton the automaton to add transitions to
      * @param id2state the map of ID objects to a state
-     * @throws ParseException in the case of absent from/to states
+     * @throws DataException in the case of absent from/to states
      * @see #createTransition
      * @see #readStates
      */
@@ -188,21 +189,21 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 	    // Get the from state.
 	    String fromName = (String) e2t.get(TRANSITION_FROM_NAME);
 	    if (fromName == null)
-		throw new ParseException("A transition has no from state!");
+		throw new DataException("A transition has no from state!");
 	    Object id = parseID(fromName);
 	    State from = (State) id2state.get(id);
 	    if (from == null)
-		throw new ParseException("A transition is defined from "+
-				   "non-existant state "+id+"!");
+		throw new DataException("A transition is defined from "+
+				   "non-existent state "+id+"!");
 	    // Get the to state.
 	    String toName = (String) e2t.get(TRANSITION_TO_NAME);
 	    if (toName == null)
-		throw new ParseException("A transition has no to state!");
+		throw new DataException("A transition has no to state!");
 	    id = parseID(toName);
 	    State to = (State) id2state.get(id);
 	    if (to == null)
-		throw new ParseException("A transition is defined to "+
-					 "non-existant state "+id+"!");
+		throw new DataException("A transition is defined to "+
+					"non-existent state "+id+"!");
 	    // Now, make the transition.
 	    Transition transition = createTransition(from, to, tNode, e2t);
 	    automaton.addTransition(transition);
@@ -214,7 +215,7 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
      * identifier object.
      * @param string a string that encodes a state ID
      * @return an object that is unique for this state
-     * @throws ParseException if the state ID is not in a supported
+     * @throws DataException if the state ID is not in a supported
      * format
      */
     protected static Object parseID(String string) {
@@ -227,7 +228,9 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
     }
 
     /**
-     * Perform graph layout on the automaton if necessary.
+     * Perform graph layout on the automaton if necessary.  This is
+     * performed for those XML files with states that do not have their
+     * x and y tags specified.
      * @param automaton the automaton to lay out
      * @param locStates the states that have the x and y tags in the
      * DOM representation and should be kept as "isonodes" in the

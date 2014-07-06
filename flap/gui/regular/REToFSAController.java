@@ -147,14 +147,18 @@ public class REToFSAController {
 	toDo.remove(transition);
 	String label = transition.getLabel();
 	switch (action) {
-	case DEPARENS:
-	    transition.setLabel
-		(Discretizer.delambda(label.substring(1, label.length()-1)));
-	    if (requiredAction(transition.getLabel()) != 0)
-		toDo.add(transition);
+	case DEPARENS: {
+	    State s1=transition.getFromState(), s2=transition.getToState();
+	    String newLabel=Discretizer.delambda
+		(label.substring(1,label.length()-1));
+	    automaton.removeTransition(transition);
+	    FSATransition t = new FSATransition(s1, s2, newLabel);
+	    automaton.addTransition(t);
+	    if (requiredAction(newLabel) != 0)
+		toDo.add(t);
 	    action = 0; // That's all that need be done.
 	    break;
-	case DESTAR:
+	} case DESTAR:
 	    replacements = replaceTransition
 		(transition, new String[] 
 		{Discretizer.delambda(label.substring(0, label.length()-1))});
@@ -176,10 +180,10 @@ public class REToFSAController {
     }
 
     /**
-     * Creates a lambda transition between two states.
+     * Creates a lambda-transition between two states.
      * @param from the from state
      * @param to the to state
-     * @return a lambda transition between those states
+     * @return a lambda-transition between those states
      */
     private FSATransition lambda(State from, State to) {
 	return new FSATransition(from, to, "");
@@ -197,7 +201,7 @@ public class REToFSAController {
 	State from = transition.getFromState();
 	State to = transition.getToState();
 	switch (action) {
-	case 0:
+	case DEPARENS:
 	    // Probably a deparenthesization, or whatever.
 	    return;
 	case DEOR:
@@ -395,7 +399,7 @@ public class REToFSAController {
 	}
 
 	convertPane.detailLabel.setText
-	    (transitionNeeded+" more lambda transitions needed.");
+	    (transitionNeeded+" more \u03BB-transitions needed.");
 	switch (action) {
 	case DEOR:
 	    convertPane.mainLabel.setText("De-oring "+transition.getLabel());
@@ -417,7 +421,7 @@ public class REToFSAController {
     private FiniteStateAutomaton automaton;
     /** The set of transitions that still require expansion. */
     private Set toDo = new HashSet();
-    /** The set of lambda transitions still unborn! */
+    /** The set of lambda-transitions still unborn! */
     private Set toDoTransitions = new HashSet();
 
     /** The current action, or 0 if no action. */

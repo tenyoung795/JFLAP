@@ -183,7 +183,7 @@ public class Universe {
 	// Create the codec registry.
 	XMLCodec xc = new XMLCodec();
 	CODEC_REGISTRY.add(xc);
-	CODEC_REGISTRY.add(new SerializedCodec(xc));
+	//CODEC_REGISTRY.add(new SerializedCodec(xc));
 	CODEC_REGISTRY.add(new JFLAP3Codec());
 	//CODEC_REGISTRY.add(new LenoreSystemsCodec());
     }

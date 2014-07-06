@@ -162,6 +162,27 @@ public class FirstFollowModel extends AbstractTableModel {
     }
 
     /**
+     * When a string value is used to define a set, it's possible that
+     * the string value will contain multiple characters.  This will
+     * take a string, and return a string with not duplicate
+     * characters.  Only the first instance of a character is
+     * preserved, and others are discarded.  So, if one were to pass
+     * in <I>abaacb</I>, this would return the string <I>abc</I>.
+     * @param s the string to process
+     * @return the same string as was passed in but with duplicate
+     * characters removed
+     */
+    private String removeDuplicateCharacters(String s) {
+	Set characters = new HashSet();
+	StringBuffer sb = new StringBuffer();
+	for (int i=0; i<s.length(); i++) {
+	    Character c = new Character(s.charAt(i));
+	    if (characters.add(c)) sb.append(c.charValue());
+	}
+	return sb.toString();
+    }
+
+    /**
      * Sets the value at each column.
      * @param value the new value
      * @param row the row to change
@@ -173,10 +194,10 @@ public class FirstFollowModel extends AbstractTableModel {
 	    variables[row] = (String) value;
 	    break;
 	case 1:
-	    firstSets[row] = (String) value;
+	    firstSets[row] = removeDuplicateCharacters((String) value);
 	    break;
 	case 2:
-	    followSets[row] = (String) value;
+	    followSets[row] = removeDuplicateCharacters((String) value);
 	    break;
 	}
     }
@@ -212,6 +233,5 @@ public class FirstFollowModel extends AbstractTableModel {
     /** The lambda string. */
     public static String LAMBDA = "\u03BB";
     /** The names of columns. */
-    //public static String[] COLUMN_NAMES = {"Variable", "First", "Follow"};
-    public static String[] COLUMN_NAMES = {" ", "First", "Follow"};
+    public static String[] COLUMN_NAMES = {" ", "FIRST", "FOLLOW"};
 }

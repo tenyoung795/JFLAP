@@ -80,11 +80,11 @@ public abstract class LRParseTableGenerator {
 		if (p.getLHS().length() == 2) {
 		    // This is the S' production.
 		    if (p.getRHS().length() == 2 &&
-			p.getRHS().charAt(1) == '_')
+			p.getRHS().charAt(1) == Operations.ITEM_POSITION)
 			pt.appendValueAt("acc", finals[i].getID(), "$");
 		    continue;
 		}
-		if (p.getRHS().endsWith("_")) {
+		if (p.getRHS().endsWith(""+Operations.ITEM_POSITION)) {
 		    Production p2 = new Production
 			(p.getLHS(), p.getRHS().substring
 			 (0,p.getRHS().length()-1));

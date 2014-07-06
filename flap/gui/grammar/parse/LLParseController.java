@@ -157,7 +157,7 @@ class LLParseController {
 		}
 		highlight(top,read);
 		// Now the derivation table garbage.
-		String rule = top+"->"+ENTRY;
+		String rule = (new Production(top, ENTRY)).toString();
 		int first = derivationString.indexOf(top.charAt(0));
 		derivationString = derivationString.substring(0,first)+
 		    ENTRY+derivationString.substring(first+1);

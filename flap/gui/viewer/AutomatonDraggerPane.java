@@ -52,7 +52,7 @@ public class AutomatonDraggerPane extends AutomatonPane {
     /**
      * Instantiates the automaton dragger pane.
      * @param drawer the automaton drawer
-     * @param boolean whether or not to adapt the size of the view
+     * @param adapt whether or not to adapt the size of the view
      */
     public AutomatonDraggerPane(AutomatonDrawer drawer, boolean adapt) {
 	super(drawer, adapt);

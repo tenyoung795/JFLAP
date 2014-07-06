@@ -31,6 +31,7 @@ import grammar.parse.*;
 import grammar.*;
 import java.util.*;
 import gui.tree.Trees;
+import javax.swing.JOptionPane;
 
 /**
  * This is the parse controller for an LR parse pane.
@@ -53,13 +54,21 @@ class LRParseController {
      * @param string the new string to parse
      */
     public void initialize(String string) {
+	DefaultTreeModel oldTree = tree;
 	tree = parseTree(string, pane.grammar, pane.table);
+	if (tree == null) {
+	    tree = oldTree;
+	    pane.statusDisplay.setText("Preliminary parse failed.");
+	    return;
+	}
+	dehighlight();
 	pane.treeDrawer.setModel(tree);
 	pane.treeDrawer.hideAll();
 	pane.treePanel.repaint();
 	pane.stepAction.setEnabled(true);
 	pane.derivationModel.setRowCount(0);
 	pane.derivationModel.addRow(new String[] {"",string});
+	reduceStep = 0;
 	// Initialize those global structures! :)
 	STRING = string+"$";
 	P = 0;
@@ -68,6 +77,7 @@ class LRParseController {
 	//STACK.push("$");
 	STACK.push(0);
 	updateStatus();
+	pane.statusDisplay.setText("Press step to begin.");
     }
 
     /**
@@ -107,6 +117,8 @@ class LRParseController {
     public void step() {
 	dehighlight();
 	int state = STACK.peekInt();
+	if (reduceStep == 1)
+	    state = reduceState;
 	String read = ""+STRING.charAt(P);
 	String entry = "";
 	try {
@@ -133,29 +145,47 @@ class LRParseController {
 	    // Reduce!
 	    int prodNumber = Integer.parseInt(entry.substring(1));
 	    Production red = productions[prodNumber];
+	    String displayString = "Reducing by "+red+", ";
 	    highlight(prodNumber);
-	    pane.statusDisplay.setText("Reducing by "+red);
-	    highlight(state, read);
-	    // Take care of lambda case.
-	    TreeNode[] children = Trees.children(nodes[NODECOUNT]);
-	    if (children.length==1&&!pane.treeDrawer.isVisible(children[0])) {
-		pane.treeDrawer.show(children[0]);
-		pane.treePanel.repaint();
-		updateStatus();
-		return;
+	    if (reduceStep == 0) {
+		// We're in the 'pop' substep of reduce.
+		highlight(state, read);
+		// Take care of case where this is a lambda node.
+		TreeNode[] children = Trees.children(nodes[NODECOUNT]);
+		if (children.length==1&&
+		    !pane.treeDrawer.isVisible(children[0])) {
+		    pane.statusDisplay.setText(displayString);
+		    pane.treeDrawer.show(children[0]);
+		    pane.treePanel.repaint();
+		    //updateStatus();
+		    //return;
+		}
+		// Past lambda case.
+		String popped = "";
+		for (int i=0; i<red.getRHS().length(); i++) {
+		    STACK.pop(); // Pops the state.
+		    popped = STACK.pop() + popped; // Pops the symbol.
+		}
+		if (popped.length()==0)
+		    popped = "\u03BB";
+		displayString += popped+" popped off stack";
+		reduceStep = 1;
+		reduceState = state; // Save that state.
+	    } else if (reduceStep == 1) {
+		// We're in the 'push' substep of reduce.
+		//highlight(state, read);
+		state = STACK.peekInt();
+		highlight(state, red.getLHS());
+		displayString += red.getLHS()+" pushed on stack";
+		STACK.push(red.getLHS());
+		STACK.push(Integer.parseInt(pane.table.getValueAt
+					    (state, red.getLHS())));
+		pane.treeDrawer.show(nodes[NODECOUNT++]);
+		pane.derivationModel.addRow
+		    (new String[] {red.toString(),derivationString()});
+		reduceStep = 0;
 	    }
-	    // Past lambda case.
-	    for (int i=0; i<red.getRHS().length(); i++) {
-		STACK.pop(); // Pops the state.
-		STACK.pop(); // Pops the symbol.
-	    }
-	    state = STACK.peekInt();
-	    STACK.push(red.getLHS());
-	    STACK.push(Integer.parseInt(pane.table.getValueAt
-					(state, red.getLHS())));
-	    pane.treeDrawer.show(nodes[NODECOUNT++]);
-	    pane.derivationModel.addRow
-		(new String[] {red.toString(),derivationString()});
+	    pane.statusDisplay.setText(displayString);
 	    pane.treePanel.repaint();
 	} else if (entry.charAt(0) == 'a') {
 	    STACK.pop();
@@ -204,12 +234,14 @@ class LRParseController {
      * @param string the string to parse
      * @param grammar the augmented grammar
      * @param table the parse table
-     * @return the parse tree
+     * @return the parse tree, or <CODE>null</CODE> if the user
+     * cancelled due to it taking too long
      */
     private DefaultTreeModel parseTree(String string, Grammar grammar,
 				       LRParseTable table) {
 	string = string+"$";
 	int p = 0;
+	int numberOfIterations = 0, numberTillNextWarning = 500;
 	IntStack stack = new IntStack();
 	stack.push(0);
 	Production[] productions = grammar.getProductions();
@@ -268,6 +300,19 @@ class LRParseController {
 		nodes = (TreeNode[]) nodeList.toArray(new TreeNode[0]);
 		return new DefaultTreeModel((TreeNode)stack.pop());
 	    }
+	    // It is possible for an LR parse table to be built that
+	    // will have an infinite loop under some inputs.  In this
+	    // case it would be nice if we could get out of this
+	    // somehow.
+	    numberOfIterations++;
+	    if (numberOfIterations >= numberTillNextWarning) {
+		int result = JOptionPane.showConfirmDialog
+		    (pane, numberOfIterations+
+		     " nodes have been generated.  Should we continue?");
+		if (result == JOptionPane.NO_OPTION)
+		    return null;
+		numberTillNextWarning *= 2;
+	    }
 	}
     }
     
@@ -278,6 +323,7 @@ class LRParseController {
     private int P;
     private String STRING;
     private int NODECOUNT;
+    private int reduceStep = 0, reduceState;
 
     /** The parse pane. */
     private LRParsePane pane;

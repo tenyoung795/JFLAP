@@ -71,7 +71,7 @@ public class TMSimulator extends AutomatonSimulator {
      * Returns a TMConfiguration object that represents the initial
      * configuration of the TM, before any input has been processed.
      * This returns an array of length one.
-     * @param input the input strings
+     * @param inputs the input strings
      */
     public Configuration[] getInitialConfigurations(String[] inputs) {
 	Tape[] tapes = new Tape[inputs.length];
@@ -86,8 +86,7 @@ public class TMSimulator extends AutomatonSimulator {
      * Simulates one step for a particular configuration, adding
      * all possible configurations reachable in one step to 
      * set of possible configurations.
-     * @param configuration the configuration to simulate the one
-     * step on.
+     * @param config the configuration to simulate the one step on
      */
     public ArrayList stepConfiguration(Configuration config) {
 	ArrayList list = new ArrayList();
@@ -126,8 +125,8 @@ public class TMSimulator extends AutomatonSimulator {
     /**
      * Returns true if the simulation of the input string on the 
      * automaton left the machine in a final state.    
-     * @return true if the simulation of the input string on the 
-     * automaton left the machine in a final state.
+     * @return true if the simulation of the input string on the
+     * automaton left the machine in a final state
      */
     public boolean isAccepted() {
 	Iterator it = myConfigurations.iterator();

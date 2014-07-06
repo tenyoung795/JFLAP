@@ -43,11 +43,11 @@ public class TMTransition extends Transition {
      * Produces a one tape Turing transition.
      * @param from the state this transition comes from
      * @param to the state this transition goes to
-     * @param toRead the string that the machine should satisfy before
+     * @param ntoRead the string that the machine should satisfy before
      * moving on to the next state
-     * @param toWrite the string that the machine should write on to
+     * @param ntoWrite the string that the machine should write on to
      * the tape
-     * @param direction the direction to move the read/write tape head
+     * @param ndirection the direction to move the read/write tape head
      */
     public TMTransition(State from, State to,
 			String ntoRead, String ntoWrite, String ndirection) {
@@ -120,13 +120,12 @@ public class TMTransition extends Transition {
      * @param stringToRead the input to read for a given tape
      * @param tape the tape index
      */
-    public void setRead(String stringToRead, int tape) {
+    protected void setRead(String stringToRead, int tape) {
 	if (stringToRead.length() == 0) stringToRead = BLANK;
 	if (stringToRead.length() != 1)
 	    throw new IllegalArgumentException
 		("Read string must have exactly one character!");
 	toRead.set(tape, stringToRead);
-	getAutomaton().transitionChanged(this);
     }
     
     /**
@@ -143,13 +142,12 @@ public class TMTransition extends Transition {
      * @param stringToWrite the string to write to tape
      * @param tape which tape to write
      */
-    public void setWrite(String stringToWrite, int tape) {
+    protected void setWrite(String stringToWrite, int tape) {
 	if (stringToWrite.length() == 0) stringToWrite = BLANK;
 	if (stringToWrite.length() != 1)
 	    throw new IllegalArgumentException
 		("Write string must have exactly one character!");
 	toWrite.set(tape, stringToWrite);
-	getAutomaton().transitionChanged(this);
     }
 
     /**
@@ -167,13 +165,12 @@ public class TMTransition extends Transition {
      * @param tape the tape index to change the direction for, indexed
      * 0 through one less than the number of tapes
      */
-    public void setDirection(String newDirection, int tape) {
+    protected void setDirection(String newDirection, int tape) {
 	if (!(newDirection.equals("L") || newDirection.equals("R")
 	      || newDirection.equals("S")))
 	    throw new IllegalArgumentException
 		("Direction must be L, R, or S!");
 	direction.set(tape, newDirection);
-	getAutomaton().transitionChanged(this);
     }
 
     /**

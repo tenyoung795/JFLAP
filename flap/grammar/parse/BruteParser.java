@@ -79,7 +79,7 @@ public abstract class BruteParser {
 	grammar = Unrestricted.optimize(grammar);
 	if (grammar == null) return;
 	queue.add(new ParseNode(grammar.getStartVariable(), P, S));
-	consideredNodes = 1;
+	consideredNodes = 0;
 	deletedNodes = 0;
 
 	smaller = Collections.unmodifiableSet

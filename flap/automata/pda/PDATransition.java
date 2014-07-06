@@ -85,11 +85,10 @@ public class PDATransition extends Transition {
      * @param inputToRead the input to read portion of the transition
      * label.
      */
-    public void setInputToRead(String inputToRead) {
-	if (!automata.StringChecker.isAlphanumeric(inputToRead))
-	    throw new IllegalArgumentException("Label must be alphanumeric!");
+    protected void setInputToRead(String inputToRead) {
+	/*if (!automata.StringChecker.isAlphanumeric(inputToRead))
+	  throw new IllegalArgumentException("Label must be alphanumeric!");*/
 	myInputToRead = inputToRead;
-	getAutomaton().transitionChanged(this);
     }
     
     /**
@@ -105,12 +104,11 @@ public class PDATransition extends Transition {
      * label for this transition.
      * @param stringToPop the string to pop from the stack.
      */
-    public void setStringToPop(String stringToPop) {
-	if (!automata.StringChecker.isAlphanumeric(stringToPop))
+    protected void setStringToPop(String stringToPop) {
+	/*if (!automata.StringChecker.isAlphanumeric(stringToPop))
 	    throw new IllegalArgumentException("Pop string must "+
-					       "be alphanumeric!");
+	    "be alphanumeric!");*/
 	myStringToPop = stringToPop;
-	getAutomaton().transitionChanged(this);
     }
 
     /**
@@ -127,12 +125,11 @@ public class PDATransition extends Transition {
      * transition label for this transition.
      * @param stringToPush the string to push on to the stack.
      */
-    public void setStringToPush(String stringToPush) {
-	if (!automata.StringChecker.isAlphanumeric(stringToPush))
+    protected void setStringToPush(String stringToPush) {
+	/*if (!automata.StringChecker.isAlphanumeric(stringToPush))
 	    throw new IllegalArgumentException("Push string must "+
-					       "be alphanumeric!");
+	    "be alphanumeric!");*/
 	myStringToPush = stringToPush;
-	getAutomaton().transitionChanged(this);
     }
 
     /**

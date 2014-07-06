@@ -30,7 +30,6 @@ import automata.Automaton;
 import automata.State;
 import automata.Transition;
 import automata.fsa.*;
-import file.ParseException;
 import java.util.*;
 import javax.xml.parsers.*;
 import org.w3c.dom.*;

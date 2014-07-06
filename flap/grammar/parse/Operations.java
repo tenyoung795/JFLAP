@@ -354,7 +354,7 @@ public class Operations {
 	Set symbols = new HashSet();
 	while (it.hasNext()) {
 	    Production item = (Production) it.next();
-	    int position = item.getRHS().indexOf('_')+1;
+	    int position = item.getRHS().indexOf(ITEM_POSITION)+1;
 	    if (position == item.getRHS().length()) continue;
 	    symbols.add(item.getRHS().substring(position, position+1));
 	}
@@ -371,5 +371,5 @@ public class Operations {
     private static WeakHashMap CACHED_VPMAP = new WeakHashMap();
 
     /** The terminal used to indicate the position in an item. */
-    private static final char ITEM_POSITION = '_';
+    public static final char ITEM_POSITION = '\u00B7';
 }

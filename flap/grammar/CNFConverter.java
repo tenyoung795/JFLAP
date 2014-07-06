@@ -94,7 +94,7 @@ public class CNFConverter {
     /**
      * Given an array of productions, this returns the proper
      * replacements of the "()" rules.
-     * @param productions the array of productions
+     * @param p the array of productions
      * @return an equivalent set of productions
      * @throws UnsupportedOperationException if the number of
      * variables needed exceeds 26

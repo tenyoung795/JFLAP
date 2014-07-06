@@ -43,7 +43,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 /**
- * This controller handles user actions for the parsing of a grammar.
+ * This controller handles user actions for the building of an LR
+ * grammar parse table.
  * 
  * @author Thomas Finley
  */
@@ -55,13 +56,16 @@ public class LRParseDerivationController extends LLParseDerivationController {
      * @param augmented the augmented grammar
      * @param environment the grammar environment
      * @param firstFollow the first-follow table
-     * @param parseTable the parse table tableview
      * @param directions the label that displays what step the user is
      * on
+     * @param dfa the DFA built during the derivation of the parse table
+     * @param derivation the view component with the user interface
+     * elements where the derivation is performed
      */
     public LRParseDerivationController
 	(Grammar grammar, Grammar augmented, GrammarEnvironment environment,
-	 FirstFollowTable firstFollow, JLabel directions, FiniteStateAutomaton dfa,
+	 FirstFollowTable firstFollow, JLabel directions,
+	 FiniteStateAutomaton dfa,
 	 LRParseTableDerivationPane derivation) {
 	super(grammar, environment, firstFollow, null, directions);
 	this.augmented = augmented;
@@ -79,7 +83,7 @@ public class LRParseDerivationController extends LLParseDerivationController {
 	// I am one lazy son of a bitch.
 	Production[] ps = augmented.getProductions();
 	Production p = ps[0]; // Oh yeah.
-	p = new Production(p.getLHS(), "_"+p.getRHS());
+	p = new Production(p.getLHS(), GOTO_SYMBOL+p.getRHS());
 	initSet.add(p);
 	initSet = Operations.closure(augmented, initSet);
 	return initSet;
@@ -106,7 +110,7 @@ public class LRParseDerivationController extends LLParseDerivationController {
 	Iterator it = set.iterator();
 	while (it.hasNext()) {
 	    Production p = (Production) it.next();
-	    if (p.getRHS().endsWith("_"))
+	    if (p.getRHS().endsWith(GOTO_SYMBOL))
 		return true;
 	}
 	return false;
@@ -300,7 +304,7 @@ public class LRParseDerivationController extends LLParseDerivationController {
 		}
 		// See what symbols have not been "gone to" yet.
 		Transition[] t = dfa.getTransitionsFromState(states[i]);
-		Set mayAdd = new HashSet
+		Set mayAdd = new TreeSet
 		    (Arrays.asList(Operations.getCanGoto(itemSet)));
 		for (int j=0; j<t.length; j++)
 		    mayAdd.remove(((FSATransition)t[j]).getLabel());
@@ -411,13 +415,13 @@ public class LRParseDerivationController extends LLParseDerivationController {
 	    firstFollow.getFFModel().setCanEditFirst(true);
 	    firstFollow.getFFModel().setCanEditFollow(false);
 	    directions.setText
-		("Define first sets.  ! is the lambda character.");
+		("Define FIRST sets.  ! is the lambda character.");
 	    break;
 	case FOLLOW_SETS:
 	    firstFollow.getFFModel().setCanEditFirst(false);
 	    firstFollow.getFFModel().setCanEditFollow(true);
 	    directions.setText
-		("Define follow sets.  $ is the end of string character.");
+		("Define FOLLOW sets.  $ is the end of string character.");
 	    break;
 	case BUILD_DFA:
 	    doSelectedAction.setEnabled(false);
@@ -524,6 +528,9 @@ public class LRParseDerivationController extends LLParseDerivationController {
     /** This indicates that a "do all" is in progress, and as such
      * some things which would provide interaction should not. */
     private boolean doAll = false;
+
+    /* This is the goto position symbol. */
+    private static final String GOTO_SYMBOL = ""+Operations.ITEM_POSITION;
     
     /** The editor. */
     EditorPane editor = null;

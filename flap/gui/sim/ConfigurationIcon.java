@@ -44,8 +44,6 @@ public abstract class ConfigurationIcon implements Icon {
     /**
      * Instantiates a new <CODE>ConfigurationIcon</CODE>.
      * @param configuration the configuration that is represented
-     * @param automaton the automaton that this configuration "arose"
-     * from
      */
     public ConfigurationIcon(Configuration configuration) {
 	this.configuration = configuration;

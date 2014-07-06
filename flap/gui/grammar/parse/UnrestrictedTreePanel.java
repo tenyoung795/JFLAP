@@ -489,7 +489,7 @@ public class UnrestrictedTreePanel extends TreePanel {
 
     /**
      * Paints the component.
-     * @param g the graphics object to draw on
+     * @param gr the graphics object to draw on
      */
     public void paintComponent(Graphics gr) {
 	//super.paintComponent(g);

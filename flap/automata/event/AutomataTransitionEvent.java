@@ -32,7 +32,8 @@ import automata.Transition;
 
 /**
  * This event is given to listeners of an automaton interested in
- * events when a transition on an automaton is added or removed.
+ * events when a transition on an automaton is added, removed, or
+ * changed.
  * @see automata.Automaton
  * @see automata.Transition
  * @see automata.Automaton#addTransition
@@ -46,9 +47,13 @@ public class AutomataTransitionEvent extends EventObject {
     /**
      * Instantiates a new <CODE>AutomataStateEvent</CODE>.
      * @param auto the <CODE>Automaton</CODE> that generated the event
-     * @param state the <CODE>State</CODE> that was added or removed
-     * @param add <CODE>true</CODE> if state added, <CODE>false</CODE>
-     * if removed
+     * @param transition the <CODE>Transition</CODE> that was added or
+     * removed
+     * @param add <CODE>true</CODE> if the transition is added,
+     * <CODE>false</CODE> if removed
+     * @param change <CODE>true</CODE> if some property of the
+     * transition was changed, <CODE>false</CODE> if this is not a
+     * simple change
      */
     public AutomataTransitionEvent(Automaton auto, Transition transition,
 				   boolean add, boolean change) {

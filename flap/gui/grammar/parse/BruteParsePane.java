@@ -26,13 +26,13 @@
  
 package gui.grammar.parse;
 
-import gui.environment.GrammarEnvironment;
 import grammar.Grammar;
 import grammar.parse.*;
-import javax.swing.*;
+import gui.environment.GrammarEnvironment;
 import gui.tree.*;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.*;
 import javax.swing.tree.*;
 
 /**
@@ -118,6 +118,7 @@ public class BruteParsePane extends ParsePane {
 	}
 	final Timer timer = new Timer(10, new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
+		    if (parser == null) return;
 		    String nodeCount =
 			"Nodes generated: "+parser.getTotalNodeCount()+"("+
 			parser.getConsiderationNodeCount()+")";
@@ -136,6 +137,7 @@ public class BruteParsePane extends ParsePane {
 			pauseResumeAction.putValue(Action.NAME, "Pause");
 			timer.start();
 			status = "Parser started.";
+			statusDisplay.setText(status);
 			break;
 		    case BruteParserEvent.REJECT:
 			pauseResumeAction.setEnabled(false);
@@ -146,6 +148,7 @@ public class BruteParsePane extends ParsePane {
 			timer.stop();
 			pauseResumeAction.putValue(Action.NAME, "Resume");
 			status = "Parser paused.";
+			statusDisplay.setText(status);
 			break;
 		    case BruteParserEvent.ACCEPT:
 			pauseResumeAction.setEnabled(false);
@@ -154,25 +157,28 @@ public class BruteParsePane extends ParsePane {
 			status = "String accepted!";
 			break;
 		    }
-		    if (parser.isFinished()) parser = null;
 		    progress.setText(status + "  " + nodeCount);
-
-		    if (!e.isAccept()) {
-			// Rejected!
-			treePanel.setAnswer(null);
+		    if (parser.isFinished()) {
+			parser = null;
+			
+			if (!e.isAccept()) {
+			    // Rejected!
+			    treePanel.setAnswer(null);
+			    treePanel.repaint();
+			    stepAction.setEnabled(false);
+			    statusDisplay.setText("Try another string.");
+			    return;
+			}
+			TreeNode node = e.getParser().getAnswer();
+			do {
+			    node = node.getParent();
+			} while (node != null);
+			statusDisplay.setText
+			    ("Press step to show derivations.");
+			treePanel.setAnswer(e.getParser().getAnswer());
 			treePanel.repaint();
-			stepAction.setEnabled(false);
-			statusDisplay.setText("Try another string.");
-			return;
 		    }
-		    TreeNode node = e.getParser().getAnswer();
-		    do {
-			node = node.getParent();
-		    } while (node != null);
 		    }
-		    statusDisplay.setText("Press step to show derivations.");
-		    treePanel.setAnswer(e.getParser().getAnswer());
-		    treePanel.repaint();
 		}
 
 	    });

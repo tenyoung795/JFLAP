@@ -60,8 +60,7 @@ public abstract class AutomatonSimulator {
      * Simulates one step for a particular configuration, adding
      * all possible configurations reachable in one step to 
      * set of possible configurations.
-     * @param configuration the configuration to simulate the one
-     * step on.
+     * @param config the configuration to simulate the one step on
      */
     public abstract ArrayList stepConfiguration(Configuration config);
 

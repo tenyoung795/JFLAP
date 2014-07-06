@@ -138,7 +138,6 @@ class UnitController {
 
     /**
      * Does the expansion of the production for those states selected.
-     * @param row the row of the production to expand
      */
     void doSelected() {
 	pane.editingActive = false;
@@ -152,6 +151,7 @@ class UnitController {
 	    if (!ProductionChecker.isUnitProduction(p)) continue;
 	    selectedUnitProductions.add(p);
 	    pane.editingGrammarModel.deleteRow(selectedRows[i]);
+	    unitProductions.remove(p);
 	    currentProductions.remove(p);
 	}
 
@@ -236,8 +236,8 @@ class UnitController {
 	    int toAdd = desiredProductions.size()-currentProductions.size()+
 		toRemove;
 	    pane.detailLabel.setText
-		(toRemove+" more remove(s), and "+toAdd+
-		 " more addition(s) needed.");
+		(toRemove+" more remove"+(toRemove==1?"":"s")+", and "+toAdd+
+		 " more addition"+(toAdd==1?"":"s")+" needed.");
 	    if (toAdd == 0 && toRemove == 0) nextStep();
 	    break;}
 	}

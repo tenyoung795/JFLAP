@@ -117,6 +117,10 @@ public class OpenAction extends RestrictedAction {
 	    JOptionPane.showMessageDialog
 		(source, e.getMessage(),
 		 "Read Error", JOptionPane.ERROR_MESSAGE);
+	} catch (DataException e) {
+	    JOptionPane.showMessageDialog
+		(source, e.getMessage(),
+		 "Data Error", JOptionPane.ERROR_MESSAGE);
 	}
     }
 

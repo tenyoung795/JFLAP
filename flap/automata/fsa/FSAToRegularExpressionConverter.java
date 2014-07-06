@@ -29,6 +29,7 @@ package automata.fsa;
 import automata.*;
 import automata.fsa.*;
 import java.util.*;
+import regular.Discretizer;
 
 /**
  * The fsa to regular expression converter can be used to convert a
@@ -211,10 +212,12 @@ public class FSAToRegularExpressionConverter {
      */
     public String concatenate(String r1, String r2) {
 	if(r1.equals(EMPTY) || r2.equals(EMPTY)) return EMPTY;
-	else if(r1.equals(LAMBDA))return r2;
+	else if(r1.equals(LAMBDA)) return r2;
 	else if(r2.equals(LAMBDA)) return r1;
-	if(needsParens(r1)) r1 = addParen(r1);
-	if(needsParens(r2)) r2 = addParen(r2);
+	if(Discretizer.or(r1).length > 1)
+	    r1 = addParen(r1);
+	if(Discretizer.or(r2).length > 1)
+	    r2 = addParen(r2);
 	return r1+r2;
     }
 
@@ -227,7 +230,12 @@ public class FSAToRegularExpressionConverter {
      */
     public String star(String r1) {
 	if(r1.equals(EMPTY)||r1.equals(LAMBDA)) return LAMBDA;
-	if(!isSingleCharacter(r1)) r1 = addParen(r1);
+	if (Discretizer.or(r1).length > 1 ||
+	    Discretizer.cat(r1).length > 1) {
+	    r1 = addParen(r1);
+	} else {
+	    if (r1.endsWith(KLEENE_STAR)) return r1;
+	}
 	return r1+KLEENE_STAR;
     }
 
@@ -245,10 +253,8 @@ public class FSAToRegularExpressionConverter {
 	if (r1.equals(LAMBDA) && r2.equals(LAMBDA)) return LAMBDA;
 	if (r1.equals(LAMBDA)) r1 = LAMBDA_DISPLAY;
 	if (r2.equals(LAMBDA)) r2 = LAMBDA_DISPLAY;
-	//else if(r1.equals(LAMBDA)) return r2;
-	//else if(r2.equals(LAMBDA)) return r1;
-	if(needsParens(r1)) r1 = addParen(r1);
-	if(needsParens(r2)) r2 = addParen(r2);
+	//if(needsParens(r1)) r1 = addParen(r1);
+	//if(needsParens(r2)) r2 = addParen(r2);
 	return r1+OR+r2;
     }
 
@@ -456,13 +462,13 @@ public class FSAToRegularExpressionConverter {
 
     /**
      * Returns a string of <CODE>word</CODE> surrounded by
-     * parentheses.  i.e. (<word>).
+     * parentheses.  i.e. (<word>), unless it is unnecessary.
      * @param word the word.
      * @return a string of <CODE>word</CODE> surrounded by
      * parentheses.
      */
     public String addParen(String word) {
-	return LEFT_PAREN.concat(word.concat(RIGHT_PAREN));
+	return LEFT_PAREN+word+RIGHT_PAREN;
     }
 
     /**
@@ -496,7 +502,8 @@ public class FSAToRegularExpressionConverter {
 	(String ii, String ij, String jj, String ji) {
 	String temp = concatenate(star(ii), concatenate(ij, concatenate(star(jj), ji)));
 	String temp2 = concatenate(star(ii), concatenate(ij, star(jj)));
-	String expression = concatenate(star(concatenate(LEFT_PAREN,concatenate(temp,RIGHT_PAREN))), temp2);
+	//String expression = concatenate(star(concatenate(LEFT_PAREN,concatenate(temp,RIGHT_PAREN))), temp2);
+	String expression = concatenate(star(temp), temp2);
 	return expression;
     }
 

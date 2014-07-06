@@ -30,7 +30,7 @@ import automata.Automaton;
 import automata.State;
 import automata.Transition;
 import automata.pda.*;
-import file.ParseException;
+import file.DataException;
 import java.util.*;
 import javax.xml.parsers.*;
 import org.w3c.dom.*;
@@ -73,7 +73,7 @@ public class PDATransducer extends AutomatonTransducer {
 	try {
 	    return new PDATransition(from, to, read, pop, push);
 	} catch (IllegalArgumentException e) {
-	    throw new ParseException(e.getMessage());
+	    throw new DataException(e.getMessage());
 	}
     }
 

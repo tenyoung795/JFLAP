@@ -115,7 +115,8 @@ public class RegularExpression implements Serializable {
      * Changes the regular expression based on a reference.  The
      * reference will only be resolved later, when the information is
      * requested.
-     * @param string the string to change the regular expression to
+     * @param ref the reference to a string to change the regular
+     * expression to
      */
     public void change(Reference ref) {
 	reference = ref;

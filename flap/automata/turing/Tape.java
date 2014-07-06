@@ -168,6 +168,20 @@ public class Tape implements Serializable {
     }
 
     /**
+     * Returns the output of the tape.  The first character of the
+     * output consists of the symbol underneath the tape head, and
+     * further consists of all symbols to the right of the tape head
+     * in order until a blank is encountered.  In the event that the
+     * tape head is on a blank the empty string is returned.
+     * @return the output of the tape
+     */
+    public String getOutput() {
+	int nextBlank = buffer.indexOf(""+BLANK, getTapeHead());
+	if (nextBlank == -1) nextBlank = buffer.length();
+	return buffer.substring(getTapeHead(), nextBlank);
+    }
+
+    /**
      * Returns the index in the buffer that the tape head is 
      * currently pointing to.
      * @return the index in the buffer that the tape head is 

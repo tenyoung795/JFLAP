@@ -66,7 +66,7 @@ abstract class ParsePane extends JPanel {
 	// Sets up the displays.
 	JComponent pt = initParseTable();
 	JScrollPane parseTable = pt == null ? null : 
-	    new JScrollPane(initParseTable());
+	    new JScrollPane(pt);
 	JScrollPane grammarTable = new JScrollPane(initGrammarTable(grammar));
 
 	treeDerivationPane.add(initTreePanel(), "0");
@@ -90,7 +90,17 @@ abstract class ParsePane extends JPanel {
     protected GrammarTable initGrammarTable(Grammar grammar) {
 	grammarTable = new GrammarTable(new GrammarTableModel(grammar) {
 		public boolean isCellEditable(int r, int c) {return false;}
-	    });
+	    }) {
+		public String getToolTipText(java.awt.event.MouseEvent event) {
+		    try {
+			int row = rowAtPoint(event.getPoint());
+			return getGrammarModel().getProduction(row).toString()
+			    +" is production "+row;
+		    } catch (Throwable e) {
+			return null;
+		    }
+		}
+	    };
 	return grammarTable;
     }
 
@@ -226,6 +236,23 @@ abstract class ParsePane extends JPanel {
      */
     protected abstract void step();
 
+    /**
+     * Prints this component.  This will print only the tree section
+     * of the component.
+     * @param g the graphics object to print to
+     */
+    public void printComponent(Graphics g) {
+	treeDerivationPane.print(g);
+    }
+    
+    /**
+     * Children are not painted here.
+     * @param g the graphics object to paint to
+     */
+    public void printChildren(Graphics g) {
+	
+    }
+
     /** The label that displays the remaining input. */
     JTextField inputDisplay = new JTextField();
     /** The label that displays the stack. */
@@ -275,7 +302,7 @@ abstract class ParsePane extends JPanel {
     CardLayout treeDerivationLayout = new CardLayout();
     /** The derivation/parse tree view. */
     JPanel treeDerivationPane = new JPanel(treeDerivationLayout);
-
+    
     /** The derivation view. */
     JScrollPane derivationPane;
 }

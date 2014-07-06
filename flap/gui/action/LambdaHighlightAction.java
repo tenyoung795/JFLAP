@@ -38,8 +38,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
- * This is an action that will highlight all states that have lambda
- * transitions.
+ * This is an action that will highlight all states that have
+ * lambda-transitions.
  * 
  * @author Thomas Finley
  */
@@ -47,7 +47,7 @@ import javax.swing.JPanel;
 public class LambdaHighlightAction extends AutomatonAction {
     public LambdaHighlightAction(Automaton automaton,
 				 Environment environment) {
-	super("Highlight Lambda Transitions", null);
+	super("Highlight \u03BB-Transitions", null);
 	this.automaton = automaton;
 	this.environment = environment;
     }
@@ -71,7 +71,7 @@ public class LambdaHighlightAction extends AutomatonAction {
 
 	// Put that in the environment.
 	LambdaPane pane = new LambdaPane(new AutomatonPane(as));
-	environment.add(pane, "Lambda Transitions", new CriticalTag() {});
+	environment.add(pane, "\u03BB-Transitions", new CriticalTag() {});
 	environment.setActive(pane);
     }
 
@@ -83,7 +83,7 @@ public class LambdaHighlightAction extends AutomatonAction {
 	public LambdaPane(AutomatonPane ap) {
 	    super(new BorderLayout());
 	    add(ap, BorderLayout.CENTER);
-	    add(new JLabel("Lambda transitions are highlighted."),
+	    add(new JLabel("\u03BB-transitions are highlighted."),
 		BorderLayout.NORTH);
 	    ArrowDisplayOnlyTool tool =
 		new ArrowDisplayOnlyTool(ap, ap.getDrawer());
@@ -91,7 +91,7 @@ public class LambdaHighlightAction extends AutomatonAction {
 	}
     }
 
-    /** The automaton to find the lambda transitions of. */
+    /** The automaton to find the lambda-transitions of. */
     private Automaton automaton;
     /** The environment to add the pane with the highlighted lambdas to. */
     private Environment environment;

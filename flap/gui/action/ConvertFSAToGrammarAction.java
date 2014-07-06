@@ -27,18 +27,27 @@
 package gui.action;
 
 import automata.Automaton;
+import automata.Transition;
 import automata.fsa.FSAToRegularGrammarConverter;
 import automata.fsa.FiniteStateAutomaton;
+import automata.fsa.FSATransition;
 import grammar.Grammar;
 import gui.environment.AutomatonEnvironment;
+import gui.environment.EnvironmentFrame;
 import gui.environment.Universe;
 import gui.grammar.GrammarTable;
 import gui.grammar.automata.ConvertController;
 import gui.grammar.automata.ConvertPane;
 import gui.grammar.automata.FSAConvertController;
 import gui.viewer.SelectionDrawer;
+import gui.viewer.ZoomPane;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
+import java.util.*;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.border.BevelBorder;
 
 /**
  * This action handles the conversion of an FSA to a regular grammar.
@@ -60,12 +69,49 @@ public class ConvertFSAToGrammarAction
      * Checks the FSA to make sure it's ready to be converted.
      */
     protected boolean checkAutomaton() {
+	// If we have more than 26 states, we can't have a single
+	// letter for all states.
 	if (getAutomaton().getStates().length > 26) {
 	    JOptionPane.showMessageDialog
 		(Universe.frameForEnvironment(getEnvironment()),
 		 "There may be at most 26 states for conversion.",
 		 "Number of States Error", JOptionPane.ERROR_MESSAGE);
+	    return false;
 	}
+	// Check for transitions with capital letters.
+	Set bad = new HashSet();
+	Transition[] t = getAutomaton().getTransitions();
+	for (int i=0; i<t.length; i++) {
+	    if (((FSATransition)t[i]).getLabel().matches(".*[A-Z].*")) {
+		bad.add(t[i]);
+	    }
+	}
+	if (bad.size() != 0) {
+	    // Initialize the structure for displaying a problem.
+	    EnvironmentFrame frame =
+		Universe.frameForEnvironment(getEnvironment());
+	    JPanel messagePanel = new JPanel(new BorderLayout());
+	    SelectionDrawer drawer = new SelectionDrawer(getAutomaton());
+	    JLabel messageLabel = new JLabel();
+	    ZoomPane zoom = new ZoomPane(drawer);
+	    JPanel tempPanel = new JPanel(new BorderLayout());
+	    tempPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
+	    zoom.setPreferredSize(new java.awt.Dimension(300,200));
+	    tempPanel.add(zoom, BorderLayout.CENTER);
+	    messagePanel.add(tempPanel, BorderLayout.CENTER);
+	    messagePanel.add(messageLabel, BorderLayout.SOUTH);
+	    // Display the message.
+	    drawer.clearSelected();
+	    Iterator it = bad.iterator();
+	    while (it.hasNext()) drawer.addSelected((Transition)it.next());
+	    messageLabel.setText
+		("Capital letters are reserved for grammar variables.");
+	    JOptionPane.showMessageDialog
+		(frame, messagePanel, "Transitions With Capitals Error",
+		 JOptionPane.ERROR_MESSAGE);
+	    return false;
+	}
+
 	return true;
     }
 

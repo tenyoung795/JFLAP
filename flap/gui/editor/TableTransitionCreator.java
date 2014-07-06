@@ -55,7 +55,8 @@ public abstract class TableTransitionCreator extends TransitionCreator {
 
     /**
      * Creates a fresh new transition between two states.
-     * @param transition the fresh new transition
+     * @param from the from state for the new transition
+     * @param to the to state for the new transition
      */
     protected abstract Transition initTransition(State from, State to);
 
@@ -110,12 +111,12 @@ public abstract class TableTransitionCreator extends TransitionCreator {
 
     /**
      * Given a table model instantiated earlier and a transition,
-     * modify the transition.
+     * return a transition with the changes in the model.
      * @param transition the transition to modify
      * @param model the table model
-     * @return if the change was a success
+     * @return the new transition, or <code>null</code> if changing failed
      */
-    protected abstract boolean modifyTransition
+    protected abstract Transition modifyTransition
 	(Transition transition, TableModel model);
 
     /**
@@ -126,15 +127,23 @@ public abstract class TableTransitionCreator extends TransitionCreator {
 	if (editingTable == null) return; // Nothing to do.
 	try {
 	    editingTable.getCellEditor().stopCellEditing();
-	} catch (NullPointerException e) {}
+	} catch (NullPointerException e) {
+
+	} catch (IllegalArgumentException e) {
+	    System.err.println("Odd 'focusCycleRoot' exception thrown "+
+			       "from the depths of Java again.");
+	}
 	if (!cancel) {
 	    TableModel oldModel = createModel(transition);
-	    if (!modifyTransition(transition, editingTable.getModel())) {
-		if (!isNew) modifyTransition(transition, oldModel);
-	    } else {
+	    Transition t =
+		modifyTransition(transition, editingTable.getModel());
+	    if (t != null) {
 		if (isNew)
 		    getParent().getDrawer().getAutomaton()
-			.addTransition(transition);
+			.addTransition(t);
+		else
+		    getParent().getDrawer().getAutomaton()
+			.replaceTransition(transition, t);
 	    }
 	}
 	getParent().remove(editingTable);

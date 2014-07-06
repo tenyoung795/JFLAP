@@ -1,3 +1,4 @@
+
 /* -- JFLAP 4.0 --
  *
  * Copyright information:
@@ -80,7 +81,7 @@ public abstract class GrowableTableModel extends AbstractTableModel
 	Iterator it = model.data.iterator();
 	while (it.hasNext()) {
 	    Object[] oldRow = (Object[]) it.next();
-	    Object[] row = new Object[oldRow.length];
+	    Object[] row = new Object[columns];
 	    for (int i=0; i<oldRow.length; i++) row[i] = oldRow[i];
 	    data.add(row);
 	}

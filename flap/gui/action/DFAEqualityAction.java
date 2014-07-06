@@ -28,6 +28,7 @@ package gui.action;
 
 import automata.fsa.FiniteStateAutomaton;
 import automata.Automaton;
+import automata.UselessStatesDetector;
 import automata.graph.DFAEqualityChecker;
 import automata.graph.FSAEqualityChecker;
 import gui.environment.Environment;
@@ -63,7 +64,7 @@ public class DFAEqualityAction extends FSAAction {
 
     /**
      * Runs a comparison with another automaton.
-     * @param event the action event
+     * @param e the action event
      */
     public void actionPerformed(ActionEvent e) {
 	JComboBox combo = new JComboBox();
@@ -108,6 +109,10 @@ public class DFAEqualityAction extends FSAAction {
 		 "The other automaton has no initial state!");
 	    return;
 	}
+	other = (FiniteStateAutomaton)
+	    UselessStatesDetector.cleanAutomaton(other);
+	automaton = (FiniteStateAutomaton)
+	    UselessStatesDetector.cleanAutomaton(automaton);
 	String checkedMessage = checker.equals(other, automaton) ?
 	    "They ARE equivalent!" : "They AREN'T equivalent!";
 	JOptionPane

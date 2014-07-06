@@ -268,13 +268,13 @@ public class LLParseDerivationController {
 	    firstFollow.getFFModel().setCanEditFirst(true);
 	    firstFollow.getFFModel().setCanEditFollow(false);
 	    directions.setText
-		("Define first sets.  ! is the lambda character.");
+		("Define FIRST sets.  ! is the lambda character.");
 	    break;
 	case FOLLOW_SETS:
 	    firstFollow.getFFModel().setCanEditFirst(false);
 	    firstFollow.getFFModel().setCanEditFollow(true);
 	    directions.setText
-		("Define follow sets.  $ is the end of string character.");
+		("Define FOLLOW sets.  $ is the end of string character.");
 	    break;
 	case PARSE_TABLE:
 	    firstFollow.getFFModel().setCanEditFollow(false);

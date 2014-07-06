@@ -76,11 +76,8 @@ public class FSATransition extends Transition {
      * @throws IllegalArgumentException if the label contains any
      * "bad" characters, i.e., not alphanumeric
      */
-    public void setLabel(String label) {
-	//if (!automata.StringChecker.isAlphanumeric(label))
-	//  throw new IllegalArgumentException("Label must be alphanumeric!");
+    protected void setLabel(String label) {
 	myLabel = label;
-	getAutomaton().transitionChanged(this);
     }
 
     /**
@@ -130,5 +127,5 @@ public class FSATransition extends Transition {
     /** The label for this transition, which is intended to be used as
      * the precondition that a string must satisfy before the machine
      * continues. */
-    protected String myLabel;
+    protected String myLabel = "";
 }

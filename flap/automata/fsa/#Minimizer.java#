@@ -216,7 +216,7 @@ public class Minimizer {
      * @param group the set of states that state might have a transition
      * to.
      * @param terminal the terminal
-     * @param automaton the automaton.
+     * @param the automaton.
      * @return true if <CODE>state</CODE> in <CODE>automaton</CODE> has
      * a transition to one of the states in <CODE>group</CODE> on
      * <CODE>terminal</CODE>.
@@ -383,14 +383,15 @@ public class Minimizer {
     }
 
     /**
-     * Returns true if <CODE>automaton</CODE> needs a trap state.
+     * Detects if <CODE>automaton</CODE> already has a trap state.
      * (i.e. there is an implied trap state since there are not
-     * transitions on every letter in the alphabet for every
-     * state in <CODE>automaton</CODE>.)
+     * transitions on every letter in the alphabet for every state in
+     * <CODE>automaton</CODE>.)
      * @param automaton the automaton.
-     * @return true if automaton needs a trap state.
+     * @return the existing trap state for the automaton, or null if
+     * there is no existing
      */
-    public boolean needsTrapState(Automaton automaton) {
+    public State getTrapState(Automaton automaton) {
 	AlphabetRetriever far = new FSAAlphabetRetriever();
        	String[] alphabet = far.getAlphabet(automaton);
 	State[] states = automaton.getStates();
@@ -413,7 +414,10 @@ public class Minimizer {
      * @param automaton the automaton.
      */
     public void addTrapState(Automaton automaton) {
-	if(!needsTrapState(automaton)) return;
+	State trapState = getTrapState(automaton);
+	if (trapState != null) {
+	    TRAP_STATE = trapState;
+	}
 	
 	StatePlacer sp = new StatePlacer();
 	Point point = sp.getPointForState(automaton);
@@ -436,14 +440,16 @@ public class Minimizer {
     }
     
     /**
-     * Returns a minimizeable automaton obtained from
-     * <CODE>automaton</CODE> by removing all unreachable states and
-     * multiple character labels on transitions.  This does not alter
+     * Returns a minimizeable automaton obtained from 
+     * <CODE>automaton</CODE> by removing all 
+     * unreachable states and multiple character labels
+     * on transitions.  This does not alter 
      * <CODE>automaton</CODE>.
-     * @param a the automaton
-     * @return a minimizeable automaton obtained from
-     * <CODE>automaton</CODE> by removing all unreachable states and
-     * multiple character labels on transitions.
+     * @param automaton the automaton
+     * @return a a minimizeable automaton obtained from 
+     * <CODE>automaton</CODE> by removing all 
+     * unreachable states and multiple character labels
+     * on transitions.  
      */
     public Automaton getMinimizeableAutomaton(Automaton a) {
 	//Automaton a = (Automaton) automaton.clone();

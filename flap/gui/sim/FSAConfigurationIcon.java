@@ -48,8 +48,6 @@ public class FSAConfigurationIcon extends ConfigurationIcon {
     /**
      * Instantiates a new <CODE>ConfigurationIcon</CODE>.
      * @param configuration the FSA configuration that is represented
-     * @param automaton the FS-automaton that this configuration
-     * "arose" from
      */
     public FSAConfigurationIcon(Configuration configuration) {
 	super(configuration);

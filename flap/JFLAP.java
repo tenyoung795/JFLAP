@@ -40,8 +40,11 @@ import java.security.*;
 
 public class JFLAP {
     /**
-     * This sets various system properties before calling on 
-     * {@link gui.action.NewAction#showNew}.
+     * Starts JFLAP.  This sets various system properties.  If there
+     * are command line arguments, this will attempt to open them as
+     * JFLAP files.  If there are no arguments, this will call on
+     * {@link gui.action.NewAction#showNew} to display a choice for a
+     * new structure.
      * @param args the command line arguments, which may hold files to open
      */
     public static void main(String[] args) {
@@ -63,6 +66,9 @@ public class JFLAP {
 	// Set the AWT exception handler.  This may not work in future
 	// Java versions.
 	try {
+	    // This is a useless statement that forces the catcher to 
+	    // compile.
+	    if (gui.ThrowableCatcher.class == null);
 	    System.setProperty("sun.awt.exception.handler",
 			       "gui.ThrowableCatcher");
 	} catch (SecurityException e) {
@@ -72,7 +78,7 @@ public class JFLAP {
 
 	// Apple is stupid.
 	try {
-	    // Well, Apple was stupid...
+	    // Well, Apple WAS stupid...
 	    if (System.getProperty("os.name").startsWith("Mac OS") &&
 		System.getProperty("java.specification.version").equals("1.3"))
 	        System.setProperty("com.apple.hwaccel", "false");

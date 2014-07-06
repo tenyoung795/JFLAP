@@ -62,7 +62,7 @@ public abstract class ConvertAutomatonToGrammarAction extends AutomatonAction {
 
     /**
      * This begins the process of converting an automaton to a grammar.
-     * @param event the event to process
+     * @param e the event to process
      */
     public void actionPerformed(ActionEvent e) {
 	if (automaton.getInitialState() == null) {

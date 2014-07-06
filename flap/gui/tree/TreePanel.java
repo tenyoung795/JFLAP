@@ -30,6 +30,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.Point2D;
 import javax.swing.tree.TreeModel;
@@ -83,7 +84,7 @@ public class TreePanel extends JComponent {
 
     /**
      * Paints the component.
-     * @param g the graphics object to draw on
+     * @param gr the graphics object to draw on
      */
     public void paintComponent(Graphics gr) {
 	Graphics2D g = (Graphics2D) gr;
@@ -99,11 +100,16 @@ public class TreePanel extends JComponent {
 
     /**
      * Prints the component.
-     * @param g the graphics interface for the printer device
+     * @param gr the graphics interface for the printer device
      */
-    /*public void printComponent(Grpahics g) {
-	
-    }*/
+    /*public void printComponent(Graphics gr) {
+	Graphics2D g = (Graphics2D) gr;
+	Rectangle c = g.getClipBounds();
+	g.translate(c.x, c.y);
+	g.setColor(java.awt.Color.white);
+	g.fillRect(0, 0, c.width, c.height);
+	treeDrawer.draw(g, new Dimension(c.width, c.height));
+	}*/
 
     /**
      * Returns the node at a particular point.
