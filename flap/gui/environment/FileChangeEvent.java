@@ -23,15 +23,15 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package gui.environment;
 
 import java.util.EventObject;
 import java.io.File;
 
 /**
- * This is an event that registers with a listener that an environment
- * has changed its file.
+ * This is an event that registers with a listener that an environment has
+ * changed its file.
  * 
  * @see gui.environment.FileChangeListener
  * @see gui.environment.Environment
@@ -42,25 +42,28 @@ import java.io.File;
  */
 
 public class FileChangeEvent extends EventObject {
-    /**
-     * Instantiates a new <CODE>FileChangeEvent</CODE>.
-     * @param environment the environment that threw this event
-     * @param oldFile the previous file that was the file of the
-     * <CODE>Environment</CODE>
-     */
-    public FileChangeEvent(Environment environment, File oldFile) {
-	super(environment);
-	this.oldFile = oldFile;
-    }
+	/**
+	 * Instantiates a new <CODE>FileChangeEvent</CODE>.
+	 * 
+	 * @param environment
+	 *            the environment that threw this event
+	 * @param oldFile
+	 *            the previous file that was the file of the <CODE>Environment</CODE>
+	 */
+	public FileChangeEvent(Environment environment, File oldFile) {
+		super(environment);
+		this.oldFile = oldFile;
+	}
 
-    /**
-     * Returns the native file for the environment before the change.
-     * @return the native file for the environment before the change
-     */
-    public File getOldFile() {
-	return oldFile;
-    }
+	/**
+	 * Returns the native file for the environment before the change.
+	 * 
+	 * @return the native file for the environment before the change
+	 */
+	public File getOldFile() {
+		return oldFile;
+	}
 
-    /** The old file that was the native file for the environment. */
-    private File oldFile;
+	/** The old file that was the native file for the environment. */
+	private File oldFile;
 }

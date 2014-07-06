@@ -23,17 +23,16 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package gui.sim;
 
 import java.util.EventObject;
 
 /**
- * The <CODE>ConfigurationSelectionEvent</CODE> is an event thrown by
- * a <CODE>ConfigurationPane</CODE> whenever a transition is selected
- * or deselected in that pane.  Because many transitions may be
- * selected or deselected at once, this merely registers that a change
- * has happened without registering exactly which have been changed.
+ * The <CODE>ConfigurationSelectionEvent</CODE> is an event thrown by a <CODE>ConfigurationPane</CODE>
+ * whenever a transition is selected or deselected in that pane. Because many
+ * transitions may be selected or deselected at once, this merely registers that
+ * a change has happened without registering exactly which have been changed.
  * 
  * @see gui.sim.ConfigurationSelectionListener
  * @see gui.sim.ConfigurationPane
@@ -42,20 +41,22 @@ import java.util.EventObject;
  */
 
 public class ConfigurationSelectionEvent extends EventObject {
-    /**
-     * Instantiates a new <CODE>ConfigurationSelectionEvent</CODE> object.
-     * @param configurationPane the configuration pane where the
-     * selection state has changed
-     */
-    public ConfigurationSelectionEvent(ConfigurationPane configurationPane) {
-	super(configurationPane);
-    }
+	/**
+	 * Instantiates a new <CODE>ConfigurationSelectionEvent</CODE> object.
+	 * 
+	 * @param configurationPane
+	 *            the configuration pane where the selection state has changed
+	 */
+	public ConfigurationSelectionEvent(ConfigurationPane configurationPane) {
+		super(configurationPane);
+	}
 
-    /**
-     * Returns the configuration pane that generated this event.
-     * @return the configuration pane that generated this event
-     */
-    public ConfigurationPane getPane() {
-	return (ConfigurationPane) getSource();
-    }
+	/**
+	 * Returns the configuration pane that generated this event.
+	 * 
+	 * @return the configuration pane that generated this event
+	 */
+	public ConfigurationPane getPane() {
+		return (ConfigurationPane) getSource();
+	}
 }

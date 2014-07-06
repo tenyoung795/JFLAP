@@ -23,14 +23,15 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package gui.environment;
 
 import java.util.EventListener;
 
 /**
- * An interface that those interested in changes in the file of an
- * environment should implement.
+ * An interface that those interested in changes in the file of an environment
+ * should implement.
+ * 
  * @see gui.environment.FileChangeEvent
  * @see gui.environment.Environment
  * @see gui.environment.Environment#setFile
@@ -38,9 +39,11 @@ import java.util.EventListener;
  */
 
 public interface FileChangeListener extends EventListener {
-    /**
-     * Registers with the listener that an event has occurred.
-     * @param event the event
-     */
-    public void fileChanged(FileChangeEvent event);
+	/**
+	 * Registers with the listener that an event has occurred.
+	 * 
+	 * @param event
+	 *            the event
+	 */
+	public void fileChanged(FileChangeEvent event);
 }

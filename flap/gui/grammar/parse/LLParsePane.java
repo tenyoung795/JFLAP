@@ -23,7 +23,7 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package gui.grammar.parse;
 
 import gui.environment.GrammarEnvironment;
@@ -39,61 +39,75 @@ import gui.tree.*;
  */
 
 public class LLParsePane extends ParsePane {
-    /**
-     * Instantiaes a new LL parse pane.
-     * @param environment the grammar environment
-     * @param grammar the augmented grammar
-     * @param table the LL parse table
-     */
-    public LLParsePane(GrammarEnvironment environment, Grammar grammar,
-		       LLParseTable table) {
-	super(environment, grammar);
-	this.table = new LLParseTable(table) {
-		public boolean isCellEditable(int r,int c) {return false;}
-	    };
-	initView();
-    }
+	/**
+	 * Instantiaes a new LL parse pane.
+	 * 
+	 * @param environment
+	 *            the grammar environment
+	 * @param grammar
+	 *            the augmented grammar
+	 * @param table
+	 *            the LL parse table
+	 */
+	public LLParsePane(GrammarEnvironment environment, Grammar grammar,
+			LLParseTable table) {
+		super(environment, grammar);
+		this.table = new LLParseTable(table) {
+			public boolean isCellEditable(int r, int c) {
+				return false;
+			}
+		};
+		initView();
+	}
 
-    /**
-     * Inits a parse table.
-     * @return a table to hold the parse table
-     */
-    protected JTable initParseTable() {
-	tablePanel = new LLParseTablePane(table);
-	return tablePanel;
-    }
+	/**
+	 * Inits a parse table.
+	 * 
+	 * @return a table to hold the parse table
+	 */
+	protected JTable initParseTable() {
+		tablePanel = new LLParseTablePane(table);
+		return tablePanel;
+	}
 
-    /**
-     * This method is called when there is new input to parse.
-     * @param string a new input string
-     */
-    protected void input(String string) {
-	controller.initialize(string);
-    }
+	/**
+	 * This method is called when there is new input to parse.
+	 * 
+	 * @param string
+	 *            a new input string
+	 */
+	protected void input(String string) {
+		controller.initialize(string);
+	}
 
-    /**
-     * This method is called when the step button is pressed.
-     */
-    protected void step() {
-	controller.step();
-    }
+	/**
+	 * This method is called when the step button is pressed.
+	 */
+	protected boolean step() {
+		controller.step();
+        return true;
+	}
 
-    /**
-     * Inits a new tree panel.  This overriding adds a selection node
-     * drawer so certain nodes can be highlighted.
-     * @return a new display for the parse tree
-     */
-    protected JComponent initTreePanel() {
-	treeDrawer.setNodeDrawer(nodeDrawer);
-	return super.initTreePanel();
-    }
+	/**
+	 * Inits a new tree panel. This overriding adds a selection node drawer so
+	 * certain nodes can be highlighted.
+	 * 
+	 * @return a new display for the parse tree
+	 */
+	protected JComponent initTreePanel() {
+		treeDrawer.setNodeDrawer(nodeDrawer);
+		return super.initTreePanel();
+	}
 
-    /** The parse table. */
-    final LLParseTable table;
-    /** The parse table panel. */
-    LLParseTablePane tablePanel;
-    /** The controller object. */
-    protected LLParseController controller = new LLParseController(this);
-    /** The selection node drawer. */
-    SelectNodeDrawer nodeDrawer = new SelectNodeDrawer();
+	/** The parse table. */
+	final LLParseTable table;
+
+	/** The parse table panel. */
+	LLParseTablePane tablePanel;
+
+	/** The controller object. */
+	protected LLParseController controller = new LLParseController(this);
+
+	/** The selection node drawer. */
+	SelectNodeDrawer nodeDrawer = new SelectNodeDrawer();
 }

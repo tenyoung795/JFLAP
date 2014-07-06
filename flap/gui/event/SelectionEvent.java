@@ -23,24 +23,26 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package gui.event;
 
 import java.util.EventObject;
 
 /**
- * The <CODE>SelectionEvent</CODE> is an event indicating that a
- * selection has changed in an object.
+ * The <CODE>SelectionEvent</CODE> is an event indicating that a selection has
+ * changed in an object.
  * 
  * @author Thomas Finley
  */
 
 public class SelectionEvent extends EventObject {
-    /**
-     * Instantiates a new <CODE>SelectionEvent</CODE>.
-     * @param object the generating object, whose selection has changed
-     */
-    public SelectionEvent(Object object) {
-	super(object);
-    }
+	/**
+	 * Instantiates a new <CODE>SelectionEvent</CODE>.
+	 * 
+	 * @param object
+	 *            the generating object, whose selection has changed
+	 */
+	public SelectionEvent(Object object) {
+		super(object);
+	}
 }

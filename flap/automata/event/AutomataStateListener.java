@@ -23,22 +23,25 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package automata.event;
 
 import java.util.EventListener;
 
 /**
- * An interface that those interested in changes in states in automata
- * should listen to.
+ * An interface that those interested in changes in states in automata should
+ * listen to.
+ * 
  * @see automata.event.AutomataStateEvent
  * @see automata.Automaton#addStateListener
  */
 
 public interface AutomataStateListener extends EventListener {
-    /**
-     * Registers with the listener that an event has occurred.
-     * @param event the event
-     */
-    public void automataStateChange(AutomataStateEvent event);
+	/**
+	 * Registers with the listener that an event has occurred.
+	 * 
+	 * @param event
+	 *            the event
+	 */
+	public void automataStateChange(AutomataStateEvent event);
 }

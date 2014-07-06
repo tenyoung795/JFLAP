@@ -23,22 +23,20 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package gui.regular;
 
-import automata.State;
 import gui.editor.StateTool;
 import gui.viewer.AutomatonDrawer;
 import gui.viewer.AutomatonPane;
-import java.awt.Component;
+
 import java.awt.event.MouseEvent;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.KeyStroke;
+
+import automata.State;
 
 /**
- * A tool that handles the creation of the final state for the FSA to
- * regular expression conversion.
+ * A tool that handles the creation of the final state for the FSA to regular
+ * expression conversion.
  * 
  * @see gui.regular.FSAToREController
  * 
@@ -46,39 +44,50 @@ import javax.swing.KeyStroke;
  */
 
 public class RegularStateTool extends StateTool {
-    /**
-     * Instantiates a new regular state tool.
-     * @param view the view that the automaton is drawn in
-     * @param drawer the automaton drawer for the view
-     * @param controller the controller object we report to
-     */
-    public RegularStateTool(AutomatonPane view, AutomatonDrawer drawer,
-			    FSAToREController controller) {
-	super(view, drawer);
-	this.controller = controller;
-    }
+	/**
+	 * Instantiates a new regular state tool.
+	 * 
+	 * @param view
+	 *            the view that the automaton is drawn in
+	 * @param drawer
+	 *            the automaton drawer for the view
+	 * @param controller
+	 *            the controller object we report to
+	 */
+	public RegularStateTool(AutomatonPane view, AutomatonDrawer drawer,
+			FSAToREController controller) {
+		super(view, drawer);
+		this.controller = controller;
+	}
 
-    /**
-     * When the user clicks, one creates a state.
-     * @param event the mouse event
-     */
-    public void mousePressed(MouseEvent event) {
-	if ((state = controller.stateCreate(event.getPoint()))==null) return;
-	getView().repaint();
-    }
+	/**
+	 * When the user clicks, one creates a state.
+	 * 
+	 * @param event
+	 *            the mouse event
+	 */
+	public void mousePressed(MouseEvent event) {
+		if ((state = controller.stateCreate(event.getPoint())) == null)
+			return;
+		getView().repaint();
+	}
 
-    /**
-     * When the user drags, one moves the created state.
-     * @param event the mouse event
-     */
-    public void mouseDragged(MouseEvent event) {
-	if (state == null) return;
-	state.setPoint(event.getPoint());
-	getView().repaint();
-    }
+	/**
+	 * When the user drags, one moves the created state.
+	 * 
+	 * @param event
+	 *            the mouse event
+	 */
+	public void mouseDragged(MouseEvent event) {
+		if (state == null)
+			return;
+		state.setPoint(event.getPoint());
+		getView().repaint();
+	}
 
-    /** The state that was created. */
-    private State state = null;
-    /** The controller object. */
-    private FSAToREController controller;
+	/** The state that was created. */
+	private State state = null;
+
+	/** The controller object. */
+	private FSAToREController controller;
 }

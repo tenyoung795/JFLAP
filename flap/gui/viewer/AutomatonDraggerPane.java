@@ -23,58 +23,63 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package gui.viewer;
 
 import gui.editor.ArrowNontransitionTool;
 import automata.Automaton;
 
 /**
- * This is the same as an automaton pane, except that it allows the
- * user to drag states around.  This is used particularly in
- * situations where the placement of states may not be to a users
- * liking, i.e. displaying of DFAs with a random placement of some
- * states.
+ * This is the same as an automaton pane, except that it allows the user to drag
+ * states around. This is used particularly in situations where the placement of
+ * states may not be to a users liking, i.e. displaying of DFAs with a random
+ * placement of some states.
  * 
  * @author Thomas Finley
  */
 
 public class AutomatonDraggerPane extends AutomatonPane {
-    /**
-     * Instantiates the automaton dragger pane.
-     * @param drawer the automaton drawer
-     */
-    public AutomatonDraggerPane(AutomatonDrawer drawer) {
-	super(drawer);
-	init();
-    }
+	/**
+	 * Instantiates the automaton dragger pane.
+	 * 
+	 * @param drawer
+	 *            the automaton drawer
+	 */
+	public AutomatonDraggerPane(AutomatonDrawer drawer) {
+		super(drawer);
+		init();
+	}
 
-    /**
-     * Instantiates the automaton dragger pane.
-     * @param drawer the automaton drawer
-     * @param adapt whether or not to adapt the size of the view
-     */
-    public AutomatonDraggerPane(AutomatonDrawer drawer, boolean adapt) {
-	super(drawer, adapt);
-	init();
-    }
+	/**
+	 * Instantiates the automaton dragger pane.
+	 * 
+	 * @param drawer
+	 *            the automaton drawer
+	 * @param adapt
+	 *            whether or not to adapt the size of the view
+	 */
+	public AutomatonDraggerPane(AutomatonDrawer drawer, boolean adapt) {
+		super(drawer, adapt);
+		init();
+	}
 
-    /**
-     * Instantiates the automaton dragger pane.
-     * @param automaton the automaton to draw
-     */
-    public AutomatonDraggerPane(Automaton automaton) {
-	super(automaton);
-	init();
-    }
-    
-    /**
-     * Adds what allows dragging.
-     */
-    private void init() {
-	ArrowNontransitionTool t =
-	    new ArrowNontransitionTool(this, getDrawer());
-	addMouseListener(t);
-	addMouseMotionListener(t);
-    }
+	/**
+	 * Instantiates the automaton dragger pane.
+	 * 
+	 * @param automaton
+	 *            the automaton to draw
+	 */
+	public AutomatonDraggerPane(Automaton automaton) {
+		super(automaton);
+		init();
+	}
+
+	/**
+	 * Adds what allows dragging.
+	 */
+	private void init() {
+		ArrowNontransitionTool t = new ArrowNontransitionTool(this, getDrawer());
+		addMouseListener(t);
+		addMouseMotionListener(t);
+	}
 }

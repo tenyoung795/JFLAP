@@ -23,12 +23,13 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package gui.action;
 
 import automata.*;
 import gui.editor.ArrowDisplayOnlyTool;
 import gui.environment.Environment;
+import gui.environment.Universe;
 import gui.environment.tag.CriticalTag;
 import gui.viewer.*;
 import java.awt.BorderLayout;
@@ -45,54 +46,54 @@ import javax.swing.JPanel;
  */
 
 public class LambdaHighlightAction extends AutomatonAction {
-    public LambdaHighlightAction(Automaton automaton,
-				 Environment environment) {
-	super("Highlight \u03BB-Transitions", null);
-	this.automaton = automaton;
-	this.environment = environment;
-    }
-
-    public void actionPerformed(ActionEvent event) {
-	Transition[] t = automaton.getTransitions();
-	Set lambdas = new HashSet();
-	LambdaTransitionChecker checker =
-	    LambdaCheckerFactory.getLambdaChecker(automaton);
-	for (int i=0; i<t.length; i++)
-	    if (checker.isLambdaTransition(t[i]))
-		lambdas.add(t[i]);
-	
-	// Create the selection drawer thingie.
-	SelectionDrawer as = new SelectionDrawer(automaton);
-	Iterator it = lambdas.iterator();
-	while (it.hasNext()) {
-	    Transition lt = (Transition) it.next();
-	    as.addSelected(lt);
+	public LambdaHighlightAction(Automaton automaton, Environment environment) {
+		super("Highlight "+Universe.curProfile.getEmptyString()+"-Transitions", null);
+		this.automaton = automaton;
+		this.environment = environment;
 	}
 
-	// Put that in the environment.
-	LambdaPane pane = new LambdaPane(new AutomatonPane(as));
-	environment.add(pane, "\u03BB-Transitions", new CriticalTag() {});
-	environment.setActive(pane);
-    }
+	public void actionPerformed(ActionEvent event) {
+		Transition[] t = automaton.getTransitions();
+		Set lambdas = new HashSet();
+		LambdaTransitionChecker checker = LambdaCheckerFactory
+				.getLambdaChecker(automaton);
+		for (int i = 0; i < t.length; i++)
+			if (checker.isLambdaTransition(t[i]))
+				lambdas.add(t[i]);
 
-    /**
-     * A class that exists to make integration with the help system
-     * feasible.
-     */
-    private class LambdaPane extends JPanel {
-	public LambdaPane(AutomatonPane ap) {
-	    super(new BorderLayout());
-	    add(ap, BorderLayout.CENTER);
-	    add(new JLabel("\u03BB-transitions are highlighted."),
-		BorderLayout.NORTH);
-	    ArrowDisplayOnlyTool tool =
-		new ArrowDisplayOnlyTool(ap, ap.getDrawer());
-	    ap.addMouseListener(tool);
+		// Create the selection drawer thingie.
+		SelectionDrawer as = new SelectionDrawer(automaton);
+		Iterator it = lambdas.iterator();
+		while (it.hasNext()) {
+			Transition lt = (Transition) it.next();
+			as.addSelected(lt);
+		}
+
+		// Put that in the environment.
+		LambdaPane pane = new LambdaPane(new AutomatonPane(as));
+		environment.add(pane, Universe.curProfile.getEmptyString()+"-Transitions", new CriticalTag() {
+		});
+		environment.setActive(pane);
 	}
-    }
 
-    /** The automaton to find the lambda-transitions of. */
-    private Automaton automaton;
-    /** The environment to add the pane with the highlighted lambdas to. */
-    private Environment environment;
+	/**
+	 * A class that exists to make integration with the help system feasible.
+	 */
+	private class LambdaPane extends JPanel {
+		public LambdaPane(AutomatonPane ap) {
+			super(new BorderLayout());
+			add(ap, BorderLayout.CENTER);
+			add(new JLabel(Universe.curProfile.getEmptyString()+"-transitions are highlighted."),
+					BorderLayout.NORTH);
+			ArrowDisplayOnlyTool tool = new ArrowDisplayOnlyTool(ap, ap
+					.getDrawer());
+			ap.addMouseListener(tool);
+		}
+	}
+
+	/** The automaton to find the lambda-transitions of. */
+	private Automaton automaton;
+
+	/** The environment to add the pane with the highlighted lambdas to. */
+	private Environment environment;
 }

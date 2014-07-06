@@ -23,13 +23,13 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 /*---------------------------------------------------------------------------
-File:				gui/SuperMouseAdapter.java
-Package:			JAWAA Editor Version 1.0
-Author:				Thomas Finley 
-Date:				August 2001
---------------------------------------------------------------------------*/
+ File:				gui/SuperMouseAdapter.java
+ Package:			JAWAA Editor Version 1.0
+ Author:				Thomas Finley 
+ Date:				August 2001
+ --------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------    
  -- JAWAA Editor 1.0 --
@@ -56,67 +56,85 @@ Date:				August 2001
  THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
----------------------------------------------------------------------------*/
+ ---------------------------------------------------------------------------*/
 
 package gui;
 
 import java.awt.event.*;
 
 /**
- * The SuperMouseAdapter takes on the responsibilities we see both in
- * the MouseAdapter and the MouseMotionAdapter, because we unfortunately
- * cannot be a subclass of two classes.  This is a convinience class so
- * that when we want to have something that is clickable or dragable or
- * something, we don't have to define all the methods when we just want
- * to do, say, two things.
+ * The SuperMouseAdapter takes on the responsibilities we see both in the
+ * MouseAdapter and the MouseMotionAdapter, because we unfortunately cannot be a
+ * subclass of two classes. This is a convinience class so that when we want to
+ * have something that is clickable or dragable or something, we don't have to
+ * define all the methods when we just want to do, say, two things.
  * 
  * @author Thomas Finley
  */
 
-public abstract class SuperMouseAdapter
-    implements MouseListener, MouseMotionListener {
-    
-    /**
-     * Invoked when a mouse button is clicked on a component.
-     * @param event the MouseEvent to process
-     */
-    public void mouseClicked(MouseEvent event) { }
+public abstract class SuperMouseAdapter implements MouseListener,
+		MouseMotionListener {
 
-    /**
-     * Invoked when the mouse enters a component.
-     * @param event the MouseEvent to process
-     */
-    public void mouseEntered(MouseEvent event) { }
+	/**
+	 * Invoked when a mouse button is clicked on a component.
+	 * 
+	 * @param event
+	 *            the MouseEvent to process
+	 */
+	public void mouseClicked(MouseEvent event) {
+	}
 
-    /**
-     * Invoked when the mouse exits a component.
-     * @param event the MouseEvent to process
-     */
-    public void mouseExited(MouseEvent event) { }
+	/**
+	 * Invoked when the mouse enters a component.
+	 * 
+	 * @param event
+	 *            the MouseEvent to process
+	 */
+	public void mouseEntered(MouseEvent event) {
+	}
 
-    /**
-     * Invoked when a mouse button is held down on a component.
-     * @param event the MouseEvent to process
-     */
-    public void mousePressed(MouseEvent event) { }
+	/**
+	 * Invoked when the mouse exits a component.
+	 * 
+	 * @param event
+	 *            the MouseEvent to process
+	 */
+	public void mouseExited(MouseEvent event) {
+	}
 
-    /**
-     * Invoked when a mouse button is released on a component.
-     * @param event the MouseEvent to process
-     */
-    public void mouseReleased(MouseEvent event) { }
+	/**
+	 * Invoked when a mouse button is held down on a component.
+	 * 
+	 * @param event
+	 *            the MouseEvent to process
+	 */
+	public void mousePressed(MouseEvent event) {
+	}
 
-    /**
-     * Invoked when a mouse is dragged over this component with a button
-     * down.
-     * @param event the MouseEvent to process
-     */
-    public void mouseDragged(MouseEvent event) { }
+	/**
+	 * Invoked when a mouse button is released on a component.
+	 * 
+	 * @param event
+	 *            the MouseEvent to process
+	 */
+	public void mouseReleased(MouseEvent event) {
+	}
 
-    /**
-     * Invoked when a mouse is moved over this component with no buttons
-     * down.
-     * @param event the MouseEvent to process
-     */
-    public void mouseMoved(MouseEvent event) { }
+	/**
+	 * Invoked when a mouse is dragged over this component with a button down.
+	 * 
+	 * @param event
+	 *            the MouseEvent to process
+	 */
+	public void mouseDragged(MouseEvent event) {
+	}
+
+	/**
+	 * Invoked when a mouse is moved over this component with no buttons down.
+	 * 
+	 * @param event
+	 *            the MouseEvent to process
+	 */
+	public void mouseMoved(MouseEvent event) {
+	}
 }

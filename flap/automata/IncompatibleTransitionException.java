@@ -23,13 +23,13 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package automata;
 
 /**
- * This class is an exception that is thrown in the event an
- * incompatible <CODE>Transition</CODE> object is assigned to an
- * automaton.
+ * This class is an exception that is thrown in the event an incompatible <CODE>Transition</CODE>
+ * object is assigned to an automaton.
+ * 
  * @see automata.Automaton
  * @see automata.Transition
  * @see automata.Automaton#getTransitionClass
@@ -38,5 +38,5 @@ package automata;
  */
 
 public class IncompatibleTransitionException extends RuntimeException {
-    
+
 }

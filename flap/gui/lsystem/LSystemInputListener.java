@@ -23,23 +23,25 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package gui.lsystem;
 
 import java.util.EventListener;
 
 /**
- * An interface that those interested in user change of an L-system
- * should listen to.
+ * An interface that those interested in user change of an L-system should
+ * listen to.
+ * 
  * @see gui.lsystem.LSystemInputEvent
  * @see gui.lsystem.LSystemInputPane
  */
 
 public interface LSystemInputListener extends EventListener {
-    /**
-     * Registers with the listener that the user has changed the
-     * L-system.
-     * @param event the event
-     */
-    public void lSystemChanged(LSystemInputEvent event);
+	/**
+	 * Registers with the listener that the user has changed the L-system.
+	 * 
+	 * @param event
+	 *            the event
+	 */
+	public void lSystemChanged(LSystemInputEvent event);
 }

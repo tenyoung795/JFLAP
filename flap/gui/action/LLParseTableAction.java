@@ -23,19 +23,20 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package gui.action;
 
 import grammar.Grammar;
-import grammar.parse.*;
+import grammar.parse.Operations;
 import gui.environment.EnvironmentFrame;
 import gui.environment.GrammarEnvironment;
 import gui.environment.Universe;
-import gui.environment.tag.*;
-import gui.event.*;
-import gui.grammar.parse.*;
+import gui.environment.tag.CriticalTag;
+import gui.grammar.parse.LLParseTableDerivationPane;
+
 import java.awt.event.ActionEvent;
-import javax.swing.*;
+
+import javax.swing.JOptionPane;
 
 /**
  * This is an action to build an LL(1) parse table for a grammar.
@@ -44,38 +45,42 @@ import javax.swing.*;
  */
 
 public class LLParseTableAction extends GrammarAction {
-    /**
-     * Instantiates a new <CODE>GrammarOutputAction</CODE>.
-     * @param environment the grammar environment
-     */
-    public LLParseTableAction(GrammarEnvironment environment) {
-	super("Build LL(1) Parse Table", null);
-	this.environment = environment;
-	this.frame = Universe.frameForEnvironment(environment);
-    }
-
-    /**
-     * Performs the action.
-     */
-    public void actionPerformed(ActionEvent e) {
-	Grammar g = environment.getGrammar();
-	if (g == null) return;
-	if (!Operations.isLL1(g)) {
-	    if (JOptionPane.showConfirmDialog
-		(frame, "The grammar is not LL(1).\nContinue anyway?",
-		 "Grammar not LL(1)", JOptionPane.YES_NO_OPTION) ==
-		JOptionPane.NO_OPTION)
-		return;
+	/**
+	 * Instantiates a new <CODE>GrammarOutputAction</CODE>.
+	 * 
+	 * @param environment
+	 *            the grammar environment
+	 */
+	public LLParseTableAction(GrammarEnvironment environment) {
+		super("Build LL(1) Parse Table", null);
+		this.environment = environment;
+		this.frame = Universe.frameForEnvironment(environment);
 	}
 
-	LLParseTableDerivationPane ptdp = 
-	    new LLParseTableDerivationPane(environment);
-	environment.add(ptdp, "Build LL(1) Parse", new CriticalTag() {});
-	environment.setActive(ptdp);
-    }
+	/**
+	 * Performs the action.
+	 */
+	public void actionPerformed(ActionEvent e) {
+		Grammar g = environment.getGrammar();
+		if (g == null)
+			return;
+		if (!Operations.isLL1(g)) {
+			if (JOptionPane.showConfirmDialog(frame,
+					"The grammar is not LL(1).\nContinue anyway?",
+					"Grammar not LL(1)", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
+				return;
+		}
 
-    /** The grammar environment. */
-    private GrammarEnvironment environment;
-    /** The frame for the grammar environment. */
-    private EnvironmentFrame frame;
+		LLParseTableDerivationPane ptdp = new LLParseTableDerivationPane(
+				environment);
+		environment.add(ptdp, "Build LL(1) Parse", new CriticalTag() {
+		});
+		environment.setActive(ptdp);
+	}
+
+	/** The grammar environment. */
+	private GrammarEnvironment environment;
+
+	/** The frame for the grammar environment. */
+	private EnvironmentFrame frame;
 }

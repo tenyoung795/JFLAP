@@ -23,7 +23,7 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package gui.sim;
 
 import java.util.EventListener;
@@ -31,15 +31,17 @@ import java.util.EventListener;
 /**
  * An interface that those interested in changes in selection of the
  * configuration pane should implement.
+ * 
  * @see gui.sim.ConfigurationSelectionEvent
  * @see gui.sim.ConfigurationPane#addSelectionListener
  */
 
 public interface ConfigurationSelectionListener extends EventListener {
-    /**
-     * Registers with the listener that an event has occurred.
-     * @param event the event
-     */
-    public void configurationSelectionChange
-	(ConfigurationSelectionEvent event);
+	/**
+	 * Registers with the listener that an event has occurred.
+	 * 
+	 * @param event
+	 *            the event
+	 */
+	public void configurationSelectionChange(ConfigurationSelectionEvent event);
 }

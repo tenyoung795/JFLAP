@@ -23,31 +23,30 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package automata;
 
-import automata.*;
-
 /**
- * The alphabet retriever object can be used to find the alphabet
- * for a given automaton.  
- *
+ * The alphabet retriever object can be used to find the alphabet for a given
+ * automaton.
+ * 
  * @author Ryan Cavalcante
  */
 
 public abstract class AlphabetRetriever {
-    /**
-     * Instantiates an <CODE>AlphabetRetriever</CODE> object.
-     */
-    public AlphabetRetriever() {
+	/**
+	 * Instantiates an <CODE>AlphabetRetriever</CODE> object.
+	 */
+	public AlphabetRetriever() {
 
-    }
+	}
 
-    /**
-     * Returns the alphabet for <CODE>automaton</CODE> in an
-     * array of strings.
-     * @param automaton the automaton.
-     * @return the alphabet.
-     */
-    public abstract String[] getAlphabet(Automaton automaton);
+	/**
+	 * Returns the alphabet for <CODE>automaton</CODE> in an array of strings.
+	 * 
+	 * @param automaton
+	 *            the automaton.
+	 * @return the alphabet.
+	 */
+	public abstract String[] getAlphabet(Automaton automaton);
 }

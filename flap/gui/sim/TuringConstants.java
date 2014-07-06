@@ -23,29 +23,30 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package gui.sim;
 
 /**
- * This interface holds constants necessary for the drawing of
- * configuration icons for Turing machines.
+ * This interface holds constants necessary for the drawing of configuration
+ * icons for Turing machines.
  * 
  * @author Thomas Finley
  */
 
 interface TuringConstants {
-    /** A simple prefix/postfix string for tape. */
-    public static final String FIX = FixCreator.getFix();
-    /** The size of the tape head. */
-    public static final int SIZE_HEAD = 4;
+	/** A simple prefix/postfix string for tape. */
+	public static final String FIX = FixCreator.getFix();
 
-    static class FixCreator {
-	public static String getFix() {
-	    char c = automata.turing.Tape.BLANK;
-	    StringBuffer b = new StringBuffer();
-	    for (int i=0; i<20; i++)
-		b.append(c);
-	    return b.toString();
+	/** The size of the tape head. */
+	public static final int SIZE_HEAD = 4;
+
+	static class FixCreator {
+		public static String getFix() {
+			char c = automata.turing.Tape.BLANK;
+			StringBuffer b = new StringBuffer();
+			for (int i = 0; i < 20; i++)
+				b.append(c);
+			return b.toString();
+		}
 	}
-    }
 }

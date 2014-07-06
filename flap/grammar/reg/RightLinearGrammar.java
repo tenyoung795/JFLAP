@@ -23,7 +23,7 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package grammar.reg;
 
 import grammar.Production;
@@ -31,26 +31,27 @@ import grammar.ProductionChecker;
 
 /**
  * This <CODE>RightLinearGrammar</CODE> is a regular grammar with the
- * additional restriction that the grammar cannot be a left linear
- * grammar.
+ * additional restriction that the grammar cannot be a left linear grammar.
  * 
  * @author Thomas Finley
  */
 
 public class RightLinearGrammar extends RegularGrammar {
-    /**
-     * The production checker makes sure that the production added is
-     * a proper right linear production.
-     * @param production the production to check
-     * @throws IllegalArgumentException if the production is not a
-     * right linear production
-     */
-    public void checkProduction(Production production) {
-	if (!PC.isRightLinear(production))
-	    throw new IllegalArgumentException
-		("The production is not right linear.");
-    }
+	/**
+	 * The production checker makes sure that the production added is a proper
+	 * right linear production.
+	 * 
+	 * @param production
+	 *            the production to check
+	 * @throws IllegalArgumentException
+	 *             if the production is not a right linear production
+	 */
+	public void checkProduction(Production production) {
+		if (!ProductionChecker.isRightLinear(production))
+			throw new IllegalArgumentException(
+					"The production is not right linear.");
+	}
 
-    /** The production checker. */
-    private static ProductionChecker PC = new ProductionChecker();
+	/** The production checker. */
+	private static ProductionChecker PC = new ProductionChecker();
 }

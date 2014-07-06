@@ -23,21 +23,21 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package gui.regular;
 
-import automata.State;
 import gui.editor.TransitionTool;
 import gui.viewer.AutomatonDrawer;
 import gui.viewer.AutomatonPane;
-import java.awt.Component;
-import java.awt.Point;
+
 import java.awt.event.MouseEvent;
 
+import automata.State;
+
 /**
- * A tool that handles the creation of transitions for the FSA to
- * regular expression conversion.  This simply calls the appropriate
- * <CODE>FSAToREController</CODE> method.
+ * A tool that handles the creation of transitions for the FSA to regular
+ * expression conversion. This simply calls the appropriate <CODE>FSAToREController</CODE>
+ * method.
  * 
  * @see gui.regular.FSAToREController#transitionCreate
  * 
@@ -45,35 +45,41 @@ import java.awt.event.MouseEvent;
  */
 
 public class RegularTransitionTool extends TransitionTool {
-    /**
-     * Instantiates a new transition tool.
-     * @param view the view where the automaton is drawn
-     * @param drawer the object that draws the automaton
-     * @param controller the controller object for the transition from
-     * an FSA to an RE
-     */
-    public RegularTransitionTool(AutomatonPane view, AutomatonDrawer drawer,
-				 FSAToREController controller) {
-	super(view, drawer);
-	this.controller = controller;
-    }
-
-    /**
-     * When we release the mouse, a transition from the start state to
-     * this released state must be formed.
-     * @param event the mouse event
-     */
-    public void mouseReleased(MouseEvent event) {
-	// Did we even start at a state?
-	if (first == null) return;
-	State state = getDrawer().stateAtPoint(event.getPoint());
-	if (state != null) {
-	    controller.transitionCreate(first, state);
+	/**
+	 * Instantiates a new transition tool.
+	 * 
+	 * @param view
+	 *            the view where the automaton is drawn
+	 * @param drawer
+	 *            the object that draws the automaton
+	 * @param controller
+	 *            the controller object for the transition from an FSA to an RE
+	 */
+	public RegularTransitionTool(AutomatonPane view, AutomatonDrawer drawer,
+			FSAToREController controller) {
+		super(view, drawer);
+		this.controller = controller;
 	}
-	first = null;
-	getView().repaint();
-    }
 
-    /** The regular conversion controller. */
-    private FSAToREController controller;
+	/**
+	 * When we release the mouse, a transition from the start state to this
+	 * released state must be formed.
+	 * 
+	 * @param event
+	 *            the mouse event
+	 */
+	public void mouseReleased(MouseEvent event) {
+		// Did we even start at a state?
+		if (first == null)
+			return;
+		State state = getDrawer().stateAtPoint(event.getPoint());
+		if (state != null) {
+			controller.transitionCreate(first, state);
+		}
+		first = null;
+		getView().repaint();
+	}
+
+	/** The regular conversion controller. */
+	private FSAToREController controller;
 }

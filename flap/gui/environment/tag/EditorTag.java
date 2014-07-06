@@ -23,20 +23,19 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package gui.environment.tag;
 
 /**
- * An editor tag is a tag intended for use to tag some object that is
- * intended to be used as some sort of editor.  In general the tag is
- * meant for something that can change the inner workings of some sort
- * of object, presumably for the purpose, one would assume, of keeping
- * it from doing so if such an edit would be inconvenient or hazardous
- * at some critical time.
+ * An editor tag is a tag intended for use to tag some object that is intended
+ * to be used as some sort of editor. In general the tag is meant for something
+ * that can change the inner workings of some sort of object, presumably for the
+ * purpose, one would assume, of keeping it from doing so if such an edit would
+ * be inconvenient or hazardous at some critical time.
  * 
  * @author Thomas Finley
  */
 
 public interface EditorTag extends Tag {
-    
+
 }

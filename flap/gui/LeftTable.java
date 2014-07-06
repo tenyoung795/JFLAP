@@ -23,42 +23,43 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package gui;
 
-import javax.swing.table.TableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 import java.awt.Color;
 
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+
 /**
- * This table is specifically for those tables where the leftmost
- * column is an identifier for the row, i.e., it should not truly be
- * considered data of the table.
+ * This table is specifically for those tables where the leftmost column is an
+ * identifier for the row, i.e., it should not truly be considered data of the
+ * table.
  * 
  * @author Thomas Finley
  */
 
 public class LeftTable extends HighlightTable {
-    public LeftTable() {
-	initView();
-    }
-    public LeftTable(TableModel model) {
-	super(model);
-	initView();
-    }
+	public LeftTable() {
+		initView();
+	}
 
-    /**
-     * Makes the leftmost column's data cells have renderers the same
-     * as the table column headers.
-     */
-    private void initView() {
-	setGridColor(Color.lightGray);
-	TableColumn column = getColumnModel().getColumn(0);
-	//column.setCellRenderer(column.getHeaderRenderer());
-	DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
-	renderer.setBackground(new Color(200,200,200));
-	column.setCellRenderer(renderer);
-    }
+	public LeftTable(TableModel model) {
+		super(model);
+		initView();
+	}
+
+	/**
+	 * Makes the leftmost column's data cells have renderers the same as the
+	 * table column headers.
+	 */
+	private void initView() {
+		setGridColor(Color.lightGray);
+		TableColumn column = getColumnModel().getColumn(0);
+		// column.setCellRenderer(column.getHeaderRenderer());
+		DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+		renderer.setBackground(new Color(200, 200, 200));
+		column.setCellRenderer(renderer);
+	}
 }

@@ -23,48 +23,53 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package regular;
 
 import java.util.EventObject;
 
 /**
- * This event should be distributed when a regular expression object
- * changes.
+ * This event should be distributed when a regular expression object changes.
  * 
  * @author Thomas Finley
  */
 
 public class ExpressionChangeEvent extends EventObject {
-    /**
-     * Instantiates a change event.
-     * @param expression the expression object that was changed
-     * @param old the string representing the old regular expression
-     */
-    public ExpressionChangeEvent(RegularExpression expression, String old) {
-	super(expression);
-	this.expression = expression;
-	this.old = old;
-    }
+	/**
+	 * Instantiates a change event.
+	 * 
+	 * @param expression
+	 *            the expression object that was changed
+	 * @param old
+	 *            the string representing the old regular expression
+	 */
+	public ExpressionChangeEvent(RegularExpression expression, String old) {
+		super(expression);
+		this.expression = expression;
+		this.old = old;
+	}
 
-    /**
-     * Returns the regular expression that was changed.
-     * @return the regular expression that was changed
-     */
-    public RegularExpression getExpression() {
-	return expression;
-    }
+	/**
+	 * Returns the regular expression that was changed.
+	 * 
+	 * @return the regular expression that was changed
+	 */
+	public RegularExpression getExpression() {
+		return expression;
+	}
 
-    /**
-     * Returns the old string representation of the expression.
-     * @return the old string representation of the expression
-     */
-    public String getOld() {
-	return old;
-    }
+	/**
+	 * Returns the old string representation of the expression.
+	 * 
+	 * @return the old string representation of the expression
+	 */
+	public String getOld() {
+		return old;
+	}
 
-    /** The changed RE. */
-    private RegularExpression expression;
-    /** The old string representation of the RE. */
-    private String old;
+	/** The changed RE. */
+	private RegularExpression expression;
+
+	/** The old string representation of the RE. */
+	private String old;
 }

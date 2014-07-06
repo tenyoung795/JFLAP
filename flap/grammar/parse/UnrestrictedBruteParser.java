@@ -23,7 +23,7 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package grammar.parse;
 
 import grammar.Grammar;
@@ -35,12 +35,15 @@ import grammar.Grammar;
  */
 
 public class UnrestrictedBruteParser extends BruteParser {
-    /**
-     * Creates a new unrestricted brute parser.
-     * @param grammar the unrestricted grammar to parse
-     * @param target the target string
-     */
-    public UnrestrictedBruteParser(Grammar grammar,String target) {
-	super(grammar, target);
-    }
+	/**
+	 * Creates a new unrestricted brute parser.
+	 * 
+	 * @param grammar
+	 *            the unrestricted grammar to parse
+	 * @param target
+	 *            the target string
+	 */
+	public UnrestrictedBruteParser(Grammar grammar, String target) {
+		super(grammar, target);
+	}
 }

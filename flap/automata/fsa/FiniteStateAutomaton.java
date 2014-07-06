@@ -23,34 +23,33 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package automata.fsa;
 
 import automata.Automaton;
 
 /**
- * This subclass of <CODE>Automaton</CODE> is specifically for a
- * definition of a regular Finite State Automaton.
+ * This subclass of <CODE>Automaton</CODE> is specifically for a definition of
+ * a regular Finite State Automaton.
  * 
  * @author Thomas Finley
  */
 
 public class FiniteStateAutomaton extends Automaton {
-    /**
-     * Creates a finite state automaton with no states and no
-     * transitions.
-     */
-    public FiniteStateAutomaton() {
-	super();
-    }
+	/**
+	 * Creates a finite state automaton with no states and no transitions.
+	 */
+	public FiniteStateAutomaton() {
+		super();
+	}
 
-    /**
-     * Returns the class of <CODE>Transition</CODE> this automaton
-     * must accept.
-     * @return the <CODE>Class</CODE> object for
-     * <CODE>automata.fsa.FSATransition</CODE>
-     */
-    protected Class getTransitionClass() {
-	return automata.fsa.FSATransition.class;
-    }
+	/**
+	 * Returns the class of <CODE>Transition</CODE> this automaton must
+	 * accept.
+	 * 
+	 * @return the <CODE>Class</CODE> object for <CODE>automata.fsa.FSATransition</CODE>
+	 */
+	protected Class getTransitionClass() {
+		return automata.fsa.FSATransition.class;
+	}
 }

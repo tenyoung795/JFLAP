@@ -23,34 +23,33 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package automata.pda;
 
 import automata.Automaton;
 
 /**
- * This subclass of <CODE>Automaton</CODE> is specifically for a
- * definition of a Pushdown Automaton.
+ * This subclass of <CODE>Automaton</CODE> is specifically for a definition of
+ * a Pushdown Automaton.
  * 
  * @author Ryan Cavalcante
  */
 
 public class PushdownAutomaton extends Automaton {
-    /**
-     * Creates a pushdown automaton with no states and no
-     * transitions.
-     */
-    public PushdownAutomaton() {
-	super();
-    }
+	/**
+	 * Creates a pushdown automaton with no states and no transitions.
+	 */
+	public PushdownAutomaton() {
+		super();
+	}
 
-    /**
-     * Returns the class of <CODE>Transition</CODE> this automaton
-     * must accept.
-     * @return the <CODE>Class</CODE> object for
-     * <CODE>automata.pda.PDATransition</CODE>
-     */
-    protected Class getTransitionClass() {
-	return automata.pda.PDATransition.class;
-    }
+	/**
+	 * Returns the class of <CODE>Transition</CODE> this automaton must
+	 * accept.
+	 * 
+	 * @return the <CODE>Class</CODE> object for <CODE>automata.pda.PDATransition</CODE>
+	 */
+	protected Class getTransitionClass() {
+		return automata.pda.PDATransition.class;
+	}
 }

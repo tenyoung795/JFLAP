@@ -23,7 +23,7 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package gui.action;
 
 import grammar.Grammar;
@@ -42,30 +42,34 @@ import java.awt.event.ActionEvent;
  */
 
 public class BruteParseAction extends GrammarAction {
-    /**
-     * Instantiates a new <CODE>BruteParseAction</CODE>.
-     * @param environment the grammar environment
-     */
-    public BruteParseAction(GrammarEnvironment environment) {
-	super("Brute Force Parse", null);
-	this.environment = environment;
-	this.frame = Universe.frameForEnvironment(environment);
-    }
+	/**
+	 * Instantiates a new <CODE>BruteParseAction</CODE>.
+	 * 
+	 * @param environment
+	 *            the grammar environment
+	 */
+	public BruteParseAction(GrammarEnvironment environment) {
+		super("Brute Force Parse", null);
+		this.environment = environment;
+		this.frame = Universe.frameForEnvironment(environment);
+	}
 
-    /**
-     * Performs the action.
-     */
-    public void actionPerformed(ActionEvent e) {
-	Grammar g = environment.getGrammar(UnrestrictedGrammar.class);
-	if (g == null) return;
-	BruteParsePane bpp = 
-	    new BruteParsePane(environment, g);
-	environment.add(bpp, "Brute Parser", new CriticalTag() {});
-	environment.setActive(bpp);
-    }
+	/**
+	 * Performs the action.
+	 */
+	public void actionPerformed(ActionEvent e) {
+		Grammar g = environment.getGrammar(UnrestrictedGrammar.class);
+		if (g == null)
+			return;
+		BruteParsePane bpp = new BruteParsePane(environment, g, null);
+		environment.add(bpp, "Brute Parser", new CriticalTag() {
+		});
+		environment.setActive(bpp);
+	}
 
-    /** The grammar environment. */
-    private GrammarEnvironment environment;
-    /** The frame for the grammar environment. */
-    private EnvironmentFrame frame;
+	/** The grammar environment. */
+	private GrammarEnvironment environment;
+
+	/** The frame for the grammar environment. */
+	private EnvironmentFrame frame;
 }

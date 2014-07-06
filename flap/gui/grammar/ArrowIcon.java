@@ -23,12 +23,11 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package gui.grammar;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import javax.swing.Icon;
 
@@ -39,44 +38,51 @@ import javax.swing.Icon;
  */
 
 public class ArrowIcon implements Icon {
-    /**
-     * Instantiates a new <CODE>ArrowIcon</CODE>.
-     * @param width the width of this icon
-     * @param height the height of this icon
-     */
-    public ArrowIcon(int width, int height) {
-	this.width = width;
-	this.height = height;
-    }
+	/**
+	 * Instantiates a new <CODE>ArrowIcon</CODE>.
+	 * 
+	 * @param width
+	 *            the width of this icon
+	 * @param height
+	 *            the height of this icon
+	 */
+	public ArrowIcon(int width, int height) {
+		this.width = width;
+		this.height = height;
+	}
 
-    /**
-     * Returns the icon's height.
-     * @return the icon's height
-     */
-    public int getIconHeight() {
-	return height;
-    }
+	/**
+	 * Returns the icon's height.
+	 * 
+	 * @return the icon's height
+	 */
+	public int getIconHeight() {
+		return height;
+	}
 
-    /**
-     * Returns the icon's width.
-     * @return the icon's width
-     */
-    public int getIconWidth() {
-	return width;
-    }
+	/**
+	 * Returns the icon's width.
+	 * 
+	 * @return the icon's width
+	 */
+	public int getIconWidth() {
+		return width;
+	}
 
-    /**
-     * Paints the arrow.
-     */
-    public void paintIcon(Component c, Graphics g, int x, int y) {
-	g.setColor(Color.black);
-	g.drawLine(x, y+height/2, x+width, y+height/2);
-	g.drawLine(x+width-height/2, y, x+width, y+height/2);
-	g.drawLine(x+width-height/2, y+height, x+width, y+height/2);
-    }
+	/**
+	 * Paints the arrow.
+	 */
+	public void paintIcon(Component c, Graphics g, int x, int y) {
+		g.setColor(Color.black);
+		g.drawLine(x, y + height / 2, x + width, y + height / 2);
+		g.drawLine(x + width - height / 2, y, x + width, y + height / 2);
+		g.drawLine(x + width - height / 2, y + height, x + width, y + height
+				/ 2);
+	}
 
-    /** The width of the icon. */
-    private int width;
-    /** The height of the icon. */
-    private int height;
+	/** The width of the icon. */
+	private int width;
+
+	/** The height of the icon. */
+	private int height;
 }

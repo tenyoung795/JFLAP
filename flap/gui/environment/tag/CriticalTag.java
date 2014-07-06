@@ -23,16 +23,15 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package gui.environment.tag;
 
 /**
- * A critical tag is used to mark a component whose "stability"
- * requires that the object which is part of an environment remain
- * uneditable for the course of an action.  In short, those components
- * with tags marked as <CODE>EditorTag</CODE> must be deactivated.
- * The intention is that an <CODE>Environment</CODE> will detect the
- * presence of critical tagged objects, and will not allow other
+ * A critical tag is used to mark a component whose "stability" requires that
+ * the object which is part of an environment remain uneditable for the course
+ * of an action. In short, those components with tags marked as <CODE>EditorTag</CODE>
+ * must be deactivated. The intention is that an <CODE>Environment</CODE> will
+ * detect the presence of critical tagged objects, and will not allow other
  * <CODE>EditorTag</CODE> objects to be selectable.
  * 
  * @see gui.environment.Environment
@@ -42,5 +41,5 @@ package gui.environment.tag;
  */
 
 public interface CriticalTag extends Tag {
-    
+
 }

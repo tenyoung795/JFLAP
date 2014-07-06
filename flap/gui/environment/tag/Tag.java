@@ -23,19 +23,18 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package gui.environment.tag;
 
 /**
- * A tag is simply an interface that can be applied to an object to
- * indicate that it satisfies some sort of property.  The intention is
- * for a tag object to have absolutely no methods to implement.  In
- * this way a tag object functions much like the bitfield vectors of
- * yore for identifying them with particular characteristics, but
- * without the inconvinience of having particular bits tied to certain
- * values that absolutely everybody and his mother had to be made
- * aware of.  A tag object may simply be something that implements
- * <CODE>Tag</CODE> only to indicate that it has no tag.
+ * A tag is simply an interface that can be applied to an object to indicate
+ * that it satisfies some sort of property. The intention is for a tag object to
+ * have absolutely no methods to implement. In this way a tag object functions
+ * much like the bitfield vectors of yore for identifying them with particular
+ * characteristics, but without the inconvinience of having particular bits tied
+ * to certain values that absolutely everybody and his mother had to be made
+ * aware of. A tag object may simply be something that implements <CODE>Tag</CODE>
+ * only to indicate that it has no tag.
  * 
  * @see gui.environment.Environment#add
  * 
@@ -43,5 +42,5 @@ package gui.environment.tag;
  */
 
 public interface Tag {
-    
+
 }

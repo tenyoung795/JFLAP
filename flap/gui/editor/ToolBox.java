@@ -23,17 +23,16 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package gui.editor;
 
 import gui.viewer.AutomatonDrawer;
 import gui.viewer.AutomatonPane;
-import java.awt.Component;
 import java.util.List;
 
 /**
- * A <CODE>ToolBox</CODE> is an object used for defining what tools
- * are in a <CODE>ToolBar</CODE> object.
+ * A <CODE>ToolBox</CODE> is an object used for defining what tools are in a
+ * <CODE>ToolBar</CODE> object.
  * 
  * @see gui.editor.ToolBar
  * @see gui.editor.Tool
@@ -42,11 +41,13 @@ import java.util.List;
  */
 
 public interface ToolBox {
-    /**
-     * Returns a list of tools in the order they should be in the tool
-     * bar.
-     * @param view the view that the automaton will be drawn in
-     * @param drawer the automaton drawer for the view
-     */
-    public List tools(AutomatonPane view, AutomatonDrawer drawer);
+	/**
+	 * Returns a list of tools in the order they should be in the tool bar.
+	 * 
+	 * @param view
+	 *            the view that the automaton will be drawn in
+	 * @param drawer
+	 *            the automaton drawer for the view
+	 */
+	public List tools(AutomatonPane view, AutomatonDrawer drawer);
 }

@@ -23,7 +23,7 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package gui.action;
 
 import grammar.Grammar;
@@ -41,30 +41,36 @@ import java.awt.event.ActionEvent;
  */
 
 public class LRParseTableAction extends GrammarAction {
-    /**
-     * Instantiates a new <CODE>GrammarOutputAction</CODE>.
-     * @param environment the grammar environment
-     */
-    public LRParseTableAction(GrammarEnvironment environment) {
-	super("Build SLR(1) Parse Table", null);
-	this.environment = environment;
-	this.frame = Universe.frameForEnvironment(environment);
-    }
+	/**
+	 * Instantiates a new <CODE>GrammarOutputAction</CODE>.
+	 * 
+	 * @param environment
+	 *            the grammar environment
+	 */
+	public LRParseTableAction(GrammarEnvironment environment) {
+		super("Build SLR(1) Parse Table", null);
+		this.environment = environment;
+		this.frame = Universe.frameForEnvironment(environment);
+	}
 
-    /**
-     * Performs the action.
-     */
-    public void actionPerformed(ActionEvent e) {
-	Grammar g = environment.getGrammar();
-	if (g == null) return;
-	LRParseTableDerivationPane ptdp = 
-	    new LRParseTableDerivationPane(environment);
-	environment.add(ptdp, "Build SLR(1) Parse", new CriticalTag() {});
-	environment.setActive(ptdp);
-    }
+	/**
+	 * Performs the action.
+	 */
+	public void actionPerformed(ActionEvent e) {
+		Grammar g = environment.getGrammar();
+		if (g == null)
+			return;
+		LRParseTableDerivationPane ptdp = new LRParseTableDerivationPane(
+				environment);
+        if(ptdp.getAugmentedGrammar() == null) return;
+		environment.add(ptdp, "Build SLR(1) Parse", new CriticalTag() {
+		});
+		environment.setActive(ptdp);
+	}
 
-    /** The grammar environment. */
-    private GrammarEnvironment environment;
-    /** The frame for the grammar environment. */
-    private EnvironmentFrame frame;
+	/** The grammar environment. */
+	private GrammarEnvironment environment;
+
+	/** The frame for the grammar environment. */
+	private EnvironmentFrame frame;
 }

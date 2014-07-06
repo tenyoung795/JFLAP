@@ -1,0 +1,15 @@
+JFLAP 6.2 Changes 
+
+Major:
+-A User Control Parsing function has been added, where users can choose which production to apply in parsing.
+-A CYK Parser and Multi-Run CYK Parser have been added, which are quicker than Brute Force parsing.
+-JFLAP now implements a package of layout commands and algorithms that can be applied to automata.
+-The pumping lemma game now allows the computer to go first, if desired.
+-New languages have been added to the pumping-lemma game, and a few removed.  
+
+Minor:
+-Turing machines, by default, can no longer have transitions leading from final states, although this feature is available as an option.
+-JFLAP now transforms the grammar into CNF even if the start variable derives lambda. Newly transformed grammars before would not accept the lambda String.
+-Superfluous grammar rules are now removed during the transformation from a pushdown automaton to a context-free grammar.
+-The default layout algorithm (GEM) has been improved such that vertices will now stay on the screen.
+

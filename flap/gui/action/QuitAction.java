@@ -23,14 +23,16 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 package gui.action;
 
-import gui.environment.*;
-import javax.swing.KeyStroke;
+import gui.environment.EnvironmentFrame;
+import gui.environment.Universe;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.InputEvent;
+
+import javax.swing.KeyStroke;
 
 /**
  * This action handles quitting.
@@ -39,35 +41,41 @@ import java.awt.event.InputEvent;
  */
 
 public class QuitAction extends RestrictedAction {
-    /**
-     * Instantiates a new <CODE>QuitAction</CODE>.
-     */
-    public QuitAction() {
-	super("Quit", null);
-	putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke
-		 (KeyEvent.VK_Q, MAIN_MENU_MASK));
-    }
+	/**
+	 * Instantiates a new <CODE>QuitAction</CODE>.
+	 */
+	public QuitAction() {
+		super("Quit", null);
+		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Q,
+				MAIN_MENU_MASK));
+	}
 
-    /**
-     * This begins the process of quitting.  If this method returns,
-     * you know it did not succeed.  Quitting may not succeed if there
-     * is an unsaved document and the user elects to cancel the
-     * process.
-     */
-    public static void beginQuit() {
-	EnvironmentFrame[] frames = Universe.frames();
-	for (int i=0; i<frames.length; i++)
-	    if (!frames[i].close()) return;
-	System.exit(0);
-    }
+	/**
+	 * This begins the process of quitting. If this method returns, you know it
+	 * did not succeed. Quitting may not succeed if there is an unsaved document
+	 * and the user elects to cancel the process.
+	 */
+	public static void beginQuit() {
+		EnvironmentFrame[] frames = Universe.frames();
+		for (int i = 0; i < frames.length; i++)
+			if (!frames[i].close())
+				return;
+		
+		//modified by Moti Ben-Ari
+		if (gui.Main.getDontQuit())
+			NewAction.closeNew();
+		else
+			System.exit(0);
+		
+	}
 
-    /**
-     * In repsonding to events, it cycles through all registered
-     * windows in the <CODE>gui.environment.Universe</CODE> and closes
-     * them all, or at least until the user does something that stops
-     * a close, at which point the quit terminates.
-     */
-    public void actionPerformed(ActionEvent e) {
-	beginQuit();
-    }
+	/**
+	 * In repsonding to events, it cycles through all registered windows in the
+	 * <CODE>gui.environment.Universe</CODE> and closes them all, or at least
+	 * until the user does something that stops a close, at which point the quit
+	 * terminates.
+	 */
+	public void actionPerformed(ActionEvent e) {
+		beginQuit();
+	}
 }

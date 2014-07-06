@@ -1,14 +1,14 @@
-/* -- JFLAP 4.0 --
+/* -- JFLAP 6.3 --
  *
  * Copyright information:
  *
  * Susan H. Rodger, Thomas Finley
  * Computer Science Department
  * Duke University
- * April 24, 2003
+ * May 23, 2008
  * Supported by National Science Foundation DUE-9752583.
  *
- * Copyright (c) 2003
+ * Copyright (c) 2008
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms are permitted
@@ -23,87 +23,43 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
- 
+
 import file.Codec;
 import file.ParseException;
+import file.xml.Transducer;
+import file.xml.TransducerFactory;
 import gui.action.NewAction;
 import gui.action.OpenAction;
+import gui.environment.Profile;
 import gui.environment.Universe;
+
+import java.io.BufferedReader;
 import java.io.File;
-import java.security.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * This is the class that starts JFLAP.
  * 
  * @author Thomas Finley
+ * @author Moti Ben-Ari
+ *   All code moved to gui.Main
+ *   Parameter dontQuit false for command line invocation
  */
 
 public class JFLAP {
-    /**
-     * Starts JFLAP.  This sets various system properties.  If there
-     * are command line arguments, this will attempt to open them as
-     * JFLAP files.  If there are no arguments, this will call on
-     * {@link gui.action.NewAction#showNew} to display a choice for a
-     * new structure.
-     * @param args the command line arguments, which may hold files to open
-     */
-    public static void main(String[] args) {
-	// Make sure we're not some old version.
-	try {
-	    String v = System.getProperty("java.specification.version");
-	    double version = Double.parseDouble(v)+0.00001;
-	    if (version < 1.4) {
-		javax.swing.JOptionPane.showMessageDialog
-		    (null, "Java 1.4 or higher required to run JFLAP!\n"+
-		     "You appear to be running Java "+v+".\n"+
-		     "This program will now exit.");
-		System.exit(0);
-	    }
-	} catch (SecurityException e) {
-	    // Eh, that shouldn't happen.
+	public static void main(String[] args) {
+		gui.Main.main(args, false);
 	}
-
-	// Set the AWT exception handler.  This may not work in future
-	// Java versions.
-	try {
-	    // This is a useless statement that forces the catcher to 
-	    // compile.
-	    if (gui.ThrowableCatcher.class == null);
-	    System.setProperty("sun.awt.exception.handler",
-			       "gui.ThrowableCatcher");
-	} catch (SecurityException e) {
-	    System.err.println("Warning: could not set the "+
-			       "AWT exception handler.");
-	}
-
-	// Apple is stupid.
-	try {
-	    // Well, Apple WAS stupid...
-	    if (System.getProperty("os.name").startsWith("Mac OS") &&
-		System.getProperty("java.specification.version").equals("1.3"))
-	        System.setProperty("com.apple.hwaccel", "false");
-	} catch (SecurityException e) {
-	    // Bleh.
-	}
-	// Sun is stupider.
-	try {
-	    System.setProperty("java.util.prefs.syncInterval","2000000");
-	} catch (SecurityException e) {
-	    // Well, not key.
-	}
-	// Prompt the user for newness.
-	NewAction.showNew();
-	if (args.length > 0) {
-	    for (int i=0; i<args.length; i++) {
-		Codec[] codecs = (Codec[]) Universe.CODEC_REGISTRY
-		    .getDecoders().toArray(new Codec[0]);
-		try {
-		    OpenAction.openFile(new File(args[i]), codecs);
-		} catch (ParseException e) {
-		    System.err.println("Could not open "+args[i]+": "+
-				       e.getMessage());
-		}
-	    }
-	}
-    }
 }
