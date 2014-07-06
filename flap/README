@@ -1,0 +1,47 @@
+Building JFLAP
+--------------
+Compiling JFLAP requires Java 1.4, however, running JFLAP requires Java
+1.3 for nearly everything except L-Systems rendering, which requires 1.4.  
+The dependence on 1.4 will likely increase in the future, so beware.  To
+compile this source on Unix, execute the following command from this
+directory:
+
+	javac JFLAP.java JFLAPplet.java
+
+To run JFLAP in this way, then you can execute:
+
+	java JFLAP.java
+
+JAR Distribution
+----------------
+The JAR.py script will compile all the .class files into a JFLAP.jar
+single file distribution.  Naturally, it requires successful compilation
+of JFLAP into all the .class files, as described in the compilation
+section.
+
+	python JAR.py
+
+This, of course, requires Python, and has been verified to work only with
+Python 2.2 and higher, but it probably works on previous versions.
+
+To run as a JAR:
+
+	java -jar JFLAP.jar
+
+Alternatively on OS X and on a correct configured Windows machine, you can 
+double click the JFLAP.jar file and it should just work.
+
+JFLAPplet
+---------
+The demo.html page shows a very simple example of embedding JFLAP as an
+applet, and requires that a JAR file for JFLAP be built as described
+above.
+
+Javadoc
+-------
+The ./DOC script will create Javadoc documentation for all the JFLAP code
+and packages in the javadoc directory.  Preferred is the javadoc that
+comes with the 1.4 SDK; you may have to remove the "-breakiterator" line
+to make it compatible with these early versions, plus there were some bugs
+in the previous versions of javadoc that led to it failing to compile
+javadoc.
