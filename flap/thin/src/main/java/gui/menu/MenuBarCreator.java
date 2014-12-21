@@ -27,7 +27,9 @@ import java.io.Serializable;
 import java.io.File;
 import java.io.IOException;
 
-import java.lang.reflect.*;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.jar.*;
 
 import grammar.Grammar;
@@ -170,23 +172,19 @@ public class MenuBarCreator {
 			saveImageMenu.add(new SaveGraphGIFAction(environment, menu));
 			saveImageMenu.add(new SaveGraphBMPAction(environment, menu));
             if (environment instanceof AutomatonEnvironment){ //this is strictly for non-Grammar
-                JarFile jar = null;
-                try{
-                    if (new File("JFLAP.jar").exists()) jar = new JarFile("JFLAP.jar");
-                    else if (new File("JFLAP_With_Source.jar").exists()) jar = new JarFile("JFLAP_With_Source.jar");
-                }
-                catch (IOException ioe){
-                    ioe.printStackTrace();
-                }
-
-                if (new File("svg.jar").exists() || (jar != null && jar.getJarEntry("org/foo.txt") != null)){
-                    //                saveImageMenu.add(new ExportAction(environment));
-                    try{
-                        RestrictedAction ra = (RestrictedAction) Class.forName("gui.action.ExportAction").getConstructor(new Class[]{Environment.class}).newInstance(environment);
+                if (NEW_EXPORT_ACTION != null) {
+                    try {
+                        RestrictedAction ra = (RestrictedAction) NEW_EXPORT_ACTION.invokeExact(environment);
                         saveImageMenu.add(ra);
-                    }catch(Exception e){
-                        e.printStackTrace();
-                        System.err.println("Cannot make menu");
+                    } catch (Throwable throwable) {
+                        if (throwable instanceof RuntimeException) {
+                            throw (RuntimeException) throwable;
+                        }
+                        if (throwable instanceof Error) {
+                            throw (Error) throwable;
+                        }
+                        // ExportAction's constructor has no checked exceptions.
+                        throw new AssertionError("Cannot make menu", throwable);
                     }
                 }
             }
@@ -530,4 +528,20 @@ public class MenuBarCreator {
 
 		return menu;
 	}
+
+    private static final MethodHandle NEW_EXPORT_ACTION;
+    static {
+        MethodHandle handle;
+        try {
+            Class<?> clazz = Class.forName("gui.action.ExportAction");
+            handle = MethodHandles.lookup()
+                .findConstructor(clazz, MethodType.methodType(void.class, Environment.class))
+                .asType(MethodType.methodType(RestrictedAction.class, Environment.class));
+        } catch (ClassNotFoundException unused) {
+            handle = null;
+        } catch (NoSuchMethodException|IllegalAccessException impossible) {
+            throw new AssertionError("Cannot make menu", impossible);
+        }
+        NEW_EXPORT_ACTION = handle;
+    }
 }
