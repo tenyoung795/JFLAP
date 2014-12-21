@@ -58,8 +58,9 @@ public class ExportAction extends RestrictedAction {
      */
     public void actionPerformed(ActionEvent e) {
     JComponent c=(JComponent)environment.getActive();
-    SVGDOMImplementation domImpl =
-    (SVGDOMImplementation)SVGDOMImplementation.getDOMImplementation();
+    Component comp= (Component) environment.tabbed.getSelectedComponent();
+
+    SVGDOMImplementation domImpl = (SVGDOMImplementation)SVGDOMImplementation.getDOMImplementation();
     
     String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
     Document document = domImpl.createDocument(svgNS, "svg", null);
@@ -70,7 +71,13 @@ public class ExportAction extends RestrictedAction {
     
     SVGGraphics2D svgGenerator = new SVGGraphics2D(cntx, false);
     
-    c.print(svgGenerator);
+    Image canvasimage = comp.createImage(comp.getWidth(),comp.getHeight());
+    Graphics imgG = canvasimage.getGraphics(); //voodoo
+    comp.paint(imgG);
+
+    comp.print(svgGenerator);
+
+//    svgGenerator.drawImage(canvasimage, null, null);
 
     Universe.CHOOSER.resetChoosableFileFilters();
     Universe.CHOOSER.setAcceptAllFileFilterUsed(false);

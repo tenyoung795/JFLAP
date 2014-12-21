@@ -24,6 +24,11 @@ package gui.menu;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.io.Serializable;
+import java.io.File;
+import java.io.IOException;
+
+import java.lang.reflect.*;
+import java.util.jar.*;
 
 import grammar.Grammar;
 import grammar.TuringChecker;
@@ -164,10 +169,29 @@ public class MenuBarCreator {
 			saveImageMenu.add(new SaveGraphPNGAction(environment, menu));
 			saveImageMenu.add(new SaveGraphGIFAction(environment, menu));
 			saveImageMenu.add(new SaveGraphBMPAction(environment, menu));
-            if (environment instanceof AutomatonEnvironment) //this is strictly for non-Grammar
-                saveImageMenu.add(new ExportAction(environment));
+            if (environment instanceof AutomatonEnvironment){ //this is strictly for non-Grammar
+                JarFile jar = null;
+                try{
+                    if (new File("JFLAP.jar").exists()) jar = new JarFile("JFLAP.jar");
+                    else if (new File("JFLAP_With_Source.jar").exists()) jar = new JarFile("JFLAP_With_Source.jar");
+                }
+                catch (IOException ioe){
+                    ioe.printStackTrace();
+                }
+
+                if (new File("svg.jar").exists() || (jar != null && jar.getJarEntry("org/foo.txt") != null)){
+                    //                saveImageMenu.add(new ExportAction(environment));
+                    try{
+                        RestrictedAction ra = (RestrictedAction) Class.forName("gui.action.ExportAction").getConstructor(new Class[]{Environment.class}).newInstance(environment);
+                        saveImageMenu.add(ra);
+                    }catch(Exception e){
+                        e.printStackTrace();
+                        System.err.println("Cannot make menu");
+                    }
+                }
+            }
+
 			menu.add(saveImageMenu);
-            
 		}
 		else{
 			addItem(menu, new OpenURLAction());

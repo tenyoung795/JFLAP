@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
-Created-By: 1.6.0_07 (Sun Microsystems Inc.)
+Class-Path: svg.jar JFLAP.jar JFLAP_With_Source.jar
+Created-By: 1.6.0_23 (Sun Microsystems Inc.)
 Main-Class: JFLAP
 

@@ -134,8 +134,6 @@ public class AutomatonPane extends JPanel implements Scrollable {
 	 *            the graphics object to draw upon
 	 */
 	public void paintComponent(Graphics g) {
-		
-	    
 		super.paintComponent(g);
 		
 		if (transformNeedsReform)
@@ -145,8 +143,6 @@ public class AutomatonPane extends JPanel implements Scrollable {
 		Graphics2D g2 = (Graphics2D) g;
 
 		g2.transform(transform);
-		
-		
 		drawer.drawAutomaton(g);
 
 		//g2.translate(-transform.getTranslateX(), -transform.getTranslateY());
@@ -169,17 +165,42 @@ public class AutomatonPane extends JPanel implements Scrollable {
 	 * @param g
 	 *            the graphics interface for the printer device
 	 */
+//	public void printComponent(Graphics g) {
+//		boolean oldAdapt = adapt;
+//		adapt = true;
+//
+//		reformTransform(g.getClipBounds());
+//		g.setColor(java.awt.Color.white);
+//		g.fillRect(0, 0, g.getClipBounds().width, g.getClipBounds().height);
+////		Graphics2D g2 = (Graphics2D) g.create();
+//		Graphics2D g2 = (Graphics2D) g;
+//		g2.transform(transform);
+//		drawer.drawAutomaton(g2);
+//		adapt = oldAdapt;
+//		reformTransform(new Rectangle(getSize()));
+//	}
 	public void printComponent(Graphics g) {
-		boolean oldAdapt = adapt;
-		adapt = true;
-		reformTransform(g.getClipBounds());
+//		boolean oldAdapt = adapt;
+//		adapt = true;
+
+		if (transformNeedsReform)
+			reformTransform(g.getClipBounds());
 		g.setColor(java.awt.Color.white);
 		g.fillRect(0, 0, g.getClipBounds().width, g.getClipBounds().height);
-		Graphics2D g2 = (Graphics2D) g.create();
+        
+		Graphics2D g2 = (Graphics2D) g;
 		g2.transform(transform);
-		drawer.drawAutomaton(g2);
-		adapt = oldAdapt;
-		reformTransform(new Rectangle(getSize()));
+        drawer.invalidate();
+		drawer.drawAutomaton(g);
+
+		ArrayList notes = this.getDrawer().getAutomaton().getNotes();
+		for(int k = 0; k < notes.size(); k++){
+			Note curNote = (Note)notes.get(k);
+			curNote.updateView();	
+		}
+
+//		adapt = oldAdapt;
+//		reformTransform(new Rectangle(getSize()));
 	}
 
 	/**
