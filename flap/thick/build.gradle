@@ -1,0 +1,5 @@
+dependencies {
+    compile group:'org.apache.xmlgraphics', name:'batik-svggen', version:'1.7'
+    compile group:'org.apache.xmlgraphics', name:'batik-swing', version:'1.7'
+    compile project(':thin')
+}

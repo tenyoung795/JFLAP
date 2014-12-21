@@ -1,0 +1,12 @@
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'application'
+
+    sourceCompatibility = 1.6
+    version = '7.0'
+    mainClassName = "JFLAP"
+
+    repositories {
+        mavenCentral()
+    }
+}
