@@ -16,5 +16,6 @@ So far, the only modifications are
     Instead, only the thick project compiles the only class dealing with SVG.
     Then JFLAP just checks whether that class exists before providing the option
     to export a machine as SVG.
+*   Use proper file URI when saving a JFF.
 
 See [the issues](https://github.com/tenyoung795/JFLAP/issues) for TODOs.
