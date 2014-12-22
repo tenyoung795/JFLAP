@@ -117,7 +117,9 @@ public class XMLCodec extends Codec {
             
 			DOMPrettier.makePretty(dom);
 			Source s = new DOMSource(dom);
-			Result r = new StreamResult(file);
+			// Use Path to construct the URI as "file://" + path; File.toURI() is just "file:" + path,
+			// Strangely, this is only a problem in thick, not thin.
+			Result r = new StreamResult(file.toPath().toUri().toASCIIString());
 			Transformer t = TransformerFactory.newInstance().newTransformer();
 			t.transform(s, r);
 			return file;
