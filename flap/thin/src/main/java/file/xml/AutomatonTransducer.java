@@ -20,7 +20,6 @@
 
 package file.xml;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -43,8 +42,8 @@ import automata.mealy.MooreMachine;
 import file.DataException;
 import automata.turing.TMState;
 import automata.turing.TuringMachine;
-import debug.EDebug;
 
+import javax.xml.xpath.*;
 import java.awt.Point;
 
 /**
@@ -70,25 +69,23 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 	 * Reads the states from the document and adds them to the automaton. Note
 	 * that in the event of error, the automaton may have been changed up until
 	 * the point where the error was encountered.
-	 * 
-	 * @param document
-	 *            the DOM document to read states from
+	 * @param element
+	 *            the DOM element to read states from a map from state identifiers to the specific state
+	 * @param element
 	 * @param automaton
 	 *            the automaton to add states to
 	 * @param locatedStates
-	 *            if not <CODE>null</CODE>, this set will be filled with
-	 *            those states that have their X and Y coordinates specified in
-	 *            the DOM and do not need to be laid out
-	 * @return a map from state identifiers to the specific state
+ *            if not <CODE>null</CODE>, this set will be filled with
+ *            those states that have their X and Y coordinates specified in
+ *            the DOM and do not need to be laid out
 	 * @throws DataException
 	 *             in the case of non-numeric, negative, or duplicate IDs
 	 * @see #readTransitions
 	 */
-	protected Map readStates(Node node, Automaton automaton, Set locatedStates,
-			Document document) {
+	protected Map readStates(Element element, Automaton automaton, Set locatedStates) {
 		Map i2s = new java.util.HashMap();
-        if(node == null) return i2s;
-		NodeList allNodes = node.getChildNodes();
+        if(element == null) return i2s;
+		NodeList allNodes = element.getChildNodes();
 		ArrayList stateNodes = new ArrayList();
 		for (int k = 0; k < allNodes.getLength(); k++) {
 			if (allNodes.item(k).getNodeName().equals(STATE_NAME)) {
@@ -109,16 +106,15 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 				return ((Comparable) o1).compareTo(o2);
 			}
 		});
-		createState(stateNodes, i2sn, automaton, locatedStates, i2s, false,
-				document);
+		createState(element, stateNodes, i2sn, automaton, locatedStates, i2s, false
+		);
 		// i2s = addBlocks(document, automaton, locatedStates, i2s);
 		return i2s;
 	}
 	
 	//Creates a state node
-	protected void createState(ArrayList stateNodes, Map i2sn,
-			Automaton automaton, Set locatedStates, Map i2s, boolean isBlock,
-			Document document) {
+	protected void createState(Element element, ArrayList stateNodes, Map i2sn,
+							   Automaton automaton, Set locatedStates, Map i2s, boolean isBlock) {
 		// Create the map of ids to state nodes.
 		for (int i = 0; i < stateNodes.size(); i++) {
 			Node stateNode = (Node) stateNodes.get(i);
@@ -175,18 +171,24 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 				state = automaton.createStateWithId(p, id.intValue());
             }
 			else {
-                Node tempNode = null;
-                if (e2t.containsKey(FILE_NAME)){
-                    String fileName = e2t.get(FILE_NAME).toString();
-                    tempNode = document.getDocumentElement()
-                            .getElementsByTagName(fileName).item(0);
-                    Automaton temp = (TuringMachine) readAutomaton(tempNode, document);
+                Element tempNode = null;
+                if (e2t.containsKey(FILE_NAME)) {
+					String fileName = e2t.get(FILE_NAME).toString();
+					try {
+						tempNode = (Element) XPATH.evaluate(fileName, element, XPathConstants.NODE);
+					} catch (XPathExpressionException e) {
+						throw new AssertionError(e);
+					}
+				}
+				if (tempNode != null) {
+					Automaton temp = (TuringMachine) readAutomaton(tempNode);
                     //MERLIN MERLIN MERLIN MERLIN MERLIN//
 //                    EDebug.print("Are we or not creating a block?");
-                    state = ((TuringMachine) automaton).createInnerTM(p, temp, fileName,
+                    state = ((TuringMachine) automaton).createInnerTM(p, temp, tempNode.getTagName(),
                             id.intValue());
                 }
                 else{
+
                      state = ((TuringMachine) automaton).createTMStateWithID(p, id.intValue());   
                 }
 			}
@@ -214,13 +216,13 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 		}
 	}
 	//Add the blocks
-	protected void addBlocks(Node node, Automaton automaton, Set locatedStates,
-			Map i2s, Document document) {
+	protected void addBlocks(Element element, Automaton automaton, Set locatedStates,
+							 Map i2s) {
         assert(automaton instanceof TuringMachine); //this code should really be in TMTransducer, but I see why it's here
-        if(node == null) return;
-		if (!node.hasChildNodes())
+        if(element == null) return;
+		if (!element.hasChildNodes())
 			return;
-		NodeList allNodes = node.getChildNodes();
+		NodeList allNodes = element.getChildNodes();
 		ArrayList blockNodes = new ArrayList();
 		for (int k = 0; k < allNodes.getLength(); k++) {
 			if (allNodes.item(k).getNodeName().equals(BLOCK_NAME)) {
@@ -239,8 +241,8 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 				return ((Comparable) o1).compareTo(o2);
 			}
 		});
-		createState(blockNodes, i2sn, automaton, locatedStates, i2s, true,
-				document);
+		createState(element, blockNodes, i2sn, automaton, locatedStates, i2s, true
+		);
 		// return i2s;
 	}
 
@@ -267,8 +269,8 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 	 * Note that in the event of error, the automaton may have been changed up
 	 * until the point where the error was encountered.
 	 * 
-	 * @param document
-	 *            the DOM document to read transitions from
+	 * @param parent
+	 *            the DOM node to read transitions from
 	 * @param automaton
 	 *            the automaton to add transitions to
 	 * @param id2state
@@ -397,32 +399,31 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 	 */
 	public java.io.Serializable fromDOM(Document document) {
 		automatonMap.clear();
-		Automaton a = createEmptyAutomaton(document);
-        Node parent = document.getDocumentElement()
+        Element parent = (Element) document.getDocumentElement()
         .getElementsByTagName(AUTOMATON_NAME).item(0);
         if(parent == null) parent = document.getDocumentElement();
-        return readAutomaton(parent, document);
+        return readAutomaton(parent);
       
         
 	}
 
-	public java.io.Serializable readAutomaton(Node parent, Document document) {
+	public java.io.Serializable readAutomaton(Element element) {
 		Set locatedStates = new java.util.HashSet();
-		Automaton root = createEmptyAutomaton(document);
-        if(parent == null) return root;
-		readBlocks(parent, root, locatedStates, document);
+		Automaton root = createEmptyAutomaton(element.getOwnerDocument());
+        if(element == null) return root;
+		readBlocks(element, root, locatedStates);
 		// Read the states and transitions.
-		readTransitions(parent, root, readStates(parent, root, locatedStates,
-				document));
+		readTransitions(element, root, readStates(element, root, locatedStates
+		));
 		//read the notes
-		readnotes(parent, root, document);
+		readnotes(element, root);
 		// Do the layout if necessary.
 		performLayout(root, locatedStates);
-		automatonMap.put(parent.getNodeName(), root);
+		automatonMap.put(element.getNodeName(), root);
 		return root;
 	}
 
-	private void readnotes(Node parent, Automaton root, Document document) {
+	private void readnotes(Node parent, Automaton root) {
 
 		NodeList allNodes = parent.getChildNodes();
 		ArrayList noteNodes = new ArrayList();
@@ -475,14 +476,15 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 	}
 
 	/**
-	 * @param document
 	 * @param a *
+	 * @param document
+	 * @param prefix
+	 * @param element
 	 */
 
-	private void readBlocks(Node parent, Automaton root, Set states,
-			Document document) {
+	private void readBlocks(Element element, Automaton root, Set states) {
 		Map i2b = new java.util.HashMap();
-		addBlocks(parent, root, states, i2b, document);
+		addBlocks(element, root, states, i2b);
 	}
 
 	/**
@@ -784,4 +786,6 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 	
 	/**The tag name for the block transition */
 	private static final String IS_BLOCK = "block";
+
+	private static final XPath XPATH = XPathFactory.newInstance().newXPath();
 }
