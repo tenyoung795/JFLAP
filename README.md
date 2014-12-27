@@ -17,5 +17,6 @@ So far, the only modifications are
     Then JFLAP just checks whether that class exists before providing the option
     to export a machine as SVG.
 *   Use proper file URI when saving a JFF.
+*   Properly scope nested Turing-machines.
 
 See [the issues](https://github.com/tenyoung795/JFLAP/issues) for TODOs.
