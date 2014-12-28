@@ -19,42 +19,36 @@ import regular.RegularExpression;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 @RunWith(Parameterized.class)
 public class ThickXMLCodecTest {
 
-    @Parameterized.Parameters(name = "{0}")
-    public static List<Class<? extends Serializable>> parameters() {
-        return Arrays.asList(
-            FiniteStateAutomaton.class,
-            PushdownAutomaton.class,
-            TuringMachine.class,
-            Grammar.class,
-            RegularExpression.class,
-            LSystem.class,
-            MealyMachine.class,
-            MooreMachine.class,
-            RegPumpingLemmaChooser.class,
-            CFPumpingLemmaChooser.class
-        );
+    @Parameterized.Parameters(name = "{index}: {0}")
+    public static Serializable[] parameters() {
+        return new Serializable[] {
+            new FiniteStateAutomaton(),
+            new PushdownAutomaton(),
+            new TuringMachine(),
+            Mockito.mock(Grammar.class, Mockito.RETURNS_SMART_NULLS),
+            new RegularExpression(),
+            new LSystem(),
+            new MealyMachine(),
+            new MooreMachine(),
+            new RegPumpingLemmaChooser(),
+            new CFPumpingLemmaChooser()
+        };
     }
 
     @Parameterized.Parameter
-    public Class<? extends Serializable> clazz;
+    public Serializable structure;
 
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
-    public void testXMLCodec_encode_doesNotThrow() throws IOException, IllegalAccessException, InstantiationException {
-        new XMLCodec().encode(Modifier.isAbstract(clazz.getModifiers())
-                ? Mockito.mock(clazz, Mockito.RETURNS_SMART_NULLS) : clazz.newInstance(),
-            temporaryFolder.newFile(),
-            Collections.emptyMap());
+    public void testXMLCodec_encode_doesNotThrow() throws IOException {
+        new XMLCodec().encode(structure, temporaryFolder.newFile(), Collections.emptyMap());
     }
 
 }
