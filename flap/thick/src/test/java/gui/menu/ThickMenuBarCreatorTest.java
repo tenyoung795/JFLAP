@@ -1,50 +1,50 @@
 package gui.menu;
 
 import automata.Automaton;
-import com.athaydes.automaton.Swinger;
 import gui.action.ExportAction;
 import gui.action.NewAction;
 import gui.environment.AutomatonEnvironment;
 import gui.environment.EnvironmentFrame;
-import org.junit.After;
-import org.junit.Before;
+import org.assertj.swing.annotation.GUITest;
+import org.assertj.swing.edt.GuiActionRunner;
+import org.assertj.swing.edt.GuiQuery;
+import org.assertj.swing.fixture.FrameFixture;
+import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
+import org.assertj.swing.junit.v4_5.runner.GUITestRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.swing.*;
-
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ThickMenuBarCreatorTest {
+@RunWith(GUITestRunner.class)
+public class ThickMenuBarCreatorTest extends AssertJSwingJUnitTestCase {
 
-    private EnvironmentFrame frame;
+    private FrameFixture window;
 
-    @Before
-    public void setUp() {
-        NewAction.showNew();
-
-        frame = new EnvironmentFrame(new AutomatonEnvironment(Mockito.mock(Automaton.class)));
-        frame.setSize(600, 400);
-        frame.setVisible(true);
+    @Override
+    protected void onSetUp() {
+        window = new FrameFixture(robot(), GuiActionRunner.execute(new SetUp()));
     }
 
     @Test
+    @GUITest
     public void testMenuBar_automatonEnvironment_canExportToSVG() {
-        JMenuItem menuItem = (JMenuItem) Swinger.getUserWith(frame)
-            .clickOn("text:File")
-            .moveTo("text:Save Image As...")
-            .getAt("text:Export to SVG");
-
-        assertThat(menuItem.getAction(), instanceOf(ExportAction.class));
+        assertThat(window.menuItemWithPath("File", "Save Image As...", "Export to SVG").target().getAction(),
+            instanceOf(ExportAction.class));
     }
 
-    @After
-    public void tearDown() {
-        frame.close();
-        NewAction.closeNew();
+    private static final class SetUp extends GuiQuery<EnvironmentFrame> {
+
+        @Override
+        protected EnvironmentFrame executeInEDT() {
+            NewAction.showNew();
+
+            EnvironmentFrame frame = new EnvironmentFrame(new AutomatonEnvironment(Mockito.mock(Automaton.class)));
+            frame.setSize(600, 400);
+            frame.setVisible(true);
+            return frame;
+        }
     }
 }
