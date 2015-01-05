@@ -25,26 +25,17 @@ import grammar.lsystem.LSystem;
 import gui.ImageDisplayComponent;
 import gui.transform.Matrix;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -70,6 +61,7 @@ public class DisplayPane extends JPanel {
 		expansionDisplay.setEditable(false);
 		// The user has to be able to change the recursion depth.
 		JSpinner spinner = new JSpinner(spinnerModel);
+		spinner.setName("derivation");
 		spinnerModel.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				updateDisplay();
@@ -102,6 +94,7 @@ public class DisplayPane extends JPanel {
 		bottomPanel.add(new JLabel("Yaw"));
 		bottomPanel.add(s3);
 		//bottomPanel.setBackground(Color.WHITE);
+		imageDisplay.setName("image");
 		JScrollPane scroller = new JScrollPane(imageDisplay);
 		add(scroller, BorderLayout.CENTER);
 		add(bottomPanel, BorderLayout.SOUTH);
@@ -113,72 +106,105 @@ public class DisplayPane extends JPanel {
 	 * Updates the display.Graphics2D;
 	 */
 	private void updateDisplay() {
+		if (!optionalPreviousRenderer.map(renderer -> {
+			if (!(renderer.isDone() || renderer.cancel(true))) {
+				try {
+					renderer.get();
+				} catch (CancellationException ignored) {
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					return false;
+				} catch (ExecutionException e) {
+					Throwable cause = e.getCause();
+					if (cause instanceof RuntimeException) throw (RuntimeException) cause;
+					if (cause instanceof Error) throw (Error) cause;
+					throw new AssertionError(cause);
+				}
+			}
+			return true;
+		}).orElse(true)) return;
+
 		int recursionDepth = spinnerModel.getNumber().intValue();
 		final List expansion = expander.expansionForLevel(recursionDepth);
 		progressBar.setMaximum(expansion.size() * 2);
-		imageDisplay.setImage(null);
-		Image renderImage = null;
+		progressBar.setValue(0);
+		imageDisplay.setIcon(null);
 
-		final javax.swing.Timer t = new javax.swing.Timer(30,
-				new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						int i = renderer.getDoneSymbols() - 1;
-						progressBar.setValue(i);
-						progressBar.repaint();
-					}
+		if (expansion.size() < 70) {
+			String expansionString = LSystemInputPane
+				.listAsString(expansion);
+			expansionDisplay.setText(expansionString);
+		} else
+			expansionDisplay.setText("Suffice to say, quite long.");
+		// Now, set the display.
+		Map parameters = lsystem.getValues();
+
+		Matrix m = new Matrix();
+		double pitch = pitchModel.getNumber().doubleValue(), roll = rollModel
+			.getNumber().doubleValue(), yaw = yawModel.getNumber()
+			.doubleValue();
+		m.pitch(pitch);
+		m.roll(roll);
+		m.yaw(yaw);
+
+		Renderer renderer = new Renderer(expansion, parameters, m) {
+			@Override
+			protected Graphics2D createGraphics(Rectangle2D bounds) {
+				image = new BufferedImage((int) bounds.getWidth() + 10,
+					(int) bounds.getHeight() + 10,
+					BufferedImage.TYPE_INT_ARGB);
+				SwingUtilities.invokeLater(() -> {
+					if (isCancelled()) return;
+					imageIcon.setImage(image);
+					imageDisplay.setIcon(imageIcon);
 				});
+				Graphics2D graphics = image.createGraphics();
+				graphics.translate(-bounds.getX() + 5.0, -bounds.getY() + 5.0);
+				graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+					RenderingHints.VALUE_ANTIALIAS_ON);
+				return graphics;
+			}
 
-		final Thread drawThread = new Thread() {
-			public void run() {
-				if (expansion.size() < 70) {
-					String expansionString = LSystemInputPane
-							.listAsString(expansion);
-					expansionDisplay.setText(expansionString);
-				} else
-					expansionDisplay.setText("Suffice to say, quite long.");
-				// Now, set the display.
-				Map parameters = lsystem.getValues();
-
-				t.start();
-				Matrix m = new Matrix();
-				double pitch = pitchModel.getNumber().doubleValue(), roll = rollModel
-						.getNumber().doubleValue(), yaw = yawModel.getNumber()
-						.doubleValue();
-				m.pitch(pitch);
-				m.roll(roll);
-				m.yaw(yaw);
-				Point origin = new Point(); // Ignored, for now.
-				Image image = renderer.render(expansion, parameters, m, null,
-						origin);
-				imageDisplay.setImage(image);
-				t.stop();
+			@Override
+			protected void updateProgress(int progress) {
 				imageDisplay.repaint();
-				imageDisplay.revalidate();
-				progressBar.setValue(progressBar.getMaximum());
+				progressBar.setValue(progress);
 			}
 		};
-		drawThread.start();
+		optionalPreviousRenderer = Optional.of(renderer);
+		renderer.execute();
 	}
 
 	/**
 	 * Prints the current displayed L-system.
-	 * 
+	 *
 	 * @param g
 	 *            the graphics interface for the printer device
 	 */
-	public void printComponent(Graphics g) {
-		int recursionDepth = spinnerModel.getNumber().intValue();
-		List expansion = expander.expansionForLevel(recursionDepth);
-		// Now, set the display.
-		Map parameters = lsystem.getValues();
-		Matrix m = new Matrix();
-		double pitch = pitchModel.getNumber().doubleValue(), roll = rollModel
-				.getNumber().doubleValue(), yaw = yawModel.getNumber()
-				.doubleValue();
-		m.pitch(pitch);
-		m.roll(roll);
-		m.yaw(yaw);
-		renderer.render(expansion, parameters, m, (Graphics2D) g, new Point());
+	protected void printComponent(Graphics g) {
+		optionalPreviousRenderer.ifPresent(renderer -> {
+			if (!renderer.isDone()) {
+				try {
+					renderer.get();
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					return;
+				} catch (ExecutionException e) {
+					Throwable cause = e.getCause();
+					if (cause instanceof RuntimeException) throw (RuntimeException) cause;
+					if (cause instanceof Error) throw (Error) cause;
+					throw new RuntimeException(cause);
+				}
+				// Calling get on the EDT delays all EDT-related events from the worker.
+				imageIcon.setImage(image);
+				imageDisplay.setIcon(imageIcon);
+				// imageDisplay implicitly revalidates, which invalidates imageDisplay
+				// then asynchronously requests validating the validate-*root*.
+				imageDisplay.invalidate();
+				imageDisplay.getRootPane().validate();
+			}
+			imageDisplay.print(g);
+		});
 	}
 
 	/**
@@ -187,7 +213,7 @@ public class DisplayPane extends JPanel {
 	 * @param g
 	 *            the graphics object to paint to
 	 */
-	public void printChildren(Graphics g) {
+	protected void printChildren(Graphics g) {
 
 	}
 
@@ -197,11 +223,12 @@ public class DisplayPane extends JPanel {
 	/** The current expander. */
 	private Expander expander = null;
 
-	/** The renderer. */
-	private Renderer renderer = new Renderer();
+	private final ImageIcon imageIcon = new ImageIcon();
 
 	/** The image display component. */
-	private ImageDisplayComponent imageDisplay = new ImageDisplayComponent();
+	private final JLabel imageDisplay = new JLabel(imageIcon, JLabel.CENTER);
+
+	private BufferedImage image;
 
 	/** The spinner model. */
 	private SpinnerNumberModel spinnerModel = new SpinnerNumberModel(0, 0, 200,
@@ -226,4 +253,5 @@ public class DisplayPane extends JPanel {
 			15), rollModel = new SpinnerNumberModel(0, 0, 359, 15),
 			yawModel = new SpinnerNumberModel(0, 0, 359, 15);
 
+	private Optional<Renderer> optionalPreviousRenderer = Optional.empty();
 }
