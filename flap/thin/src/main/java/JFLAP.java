@@ -33,7 +33,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 
+import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -54,6 +56,6 @@ import org.xml.sax.SAXException;
 
 public class JFLAP {
 	public static void main(String[] args) {
-		gui.Main.main(args, false);
+		SwingUtilities.invokeLater(() -> gui.Main.main(args, false));
 	}
 }

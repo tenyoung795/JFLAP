@@ -27,7 +27,7 @@ import java.io.Serializable;
  * This is an affine transform matrix rather like the <CODE>AffineTransform</CODE>
  * of <CODE>jawa.awt.geom</CODE> fame, but for three dimensions. This type of
  * matrix does not support shearing or scaling.
- * 
+ *
  * @author Thomas Finley
  */
 
@@ -54,7 +54,7 @@ public class Matrix implements Cloneable, Serializable {
 
 	/**
 	 * Instantiates a copy of the passed in matrix.
-	 * 
+	 *
 	 * @param m
 	 *            the matrix to copy
 	 */
@@ -66,7 +66,7 @@ public class Matrix implements Cloneable, Serializable {
 
 	/**
 	 * Returns a copy of this object.
-	 * 
+	 *
 	 * @return a copy of this matrix
 	 */
 	public Object clone() {
@@ -75,7 +75,7 @@ public class Matrix implements Cloneable, Serializable {
 
 	/**
 	 * Returns the entry at the given entry.
-	 * 
+	 *
 	 * @param row
 	 *            the row index, must be 0 through 3
 	 * @param column
@@ -91,7 +91,7 @@ public class Matrix implements Cloneable, Serializable {
 	 * matrix, and store the result in this matrix. If <I>A</I> is this matrix
 	 * and <I>B</I> is the matrix passed in as a parameter, then this is
 	 * similar to <I>A = BA</I>.
-	 * 
+	 *
 	 * @param matrix
 	 *            the matrix to premultiply
 	 */
@@ -116,7 +116,7 @@ public class Matrix implements Cloneable, Serializable {
 	 * matrix, and store the result in this matrix. If <I>B</I> is this matrix
 	 * and <I>A</I> is the matrix passed in as a parameter, then this is
 	 * similar to <I>B = BA</I>.
-	 * 
+	 *
 	 * @param matrix
 	 *            the matrix to premultiply
 	 */
@@ -135,86 +135,57 @@ public class Matrix implements Cloneable, Serializable {
 
 	/**
 	 * Turns the current matrix about the X-axis.
-	 * 
+	 *
 	 * @param angle
 	 *            the angle to turn
 	 */
 	public final void pitch(double angle) {
-		if (XAXIS_ANGLE == -angle) {
-			XAXIS_ANGLE = angle;
-			XAXIS_TURN.entry[1][2] = -XAXIS_TURN.entry[1][2];
-			XAXIS_TURN.entry[2][1] = -XAXIS_TURN.entry[2][1];
-		} else if (XAXIS_ANGLE != angle) {
-			// Cache it!
-			XAXIS_ANGLE = angle;
-			angle = Math.toRadians(angle);
-			double c = Math.cos(angle), s = Math.sin(angle);
-			XAXIS_TURN = new Matrix(1.0, 0.0, 0.0, 0.0, 0.0, c, -s, 0.0, 0.0,
-					s, c, 0.0);
-		}
-		premultiply(XAXIS_TURN);
+		angle = Math.toRadians(angle);
+		double c = Math.cos(angle), s = Math.sin(angle);
+		premultiply(new Matrix(1.0, 0.0, 0.0, 0.0, 0.0, c, -s, 0.0, 0.0,
+				s, c, 0.0));
 	}
 
 	/**
 	 * Turns the current matrix about the Y-axis.
-	 * 
+	 *
 	 * @param angle
 	 *            the angle to turn
 	 */
 	public final void roll(double angle) {
-		if (YAXIS_ANGLE == -angle) {
-			YAXIS_ANGLE = angle;
-			YAXIS_TURN.entry[0][2] = -YAXIS_TURN.entry[0][2];
-			YAXIS_TURN.entry[2][0] = -YAXIS_TURN.entry[2][0];
-		} else if (YAXIS_ANGLE != angle) {
-			// Cache it!
-			YAXIS_ANGLE = angle;
-			angle = Math.toRadians(angle);
-			double c = Math.cos(angle), s = Math.sin(angle);
-			YAXIS_TURN = new Matrix(c, 0.0, s, 0.0, 0.0, 1.0, 0.0, 0.0, -s,
-					0.0, c, 0.0);
-		}
-		premultiply(YAXIS_TURN);
+		angle = Math.toRadians(angle);
+		double c = Math.cos(angle), s = Math.sin(angle);
+		premultiply(new Matrix(c, 0.0, s, 0.0, 0.0, 1.0, 0.0, 0.0, -s,
+				0.0, c, 0.0));
 	}
 
 	/**
 	 * Turns the current matrix about the Z-axis.
-	 * 
+	 *
 	 * @param angle
 	 *            the angle to turn
 	 */
 	public final void yaw(double angle) {
-		if (ZAXIS_ANGLE == -angle) {
-			ZAXIS_ANGLE = angle;
-			ZAXIS_TURN.entry[0][1] = -ZAXIS_TURN.entry[0][1];
-			ZAXIS_TURN.entry[1][0] = -ZAXIS_TURN.entry[1][0];
-		} else if (ZAXIS_ANGLE != angle) {
-			// Cache it!
-			ZAXIS_ANGLE = angle;
-			angle = Math.toRadians(angle);
-			double c = Math.cos(angle), s = Math.sin(angle);
-			ZAXIS_TURN = new Matrix(c, -s, 0.0, 0.0, s, c, 0.0, 0.0, 0.0, 0.0,
-					1.0, 0.0);
-		}
-		premultiply(ZAXIS_TURN);
+		angle = Math.toRadians(angle);
+		double c = Math.cos(angle), s = Math.sin(angle);
+		premultiply(new Matrix(c, -s, 0.0, 0.0, s, c, 0.0, 0.0, 0.0, 0.0,
+				1.0, 0.0));
 	}
 
 	/**
 	 * Translates the current matrix
 	 */
 	public final void translate(double x, double y, double z) {
-		if (DIRS[0] != x || DIRS[1] != y || DIRS[2] != z) {
-			// Cache it!
-			DIRS[0] = TRANSLATE.entry[0][3] = x;
-			DIRS[1] = TRANSLATE.entry[1][3] = y;
-			DIRS[2] = TRANSLATE.entry[2][3] = z;
-		}
-		premultiply(TRANSLATE);
+		Matrix translate = new Matrix();
+		translate.entry[0][3] = x;
+		translate.entry[1][3] = y;
+		translate.entry[2][3] = z;
+		premultiply(translate);
 	}
 
 	/**
 	 * Returns the point (the x and y coordinates) of the transformed origin.
-	 * 
+	 *
 	 * @param point
 	 *            the point to store the location in
 	 * @return either the point passed in or, if that point was null, a newly
@@ -223,14 +194,15 @@ public class Matrix implements Cloneable, Serializable {
 	public final Point2D origin(Point2D point) {
 		if (point == null)
 			point = new Point2D.Double();
-		origin(ORIGIN_REUSE);
-		point.setLocation(ORIGIN_REUSE[0], ORIGIN_REUSE[1]);
+		double[] origin = new double[3];
+		origin(origin);
+		point.setLocation(origin[0], origin[1]);
 		return point;
 	}
 
 	/**
 	 * Returns the x, y, and z coordinates of the transformed origin.
-	 * 
+	 *
 	 * @param array
 	 *            the array of three entries which will hold, in order, the <I>x</I>,
 	 *            <I>y</I>, and <I>z</I> coordinates, or null if you wish a
@@ -240,10 +212,11 @@ public class Matrix implements Cloneable, Serializable {
 	public final double[] origin(double[] array) {
 		if (array == null)
 			array = new double[3];
+		Matrix inverse = new Matrix();
 		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++)
-				INVERSE.entry[i][j] = entry[j][i];
-		premultiply(INVERSE);
+				inverse.entry[i][j] = entry[j][i];
+		premultiply(inverse);
 		for (int i = 0; i < 3; i++)
 			array[i] = entry[i][3];
 		// Swap it back!
@@ -256,7 +229,7 @@ public class Matrix implements Cloneable, Serializable {
 
 	/**
 	 * Returns a string representation of this matrix.
-	 * 
+	 *
 	 * @return a string representation of this matrix
 	 */
 	public final String toString() {
@@ -284,30 +257,6 @@ public class Matrix implements Cloneable, Serializable {
 
 	/** The backup entries. */
 	private double[][] entry2 = new double[4][4];
-
-	/** The old angles for each of the cached turn matrices. */
-	private static double XAXIS_ANGLE = Double.NaN, YAXIS_ANGLE = Double.NaN,
-			ZAXIS_ANGLE = Double.NaN;
-
-	/** The cached matrices for turning. */
-	private static Matrix XAXIS_TURN, YAXIS_TURN, ZAXIS_TURN;
-
-	/** The old distances for each of the cache translation matrices. */
-	private static double[] DIRS = new double[] { 0.0, 0.0, 0.0 };
-
-	/** The old translation matrix. */
-	private static final Matrix TRANSLATE = new Matrix();
-
-	/**
-	 * The old matrix used for computing inversions back to user space...
-	 */
-	private static final Matrix INVERSE = new Matrix();
-
-	/**
-	 * Used for the origin methods, so new arrays needn't constantly be
-	 * allocated.
-	 */
-	private static final double[] ORIGIN_REUSE = new double[3];
 
 	public static final String arrayString(double[] d) {
 		return "( " + d[0] + ", " + d[1] + ", " + d[2] + " )";

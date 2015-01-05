@@ -39,7 +39,8 @@ class Turtle implements Cloneable, Serializable {
 	/**
 	 * Instantiates a turtle.
 	 */
-	public Turtle() {
+	public Turtle(Matrix matrix) {
+		this.matrix = new Matrix(matrix);
 		parametersToNumbers = new HashMap();
 
 		setDistance(15.0);
@@ -96,7 +97,7 @@ class Turtle implements Cloneable, Serializable {
 	public final Rectangle2D getBounds() {
 		if (bounds == null)
 			updateBounds();
-		return bounds;
+		return bounds.getBounds2D();
 	}
 
 	/**
