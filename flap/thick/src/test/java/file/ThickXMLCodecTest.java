@@ -24,31 +24,31 @@ import java.util.Collections;
 @RunWith(Parameterized.class)
 public class ThickXMLCodecTest {
 
-    @Parameterized.Parameters(name = "{index}: {0}")
-    public static Serializable[] parameters() {
-        return new Serializable[] {
-            new FiniteStateAutomaton(),
-            new PushdownAutomaton(),
-            new TuringMachine(),
-            Mockito.mock(Grammar.class, Mockito.RETURNS_SMART_NULLS),
-            new RegularExpression(),
-            new LSystem(),
-            new MealyMachine(),
-            new MooreMachine(),
-            new RegPumpingLemmaChooser(),
-            new CFPumpingLemmaChooser()
-        };
-    }
+	@Parameterized.Parameters(name = "{index}: {0}")
+	public static Serializable[] parameters() {
+		return new Serializable[]{
+			new FiniteStateAutomaton(),
+			new PushdownAutomaton(),
+			new TuringMachine(),
+			Mockito.mock(Grammar.class, Mockito.RETURNS_SMART_NULLS),
+			new RegularExpression(),
+			new LSystem(),
+			new MealyMachine(),
+			new MooreMachine(),
+			new RegPumpingLemmaChooser(),
+			new CFPumpingLemmaChooser()
+		};
+	}
 
-    @Parameterized.Parameter
-    public Serializable structure;
+	@Parameterized.Parameter
+	public Serializable structure;
 
-    @Rule
-    public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+	@Rule
+	public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    @Test
-    public void testXMLCodec_encode_doesNotThrow() throws IOException {
-        new XMLCodec().encode(structure, temporaryFolder.newFile(), Collections.emptyMap());
-    }
+	@Test
+	public void testXMLCodec_encode_doesNotThrow() throws IOException {
+		new XMLCodec().encode(structure, temporaryFolder.newFile(), Collections.emptyMap());
+	}
 
 }

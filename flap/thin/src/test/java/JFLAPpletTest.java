@@ -5,13 +5,13 @@ import org.junit.Test;
 
 public class JFLAPpletTest extends AssertJSwingJUnitTestCase {
 
-    @Override
-    protected void onSetUp() {
-    }
+	@Override
+	protected void onSetUp() {
+	}
 
-    @Test
-    @GUITest
-    public void start_swingStaysInEDT() {
-        AppletLauncher.applet(JFLAPplet.class).start().unloadApplet();
-    }
+	@Test
+	@GUITest
+	public void start_swingStaysInEDT() {
+		AppletLauncher.applet(JFLAPplet.class).start().unloadApplet();
+	}
 }

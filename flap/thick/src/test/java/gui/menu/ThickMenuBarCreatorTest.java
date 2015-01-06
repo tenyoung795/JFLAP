@@ -21,30 +21,30 @@ import static org.junit.Assert.assertThat;
 @RunWith(GUITestRunner.class)
 public class ThickMenuBarCreatorTest extends AssertJSwingJUnitTestCase {
 
-    private FrameFixture window;
+	private FrameFixture window;
 
-    @Override
-    protected void onSetUp() {
-        window = new FrameFixture(robot(), GuiActionRunner.execute(new SetUp()));
-    }
+	@Override
+	protected void onSetUp() {
+		window = new FrameFixture(robot(), GuiActionRunner.execute(new SetUp()));
+	}
 
-    @Test
-    @GUITest
-    public void testMenuBar_automatonEnvironment_canExportToSVG() {
-        assertThat(window.menuItemWithPath("File", "Save Image As...", "Export to SVG").target().getAction(),
-            instanceOf(ExportAction.class));
-    }
+	@Test
+	@GUITest
+	public void testMenuBar_automatonEnvironment_canExportToSVG() {
+		assertThat(window.menuItemWithPath("File", "Save Image As...", "Export to SVG").target().getAction(),
+			instanceOf(ExportAction.class));
+	}
 
-    private static final class SetUp extends GuiQuery<EnvironmentFrame> {
+	private static final class SetUp extends GuiQuery<EnvironmentFrame> {
 
-        @Override
-        protected EnvironmentFrame executeInEDT() {
-            NewAction.showNew();
+		@Override
+		protected EnvironmentFrame executeInEDT() {
+			NewAction.showNew();
 
-            EnvironmentFrame frame = new EnvironmentFrame(new AutomatonEnvironment(Mockito.mock(Automaton.class)));
-            frame.setSize(600, 400);
-            frame.setVisible(true);
-            return frame;
-        }
-    }
+			EnvironmentFrame frame = new EnvironmentFrame(new AutomatonEnvironment(Mockito.mock(Automaton.class)));
+			frame.setSize(600, 400);
+			frame.setVisible(true);
+			return frame;
+		}
+	}
 }

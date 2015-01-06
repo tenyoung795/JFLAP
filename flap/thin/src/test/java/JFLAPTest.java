@@ -8,26 +8,26 @@ import org.junit.Test;
 
 public class JFLAPTest extends AssertJSwingJUnitTestCase {
 
-    @Override
-    protected void onSetUp() {
-    }
+	@Override
+	protected void onSetUp() {
+	}
 
-    @Test
-    @GUITest
-    public void main_swingStaysInEDT() {
-        ApplicationLauncher.application(JFLAP.class).start();
-    }
+	@Test
+	@GUITest
+	public void main_swingStaysInEDT() {
+		ApplicationLauncher.application(JFLAP.class).start();
+	}
 
-    @Override
-    protected void onTearDown() {
-        GuiActionRunner.execute(new TearDown());
-    }
+	@Override
+	protected void onTearDown() {
+		GuiActionRunner.execute(new TearDown());
+	}
 
-    private static final class TearDown extends GuiTask {
+	private static final class TearDown extends GuiTask {
 
-        @Override
-        protected void executeInEDT() {
-            NewAction.closeNew();
-        }
-    }
+		@Override
+		protected void executeInEDT() {
+			NewAction.closeNew();
+		}
+	}
 }
