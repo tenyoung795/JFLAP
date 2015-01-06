@@ -48,30 +48,30 @@ public class JFLAPplet extends JApplet {
 	 */
 	public void init() {
 		// Show the message.
-        try {
-            SwingUtilities.invokeAndWait(() -> {
-                JTextArea text = new JTextArea("Welcome to JFLAP "
-                    + gui.AboutBox.VERSION + "!\n"
-                    + "Report bugs to rodger@cs.duke.edu!");
-                text.setEditable(false);
-                text.setWrapStyleWord(true);
-                JScrollPane scroller = new JScrollPane(text,
-                    JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                    JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-                getContentPane().add(text, BorderLayout.CENTER);
-                // Start the application.
-                myBase = this.getCodeBase();
-                Main.main(new String[0], false);
-            });
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        } catch (InvocationTargetException e) {
-            Throwable cause = e.getCause();
-            if (cause instanceof RuntimeException) throw (RuntimeException) cause;
-            if (cause instanceof Error) throw (Error) cause;
-            throw new AssertionError(cause);
-        }
-    }
+		try {
+			SwingUtilities.invokeAndWait(() -> {
+				JTextArea text = new JTextArea("Welcome to JFLAP "
+					+ gui.AboutBox.VERSION + "!\n"
+					+ "Report bugs to rodger@cs.duke.edu!");
+				text.setEditable(false);
+				text.setWrapStyleWord(true);
+				JScrollPane scroller = new JScrollPane(text,
+					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+					JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				getContentPane().add(text, BorderLayout.CENTER);
+				// Start the application.
+				myBase = this.getCodeBase();
+				Main.main(new String[0], false);
+			});
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		} catch (InvocationTargetException e) {
+			Throwable cause = e.getCause();
+			if (cause instanceof RuntimeException) throw (RuntimeException) cause;
+			if (cause instanceof Error) throw (Error) cause;
+			throw new AssertionError(cause);
+		}
+	}
 	
 	public static URL myBase = null;
 }

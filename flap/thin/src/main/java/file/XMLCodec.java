@@ -38,16 +38,16 @@ import javax.xml.transform.stream.StreamResult;
 public class XMLCodec extends Codec {
 
 
-    /**
-      * Determines which files this FileFilter will allow. We are only allowing files with extension XML and jff.
-      * 
-      */
-    @Override
-    public boolean accept(File f){
-        if (f.isDirectory()) return true;
-        if (f.getName().endsWith(".xml") || (f.getName().endsWith(".jff"))) return true;
-        return false;
-    } 
+	/**
+	  * Determines which files this FileFilter will allow. We are only allowing files with extension XML and jff.
+	  *
+	  */
+	@Override
+	public boolean accept(File f){
+		if (f.isDirectory()) return true;
+		if (f.getName().endsWith(".xml") || (f.getName().endsWith(".jff"))) return true;
+		return false;
+	}
 
 	/**
 	 * Given a file, this will return a JFLAP structure associated with that
@@ -101,20 +101,20 @@ public class XMLCodec extends Codec {
 		Transducer transducer = null;
 		try {
 			transducer = TransducerFactory.getTransducer(structure);
-            
-            /*
-             * If we are saving a pumping lemma, the associated structure would
-             * actually be a pumping lemma chooser. Thus, we have to get the
-             * lemma from the chooser.
-             */
-            Document dom;
-            if(structure instanceof gui.pumping.PumpingLemmaChooser)
-                dom = transducer.toDOM(((gui.pumping.PumpingLemmaChooser)structure).getCurrent());
-            else
-                dom = transducer.toDOM(structure);
-            
+
+			/*
+			 * If we are saving a pumping lemma, the associated structure would
+			 * actually be a pumping lemma chooser. Thus, we have to get the
+			 * lemma from the chooser.
+			 */
+			Document dom;
+			if(structure instanceof gui.pumping.PumpingLemmaChooser)
+				dom = transducer.toDOM(((gui.pumping.PumpingLemmaChooser)structure).getCurrent());
+			else
+				dom = transducer.toDOM(structure);
+
 //			Document dom = transducer.toDOM(structure);    // original line
-            
+
 			DOMPrettier.makePretty(dom);
 			Source s = new DOMSource(dom);
 			// Use Path to construct the URI as "file://" + path; File.toURI() is just "file:" + path,

@@ -84,7 +84,7 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 	 */
 	protected Map readStates(Element element, Automaton automaton, Set locatedStates) {
 		Map i2s = new java.util.HashMap();
-        if(element == null) return i2s;
+		if(element == null) return i2s;
 		NodeList allNodes = element.getChildNodes();
 		ArrayList stateNodes = new ArrayList();
 		for (int k = 0; k < allNodes.getLength(); k++) {
@@ -169,10 +169,10 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 //			if (!isBlock){
 			if (!(automaton instanceof TuringMachine)){
 				state = automaton.createStateWithId(p, id.intValue());
-            }
+			}
 			else {
-                Element tempNode = null;
-                if (e2t.containsKey(FILE_NAME)) {
+				Element tempNode = null;
+				if (e2t.containsKey(FILE_NAME)) {
 					String fileName = e2t.get(FILE_NAME).toString();
 					try {
 						tempNode = (Element) XPATH.evaluate(fileName, element, XPathConstants.NODE);
@@ -182,23 +182,23 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 				}
 				if (tempNode != null) {
 					Automaton temp = (TuringMachine) readAutomaton(tempNode);
-                    //MERLIN MERLIN MERLIN MERLIN MERLIN//
+					//MERLIN MERLIN MERLIN MERLIN MERLIN//
 //                    EDebug.print("Are we or not creating a block?");
-                    state = ((TuringMachine) automaton).createInnerTM(p, temp, tempNode.getTagName(),
-                            id.intValue());
-                }
-                else{
+					state = ((TuringMachine) automaton).createInnerTM(p, temp, tempNode.getTagName(),
+							id.intValue());
+				}
+				else{
 
-                     state = ((TuringMachine) automaton).createTMStateWithID(p, id.intValue());   
-                }
+					 state = ((TuringMachine) automaton).createTMStateWithID(p, id.intValue());
+				}
 			}
 			if (hasLocation && locatedStates != null)
 				locatedStates.add(state);
 			i2s.put(id, state);
 			String name = ((Element) stateNode).getAttribute(STATE_NAME_NAME);
 			if(name.equals("")) state.setName("q"+id.intValue());
-            else state.setName(name);
-             
+			else state.setName(name);
+
 			// Add various attributes.
 			if (e2t.containsKey(STATE_NAME_NAME))
 				state.setName((String) e2t.get(STATE_NAME_NAME));
@@ -208,18 +208,18 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 				automaton.addFinalState(state);
 			if (e2t.containsKey(STATE_INITIAL_NAME))
 				automaton.setInitialState(state);
-            /*
-             * If it is a Moore machine, add state output.
-             */
-            if(automaton instanceof MooreMachine && e2t.containsKey(MooreTransducer.STATE_OUTPUT_NAME))
-                ((MooreMachine) automaton).setOutput(state, (String) e2t.get(MooreTransducer.STATE_OUTPUT_NAME));
+			/*
+			 * If it is a Moore machine, add state output.
+			 */
+			if(automaton instanceof MooreMachine && e2t.containsKey(MooreTransducer.STATE_OUTPUT_NAME))
+				((MooreMachine) automaton).setOutput(state, (String) e2t.get(MooreTransducer.STATE_OUTPUT_NAME));
 		}
 	}
 	//Add the blocks
 	protected void addBlocks(Element element, Automaton automaton, Set locatedStates,
 							 Map i2s) {
-        assert(automaton instanceof TuringMachine); //this code should really be in TMTransducer, but I see why it's here
-        if(element == null) return;
+		assert(automaton instanceof TuringMachine); //this code should really be in TMTransducer, but I see why it's here
+		if(element == null) return;
 		if (!element.hasChildNodes())
 			return;
 		NodeList allNodes = element.getChildNodes();
@@ -283,7 +283,7 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 	protected void readTransitions(Node parent, Automaton automaton,
 			Map id2state) {
 		Map i2s = new java.util.HashMap();
-        if(parent == null || automaton == null) return;
+		if(parent == null || automaton == null) return;
 		NodeList allNodes = parent.getChildNodes();
 		ArrayList tNodes = new ArrayList();
 		boolean bool = false;
@@ -326,16 +326,16 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 			bool = false;
 
 
-            //deal with the shapiness of the transition, if the file specifies it. //add controlX and controlY
-            String controlX = (String) e2t.get(TRANSITION_CONTROL_X);
-            String controlY = (String) e2t.get(TRANSITION_CONTROL_Y);
-            if (controlX != null && controlY != null){
-                Point p = new Point(Integer.parseInt(controlX), Integer.parseInt(controlY));
-                transition.setControl(p);
-            }
-            else{ //explicit is better than implicit
-                transition.setControl(null);
-            }
+			//deal with the shapiness of the transition, if the file specifies it. //add controlX and controlY
+			String controlX = (String) e2t.get(TRANSITION_CONTROL_X);
+			String controlY = (String) e2t.get(TRANSITION_CONTROL_Y);
+			if (controlX != null && controlY != null){
+				Point p = new Point(Integer.parseInt(controlX), Integer.parseInt(controlY));
+				transition.setControl(p);
+			}
+			else{ //explicit is better than implicit
+				transition.setControl(null);
+			}
 		}
 	}
 
@@ -399,18 +399,18 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 	 */
 	public java.io.Serializable fromDOM(Document document) {
 		automatonMap.clear();
-        Element parent = (Element) document.getDocumentElement()
-        .getElementsByTagName(AUTOMATON_NAME).item(0);
-        if(parent == null) parent = document.getDocumentElement();
-        return readAutomaton(parent);
-      
-        
+		Element parent = (Element) document.getDocumentElement()
+		.getElementsByTagName(AUTOMATON_NAME).item(0);
+		if(parent == null) parent = document.getDocumentElement();
+		return readAutomaton(parent);
+
+
 	}
 
 	public java.io.Serializable readAutomaton(Element element) {
 		Set locatedStates = new java.util.HashSet();
 		Automaton root = createEmptyAutomaton(element.getOwnerDocument());
-        if(element == null) return root;
+		if(element == null) return root;
 		readBlocks(element, root, locatedStates);
 		// Read the states and transitions.
 		readTransitions(element, root, readStates(element, root, locatedStates
@@ -441,8 +441,8 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 
 			java.awt.Point p = new java.awt.Point();
 			boolean hasLocation = true;
-            Object obj = (e2t).get(NOTE_TEXT_NAME);
-            if(obj == null) continue;
+			Object obj = (e2t).get(NOTE_TEXT_NAME);
+			if(obj == null) continue;
 			String textString = obj.toString();
 			
 			// Try to get the X coord.
@@ -525,8 +525,8 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 //			a = container;
 //		}
 
-        //MERLIN MERLIN MERLIN MERLIN MERLIN//
-        Automaton a = state.getAutomaton();
+		//MERLIN MERLIN MERLIN MERLIN MERLIN//
+		Automaton a = state.getAutomaton();
 		if (a.getInitialState() == state)
 			se.appendChild(createElement(document, STATE_INITIAL_NAME, null,
 					null));
@@ -565,12 +565,12 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 		te.appendChild(createElement(document, TRANSITION_TO_NAME, null, ""
 				+ transition.getToState().getID()));
 
-        //if the transition has a control point defined,then get that too
-        if (transition.getControl() != null){
-            Point p = transition.getControl();
-            te.appendChild(createElement(document, TRANSITION_CONTROL_X, null, p.x+""));
-            te.appendChild(createElement(document, TRANSITION_CONTROL_Y, null, p.y+""));
-        }
+		//if the transition has a control point defined,then get that too
+		if (transition.getControl() != null){
+			Point p = transition.getControl();
+			te.appendChild(createElement(document, TRANSITION_CONTROL_X, null, p.x+""));
+			te.appendChild(createElement(document, TRANSITION_CONTROL_Y, null, p.y+""));
+		}
 
 		// Return the completed transition encoding element.
 		return te;
@@ -604,8 +604,8 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 //			a = container;
 //		}
 
-        //MERLIN MERLIN MERLIN MERLIN MERLIN//
-        Automaton a = block.getAutomaton(); //this will fetch the parent - I see no reason to go through the block map
+		//MERLIN MERLIN MERLIN MERLIN MERLIN//
+		Automaton a = block.getAutomaton(); //this will fetch the parent - I see no reason to go through the block map
 		if (a.getInitialState() == block)
 			be.appendChild(createElement(document, STATE_INITIAL_NAME, null,
 					null));
@@ -656,11 +656,11 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 		if (states.length > 0)
 			se.appendChild(createComment(doc, COMMENT_STATES));
 
-        if (auto instanceof TuringMachine)
-            for (int i = 0; i < states.length; i++)
+		if (auto instanceof TuringMachine)
+			for (int i = 0; i < states.length; i++)
 				se.appendChild(createBlockElement(doc, (TMState)states[i], auto));
-        else
-            for (int i = 0; i < states.length; i++)
+		else
+			for (int i = 0; i < states.length; i++)
 				se.appendChild(createStateElement(doc, states[i], auto));
 
 		// Add the transitions as subelements of the structure element.
@@ -671,27 +671,26 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 			se.appendChild(createTransitionElement(doc, transitions[i]));
 
 
-        
 		// Add the Automatons the blocks refer to as sub elements of the
 		// structure element.
-        
-        //only really need an internal name and a full TuringMachine
-        //MERLIN MERLIN MERLIN MERLIN MERLIN//
-        if (auto instanceof TuringMachine){ //there should not be building blocks in non-Turing Machines 
-            Map references = ((TuringMachine)auto).getBlockMap();
-            Iterator refer = references.keySet().iterator();
-            if (refer.hasNext())
-                se.appendChild(createComment(doc, COMMENT_AUTOMATA));
-            while (refer.hasNext()) {
-                String name = (String) refer.next();
-                if (!automatonMap.containsKey((Automaton) references.get(name))) {
-                    se.appendChild(createAutomatonElement(doc,
-                            (Automaton) references.get(name), name));
-                    automatonMap.put(name, auto);
-                }
-            }
-        }
-		
+		// only really need an internal name and a full TuringMachine
+		// MERLIN MERLIN MERLIN MERLIN MERLIN//
+		if (auto instanceof TuringMachine){
+			//there should not be building blocks in non-Turing Machines
+			Map references = ((TuringMachine)auto).getBlockMap();
+			Iterator refer = references.keySet().iterator();
+			if (refer.hasNext())
+				se.appendChild(createComment(doc, COMMENT_AUTOMATA));
+			while (refer.hasNext()) {
+				String name = (String) refer.next();
+				if (!automatonMap.containsKey((Automaton) references.get(name))) {
+					se.appendChild(createAutomatonElement(doc,
+						(Automaton) references.get(name), name));
+					automatonMap.put(name, auto);
+				}
+			}
+		}
+
 		//Add the sticky notes at the very end
 		ArrayList notes = auto.getNotes();
 		for(int k = 0; k < notes.size(); k++){
@@ -764,11 +763,11 @@ public abstract class AutomatonTransducer extends AbstractTransducer {
 	/** The tag name for the to state ID. */
 	public static final String TRANSITION_TO_NAME = "to";
 
-    /**The tag name for the x coordinate of the control point for a transition. */
-    public static final String TRANSITION_CONTROL_X = "controlx";
+	/**The tag name for the x coordinate of the control point for a transition. */
+	public static final String TRANSITION_CONTROL_X = "controlx";
 
-    /**The tag name for the y coordinate of the control point for a transition. */
-    public static final String TRANSITION_CONTROL_Y = "controly";
+	/**The tag name for the y coordinate of the control point for a transition. */
+	public static final String TRANSITION_CONTROL_Y = "controly";
 
 	/** The comment for the list of states. */
 	private static final String COMMENT_STATES = "The list of states.";

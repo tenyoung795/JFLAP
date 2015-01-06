@@ -86,10 +86,10 @@ public class MenuBarCreator {
 		if (menu.getItemCount() > 0)
 			bar.add(menu);
 
-        CloseButton dismiss = new CloseButton(frame.getEnvironment());
-        bar.add(Box.createGlue());
-        bar.add(dismiss);
-        
+		CloseButton dismiss = new CloseButton(frame.getEnvironment());
+		bar.add(Box.createGlue());
+		bar.add(dismiss);
+
 		return bar;
 	}
 	
@@ -127,10 +127,10 @@ public class MenuBarCreator {
 		if (menu.getItemCount() > 0)
 			bar.add(menu);
 
-        CloseButton dismiss = new CloseButton(frame.getEnvironment());
-        bar.add(Box.createGlue());
-        bar.add(dismiss);
-        
+		CloseButton dismiss = new CloseButton(frame.getEnvironment());
+		bar.add(Box.createGlue());
+		bar.add(dismiss);
+
 		return bar;
 	}
 
@@ -171,23 +171,23 @@ public class MenuBarCreator {
 			saveImageMenu.add(new SaveGraphPNGAction(environment, menu));
 			saveImageMenu.add(new SaveGraphGIFAction(environment, menu));
 			saveImageMenu.add(new SaveGraphBMPAction(environment, menu));
-            if (environment instanceof AutomatonEnvironment){ //this is strictly for non-Grammar
-                if (NEW_EXPORT_ACTION != null) {
-                    try {
-                        RestrictedAction ra = (RestrictedAction) NEW_EXPORT_ACTION.invokeExact(environment);
-                        saveImageMenu.add(ra);
-                    } catch (Throwable throwable) {
-                        if (throwable instanceof RuntimeException) {
-                            throw (RuntimeException) throwable;
-                        }
-                        if (throwable instanceof Error) {
-                            throw (Error) throwable;
-                        }
-                        // ExportAction's constructor has no checked exceptions.
-                        throw new AssertionError("Cannot make menu", throwable);
-                    }
-                }
-            }
+			if (environment instanceof AutomatonEnvironment){ //this is strictly for non-Grammar
+				if (NEW_EXPORT_ACTION != null) {
+					try {
+						RestrictedAction ra = (RestrictedAction) NEW_EXPORT_ACTION.invokeExact(environment);
+						saveImageMenu.add(ra);
+					} catch (Throwable throwable) {
+						if (throwable instanceof RuntimeException) {
+							throw (RuntimeException) throwable;
+						}
+						if (throwable instanceof Error) {
+							throw (Error) throwable;
+						}
+						// ExportAction's constructor has no checked exceptions.
+						throw new AssertionError("Cannot make menu", throwable);
+					}
+				}
+			}
 
 			menu.add(saveImageMenu);
 		}
@@ -529,19 +529,19 @@ public class MenuBarCreator {
 		return menu;
 	}
 
-    private static final MethodHandle NEW_EXPORT_ACTION;
-    static {
-        MethodHandle handle;
-        try {
-            Class<?> clazz = Class.forName("gui.action.ExportAction");
-            handle = MethodHandles.lookup()
-                .findConstructor(clazz, MethodType.methodType(void.class, Environment.class))
-                .asType(MethodType.methodType(RestrictedAction.class, Environment.class));
-        } catch (ClassNotFoundException unused) {
-            handle = null;
-        } catch (NoSuchMethodException|IllegalAccessException impossible) {
-            throw new AssertionError("Cannot make menu", impossible);
-        }
-        NEW_EXPORT_ACTION = handle;
-    }
+	private static final MethodHandle NEW_EXPORT_ACTION;
+	static {
+		MethodHandle handle;
+		try {
+			Class<?> clazz = Class.forName("gui.action.ExportAction");
+			handle = MethodHandles.lookup()
+				.findConstructor(clazz, MethodType.methodType(void.class, Environment.class))
+				.asType(MethodType.methodType(RestrictedAction.class, Environment.class));
+		} catch (ClassNotFoundException unused) {
+			handle = null;
+		} catch (NoSuchMethodException|IllegalAccessException impossible) {
+			throw new AssertionError("Cannot make menu", impossible);
+		}
+		NEW_EXPORT_ACTION = handle;
+	}
 }
